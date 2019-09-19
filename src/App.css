@@ -31,3 +31,7 @@
     transform: rotate(360deg);
   }
 }
+
+.react-draggable-dragged:not(.react-draggable-dragging) {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
