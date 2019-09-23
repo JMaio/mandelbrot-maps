@@ -1,13 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Typography, Button, Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CardActionArea, CardMedia, Fab, Paper } from '@material-ui/core';
+import { Typography, Button, Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CardActionArea, CardMedia, Fab, Paper, Grid, GridList, GridListTile } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { width } from '@material-ui/system';
 import { ReactComponent as PlusIcon } from './plus-icon.svg';
 import { ReactComponent as MinusIcon } from './minus-icon.svg';
 import Draggable from 'react-draggable';
-import ZoomBar from './components/ZoomBar';
+import ZoomBar, { ZoomBarF } from './components/ZoomBar';
+import RotationControl, { RotationControlFun } from './components/RotationControl';
 
 import 'typeface-roboto';
 
@@ -69,9 +70,40 @@ function App() {
 
   // app should contain all current values (x, y, zoom, orientation)
 
+
+  let springs = [
+    [30, 300],
+    [30, 600],
+    // [50, 400],
+    // [25, 800],
+    [40, 500],
+    [40, 600],
+    [40, 800],
+    // [55, 800],
+  ]
+
   return (
-    <div className="App">
+    <div className="App" style={{
+      display: 'flex',
+      flexDirection: 'column',
+      // justifyItems: 'center',
+      alignItems: 'center',
+    }}>
       <ZoomBar />
+      {springs.map(([f, t], i) => {
+        console.log(`spring ${i}: f=${f} t=${t}`)
+        return <ZoomBarF friction={f} tension={t} />
+      })}
+      <RotationControl />
+      <RotationControlFun />
+      {/* <GridList alignContent="center" cols={1}>
+        <GridListTile>
+        </GridListTile>
+
+        <GridListTile>
+        </GridListTile>
+      </GridList> */}
+
 
       {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
