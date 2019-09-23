@@ -4,6 +4,62 @@ import { ReactComponent as PlusIcon } from '../plus-icon.svg';
 import { ReactComponent as MinusIcon } from '../minus-icon.svg';
 import Draggable from "react-draggable";
 import TransparentButton from "./TransparentButton";
+import { useSpring, animated, config } from 'react-spring';
+import { useDrag } from 'react-use-gesture';
+import { clamp } from 'lodash';
+
+export function ZoomBarF(props) {
+  const [{ x }, set] = useSpring(() => ({ x: 0, config: {
+     friction: props.friction, 
+     tension: props.tension,
+     clamp: true,
+  }}))
+
+  const ref = React.useRef(null);
+
+  const bind = useDrag(({ down, movement: [x], event }) => {
+    event.preventDefault();
+    // event.stopPropagation();
+
+    const limit = 80;
+    // const dir = xDir < 0 ? -1 : 1
+    const nextX = Math.abs(x) > limit ? limit * Math.sign(x) : x;
+    // const f = down ? props.friction / 2 : props.friction
+    // const t = down ? props.tension / 2 : props.tension
+    set({ x: down ? clamp(x, -limit, limit) : 0 })
+    // set({ x: down ? x : 0 })
+    // set({ x: down ? nextX : 0 })
+    
+  }, { event: { passive: false, capture: false }, domTarget: ref })
+  
+  React.useEffect(bind, [bind])
+
+  return (
+    <animated.div ref={ref}
+      // {...bind()}
+      style={{
+        transform: x.interpolate(x => `translate3D(${x}px, 0, 0)`),
+        width: 80,
+        height: 80,
+        // background: "hotpink",
+        borderRadius: '50rem',
+      }} 
+      >
+      <Fab 
+      onClick={ e => {
+          e.preventDefault();
+          console.log("click")
+        }
+      }
+      style={{
+        width: 70,
+        height: 70
+      }}>
+        100%
+      </Fab>
+      </animated.div>
+  )
+}
 
 export default class ZoomBar extends React.Component {
   constructor(props) {
@@ -21,11 +77,13 @@ export default class ZoomBar extends React.Component {
     this.setState((prev, props) => ({
       zoom: this.state.zoom + 0.01 * this.state.mult,
     }));
-    // console.log(this.state.mult);
-    // console.log(e.movementX);
   }
 
   render() {
+    let fabSize = 70;
+
+    let maxWidth = 240;
+
     return (
       <div style={{
         height: "80px",
@@ -33,7 +91,7 @@ export default class ZoomBar extends React.Component {
       }}>
         <Paper style={{
           borderRadius: "5em",
-          maxWidth: "240px",
+          maxWidth: maxWidth,
           margin: "auto",
           display: "flex",
           justifyContent: "space-between",
@@ -42,7 +100,7 @@ export default class ZoomBar extends React.Component {
             <MinusIcon />
           </TransparentButton>
           <div style={{
-            width: "100px",
+            width: fabSize+20,
             position: "relative",
           }}>
             <Draggable
@@ -77,12 +135,12 @@ export default class ZoomBar extends React.Component {
                 // boxShadow: "none",
                 backgroundColor: "#2196f3",
 
-                width: "80px",
-                marginLeft: "-40px",
+                width: fabSize,
+                marginLeft: -fabSize/2,
                 left: "50%",
 
-                height: "80px",
-                marginTop: "-40px",
+                height: fabSize,
+                marginTop: -fabSize/2,
                 top: "50%",
 
                 position: "absolute",
