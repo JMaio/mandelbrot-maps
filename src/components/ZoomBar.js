@@ -88,43 +88,18 @@ export function ZoomBarF(props) {
   }, gestureDown ? 10 : null);
 
   const bind = useDrag(({ down, movement: [x, y], event, first, last }) => {
-    // only prevent default after first event
-    // allows buttons to activate and ripple
-    // !first && event.preventDefault();
-  
-    // if (first) {
-    //   //   React.useEffect(() => {
-    //   //     let id = setInterval(() => {
-    //   //       updateZoom();
-    //   //     }, 1000);
-    //   //     return () => clearInterval(id);
-    //   //   })
-    //   // );
-    // }
-    // if (last) {
-    //   // console.log("cleared interval #" + zoomInterval);
-    //   // setZoomInterval(0);
-    //   // setZoomRefresh(null);
-    // }
+    // only prevent default between first and last event
+    // first: prevents browser events
+    // last: allows buttons to activate and ripple
+    (!first && !last) && event.preventDefault();
+    
     setGestureDown(down);
-
-    // const mult = (y / 8)**2 // Math.max(-80, Math.min(actual + e.movementX, 80)) / 8
     
     const limit = 80;
-    
     const clampY = clamp(y, -limit, limit)
-    // setZoomMult(zoomMult + 0.01)
-    setZoomMult(down ? -Math.sign(clampY) * Math.abs(clampY / 16)**4 : 0)
-    // setZoomMult(zoomMult + 10)
-    // zoomMult += 10;
-    // console.log(zoom, zoomMult, clampY);
-    // if (active) {
-    //   updateZoom();
-    // }
-
+    
+    setZoomMult(down ? -Math.sign(clampY) * Math.abs(clampY / 10)**4 : 0)
     set({ y: down ? clampY : 0 })
-    // set({ x: down ? x : 0 })
-    // set({ x: down ? nextX : 0 })
     
   }, { event: { passive: false, capture: false }, domTarget: ref })
   
