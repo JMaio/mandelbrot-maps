@@ -7,7 +7,7 @@ import { width } from '@material-ui/system';
 import { ReactComponent as PlusIcon } from './plus-icon.svg';
 import { ReactComponent as MinusIcon } from './minus-icon.svg';
 import Draggable from 'react-draggable';
-import ZoomBar, { ZoomBarF } from './components/ZoomBar';
+import ZoomBar, { ZoomBarF, ZoomBarPaper } from './components/ZoomBar';
 import RotationControl, { RotationControlFun } from './components/RotationControl';
 
 import 'typeface-roboto';
@@ -71,16 +71,16 @@ function App() {
   // app should contain all current values (x, y, zoom, orientation)
 
 
-  let springs = [
-    [30, 300],
-    [30, 600],
-    // [50, 400],
-    // [25, 800],
-    [40, 500],
-    [40, 600],
-    [40, 800],
-    // [55, 800],
-  ]
+  // let springs = [
+  //   [30, 300],
+  //   [30, 600],
+  //   // [50, 400],
+  //   // [25, 800],
+  //   [40, 500],
+  //   [40, 600],
+  //   [40, 800],
+  //   // [55, 800],
+  // ]
 
   return (
     <div className="App" style={{
@@ -90,12 +90,20 @@ function App() {
       alignItems: 'center',
     }}>
       <ZoomBar />
-      {springs.map(([f, t], i) => {
+      {/* {springs.map(([f, t], i) => {
         console.log(`spring ${i}: f=${f} t=${t}`)
-        return <ZoomBarF friction={f} tension={t} />
-      })}
+      })} */}
+      <ZoomBarPaper />
+      {/* <ZoomBarF diameter={70} zoom={100} setZoom={z => {null}} /> */}
       <RotationControl />
       <RotationControlFun />
+
+      <Fab onClick={ e => {
+        console.log("click")
+      }}>
+        Hello
+      </Fab>
+
       {/* <GridList alignContent="center" cols={1}>
         <GridListTile>
         </GridListTile>
