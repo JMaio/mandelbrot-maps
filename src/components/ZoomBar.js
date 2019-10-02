@@ -23,8 +23,8 @@ export default function ZoomBar(props) {
 
   const zoomClick = dir => {
     // zoom in a particular direction
-    const z = Math.sign(dir) * 1e-3 * zoom.value;
-    setZoom({ zoom: z });
+    const z = Math.sign(dir) * 1e-1 * zoom.value;
+    setZoom({ zoom: zoom.value + z });
   }
 
   return (
