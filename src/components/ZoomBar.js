@@ -8,10 +8,11 @@ import { useSpring, animated, config, interpolate } from 'react-spring';
 import { useDrag } from 'react-use-gesture';
 import { clamp } from 'lodash';
 
-export function ZoomBarPaper(props) {
+export default function ZoomBar(props) {
   let fabSize = 70;
-  let maxWidth = 240;
-  const [zoom, setZoom] = useState(100);
+  let maxHeight = 240;
+  const [zoom, setZoom] = useState(100) // useSpring(() => ({ zoom: 100 }));
+  // const zoomSpring = useSpring({ zoom });
 
   return (
     <div style={{
@@ -20,7 +21,7 @@ export function ZoomBarPaper(props) {
       }}>
         <Paper style={{
           borderRadius: "5em",
-          maxHeight: maxWidth,
+          maxHeight: maxHeight,
           margin: "auto",
           display: "flex",
           flexDirection: "column-reverse",
@@ -33,7 +34,7 @@ export function ZoomBarPaper(props) {
             height: fabSize,
             position: "relative",
           }}>
-            <ZoomBarF diameter={fabSize} zoom={zoom} zoomControl={setZoom} />
+            <ZoomBarFab diameter={fabSize} zoom={zoom} zoomControl={setZoom} />
           </div>
           <TransparentButton>
             <PlusIcon />
@@ -43,21 +44,19 @@ export function ZoomBarPaper(props) {
   )
 }
 
-export function ZoomBarF(props) {
+export function ZoomBarFab(props) {
   const [{ y }, set] = useSpring(() => ({ y: 0, config: {
-     friction: 40, 
-     tension: 500,
+     friction: 30, 
+     tension: 400,
      clamp: true,
   }}))
   
   const [zoom, setZoom] = [props.zoom, props.zoomControl];
   
-  const ref = React.useRef(null);
   const [gestureDown, setGestureDown] = useState(false);
   const [zoomMult, setZoomMult] = useState(0);
+  const ref = React.useRef(null);
   
-  const springZoom = useSpring({ zoom: zoom })
-
   const reset = () => {
     setZoom(100);
   }
@@ -82,10 +81,11 @@ export function ZoomBarF(props) {
   }
 
   useInterval(() => {
-    const z = clamp(props.zoom + 2e-4 * (props.zoom ** 0.5) * zoomMult, 0.01, 9999);
-    console.log(`updating zoom (${props.zoom}) + ${zoomMult}`);
+    console.log(`updating zoom with ${zoomMult}:`);
+    console.log(zoom);
+    const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
     setZoom(z);
-  }, gestureDown ? 10 : null);
+  }, gestureDown ? 50 : null);
 
   const bind = useDrag(({ down, movement: [x, y], event, first, last }) => {
     // only prevent default between first and last event
@@ -108,7 +108,6 @@ export function ZoomBarF(props) {
   return (
     <animated.div 
       ref={ref}
-      // {...bind()}
       style={{
         transform: y.interpolate(y => `translate3D(0, ${y}px, 0)`),
         borderRadius: '50rem',
@@ -126,14 +125,9 @@ export function ZoomBarF(props) {
       >
       <Fab 
         onClick={ e => {
-            // e.preventDefault();
-            // console.log(y);
-            console.log("fab click");
+            // if click registered and fab not moved, trigger reset
             if (y.getValue() === 0) {
-              console.log("reset");
               reset();
-            } else {
-              console.log("moved - no resety");
             }
           }
         }
@@ -153,102 +147,102 @@ export function ZoomBarF(props) {
   )
 }
 
-export default class ZoomBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      zoom: 100,
-      mult: 0,
-      actual: 0,
-    };
+// export default class ZoomBar extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       zoom: 100,
+//       mult: 0,
+//       actual: 0,
+//     };
 
-    this.zoomDrag = this.zoomDrag.bind(this);
-  }
+//     this.zoomDrag = this.zoomDrag.bind(this);
+//   }
 
-  zoomDrag() {
-    this.setState((prev, props) => ({
-      zoom: this.state.zoom + 0.01 * this.state.mult,
-    }));
-  }
+//   zoomDrag() {
+//     this.setState((prev, props) => ({
+//       zoom: this.state.zoom + 0.01 * this.state.mult,
+//     }));
+//   }
 
-  render() {
-    let fabSize = 70;
+//   render() {
+//     let fabSize = 70;
 
-    let maxWidth = 240;
+//     let maxWidth = 240;
 
-    return (
-      <div style={{
-        height: "80px",
-        display: "flex"
-      }}>
-        <Paper style={{
-          borderRadius: "5em",
-          maxWidth: maxWidth,
-          margin: "auto",
-          display: "flex",
-          justifyContent: "space-between",
-        }}>
-          <TransparentButton>
-            <MinusIcon />
-          </TransparentButton>
-          <div style={{
-            width: fabSize+20,
-            position: "relative",
-          }}>
-            <Draggable
-              axis="x"
-              bounds={{ left: -80, right: 80 }}
-              position={{ x: 0, y: 0 }}
-              onStart={e => this.setState({
-                zoomDragInterval: setInterval(this.zoomDrag, 25)
-              })}
-              onStop={e => {
-                clearInterval(this.state.zoomDragInterval);
-                this.setState({
-                  actual: 0,
-                  mult: 0
-                })
-              }}
-              onDrag={e => {
-                // console.log(e);
-                // let prev = this.state.mult
-                let actual = this.state.actual
-                let mult = Math.max(-80, Math.min(actual + e.movementX, 80)) / 8
-                this.setState({
-                  actual: actual + e.movementX,
-                  mult: mult ** 2 * Math.sign(mult)
-                })
-                // (state, props) => ({
-                //   zoom: state.zoom + 0.01*mult
-                // })
-              }}
-            >
-              <Fab style={{
-                // boxShadow: "none",
-                backgroundColor: "#2196f3",
+//     return (
+//       <div style={{
+//         height: "80px",
+//         display: "flex"
+//       }}>
+//         <Paper style={{
+//           borderRadius: "5em",
+//           maxWidth: maxWidth,
+//           margin: "auto",
+//           display: "flex",
+//           justifyContent: "space-between",
+//         }}>
+//           <TransparentButton>
+//             <MinusIcon />
+//           </TransparentButton>
+//           <div style={{
+//             width: fabSize+20,
+//             position: "relative",
+//           }}>
+//             <Draggable
+//               axis="x"
+//               bounds={{ left: -80, right: 80 }}
+//               position={{ x: 0, y: 0 }}
+//               onStart={e => this.setState({
+//                 zoomDragInterval: setInterval(this.zoomDrag, 25)
+//               })}
+//               onStop={e => {
+//                 clearInterval(this.state.zoomDragInterval);
+//                 this.setState({
+//                   actual: 0,
+//                   mult: 0
+//                 })
+//               }}
+//               onDrag={e => {
+//                 // console.log(e);
+//                 // let prev = this.state.mult
+//                 let actual = this.state.actual
+//                 let mult = Math.max(-80, Math.min(actual + e.movementX, 80)) / 8
+//                 this.setState({
+//                   actual: actual + e.movementX,
+//                   mult: mult ** 2 * Math.sign(mult)
+//                 })
+//                 // (state, props) => ({
+//                 //   zoom: state.zoom + 0.01*mult
+//                 // })
+//               }}
+//             >
+//               <Fab style={{
+//                 // boxShadow: "none",
+//                 backgroundColor: "#2196f3",
 
-                width: fabSize,
-                marginLeft: -fabSize/2,
-                left: "50%",
+//                 width: fabSize,
+//                 marginLeft: -fabSize/2,
+//                 left: "50%",
 
-                height: fabSize,
-                marginTop: -fabSize/2,
-                top: "50%",
+//                 height: fabSize,
+//                 marginTop: -fabSize/2,
+//                 top: "50%",
 
-                position: "absolute",
-                zIndex: "1",
-              }}>
-                <Typography style={{ color: "#fff" }}>
-                  {this.state.zoom.toFixed(1)}%
-                  </Typography>
-              </Fab>
-            </Draggable>
-          </div>
-          <TransparentButton>
-            <PlusIcon />
-          </TransparentButton>
-        </Paper>
-      </div>
-    )
-  }
-}
+//                 position: "absolute",
+//                 zIndex: "1",
+//               }}>
+//                 <Typography style={{ color: "#fff" }}>
+//                   {this.state.zoom.toFixed(1)}%
+//                   </Typography>
+//               </Fab>
+//             </Draggable>
+//           </div>
+//           <TransparentButton>
+//             <PlusIcon />
+//           </TransparentButton>
+//         </Paper>
+//       </div>
+//     )
+//   }
+// }
