@@ -11,9 +11,14 @@ import { clamp } from 'lodash';
 export default function ZoomBar(props) {
   let fabSize = 70;
   let maxHeight = 240;
-  const [zoom, setZoom] = useState(100) // useSpring(() => ({ zoom: 100 }));
-  // const zoomSpring = useSpring({ zoom });
+  // const [zoom, setZoom] = useState(100) // useSpring(() => ({ zoom: 100 }));
+  const [{ zoom }, setZoom] = useSpring(() => ({ zoom: 100 }));
+  // const { z } = useSpring({ 
+  //   from: { z: 0 }, 
+  //   z: 100
+  // });
 
+  let setZoomSpring = () => null;
   return (
     <div style={{
         width: fabSize,
@@ -58,7 +63,7 @@ export function ZoomBarFab(props) {
   const ref = React.useRef(null);
   
   const reset = () => {
-    setZoom(100);
+    setZoom({ zoom: 100 });
   }
 
   // https://upmostly.com/tutorials/setinterval-in-react-components-using-hooks
@@ -80,11 +85,20 @@ export function ZoomBarFab(props) {
     }, [delay]);
   }
 
+  const calcZoom = z => {
+    clamp(z + 2 * 3e-5 * (z ** 0.75) * zoomMult, 0.01, 9999)
+  }
+
   useInterval(() => {
     console.log(`updating zoom with ${zoomMult}:`);
     console.log(zoom);
-    const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
-    setZoom(z);
+    // const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
+    // const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
+    console.log(
+      clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
+    )
+    // const z = calcZoom(zoom.value);
+    setZoom({ zoom: clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999) });
   }, gestureDown ? 50 : null);
 
   const bind = useDrag(({ down, movement: [x, y], event, first, last }) => {
@@ -93,6 +107,7 @@ export function ZoomBarFab(props) {
     // last: allows buttons to activate and ripple
     (!first && !last) && event.preventDefault();
     
+    // tell zoom listener if drag is happening
     setGestureDown(down);
     
     const limit = 80;
@@ -138,9 +153,7 @@ export function ZoomBarFab(props) {
           height: props.diameter,
         }}>
         <Typography style={{ color: "#fff" }}>
-          <animated.div>
-            {zoom.toFixed(1)}%
-          </animated.div>
+          <animated.span>{zoom.interpolate(z => z.toFixed(1))}</animated.span>%
         </Typography>
       </Fab>
     </animated.div>
