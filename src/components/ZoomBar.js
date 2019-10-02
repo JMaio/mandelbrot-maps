@@ -23,8 +23,8 @@ export default function ZoomBar(props) {
 
   const zoomClick = dir => {
     // zoom in a particular direction
-    const z = Math.sign(dir) * 1e-1 * zoom.value;
-    setZoom({ zoom: zoom.value + z });
+    const z = Math.sign(dir) * (1e-1 * zoom.value + 1);
+    setZoom({ zoom: clamp(zoom.value + z, 0.01, 9999) });
   }
 
   return (
@@ -102,7 +102,7 @@ export function ZoomBarFab(props) {
     // console.log(
     //   clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
     //   )
-    const z = clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
+    const z = clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75 + 1) * zoomMult, 0.01, 9999)
     // const z = calcZoom(zoom.value);
     setZoom({ zoom: z });
   }, gestureDown ? 50 : null);
