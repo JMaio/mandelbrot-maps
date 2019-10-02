@@ -3,7 +3,7 @@ import { Paper, Fab, Typography } from '@material-ui/core';
 import { ReactComponent as PlusIcon } from '../plus-icon.svg';
 import { ReactComponent as MinusIcon } from '../minus-icon.svg';
 import Draggable from "react-draggable";
-import TransparentButton from "./TransparentButton";
+import TransparentFab from "./TransparentFab";
 import { useSpring, animated, config, interpolate } from 'react-spring';
 import { useDrag } from 'react-use-gesture';
 import { clamp } from 'lodash';
@@ -12,13 +12,21 @@ export default function ZoomBar(props) {
   let fabSize = 70;
   let maxHeight = 240;
   // const [zoom, setZoom] = useState(100) // useSpring(() => ({ zoom: 100 }));
-  const [{ zoom }, setZoom] = useSpring(() => ({ zoom: 100 }));
+  const [{ zoom }, setZoom] = useSpring(() => ({ zoom: 100, config: {
+    friction: 50, 
+    tension: 600,
+  }}));
   // const { z } = useSpring({ 
   //   from: { z: 0 }, 
   //   z: 100
   // });
 
-  let setZoomSpring = () => null;
+  const zoomClick = dir => {
+    // zoom in a particular direction
+    const z = Math.sign(dir) * 1e-3 * zoom.value;
+    setZoom({ zoom: z });
+  }
+
   return (
     <div style={{
         width: fabSize,
@@ -32,18 +40,18 @@ export default function ZoomBar(props) {
           flexDirection: "column-reverse",
           justifyContent: "space-between",
         }}>
-          <TransparentButton>
+          <TransparentFab onClick={c => zoomClick(-1)}>
             <MinusIcon />
-          </TransparentButton>
+          </TransparentFab>
           <div style={{
             height: fabSize,
             position: "relative",
           }}>
             <ZoomBarFab diameter={fabSize} zoom={zoom} zoomControl={setZoom} />
           </div>
-          <TransparentButton>
+          <TransparentFab onClick={c => zoomClick(1)}>
             <PlusIcon />
-          </TransparentButton>
+          </TransparentFab>
         </Paper>
       </div>
   )
@@ -85,20 +93,18 @@ export function ZoomBarFab(props) {
     }, [delay]);
   }
 
-  const calcZoom = z => {
-    clamp(z + 2 * 3e-5 * (z ** 0.75) * zoomMult, 0.01, 9999)
-  }
-
+  
   useInterval(() => {
     console.log(`updating zoom with ${zoomMult}:`);
     console.log(zoom);
     // const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
     // const z = clamp(zoom + 2 * 3e-5 * (zoom ** 0.75) * zoomMult, 0.01, 9999);
-    console.log(
-      clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
-    )
+    // console.log(
+    //   clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
+    //   )
+    const z = clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999)
     // const z = calcZoom(zoom.value);
-    setZoom({ zoom: clamp(zoom.value + 2 * 3e-5 * (zoom.value ** 0.75) * zoomMult, 0.01, 9999) });
+    setZoom({ zoom: z });
   }, gestureDown ? 50 : null);
 
   const bind = useDrag(({ down, movement: [x, y], event, first, last }) => {
