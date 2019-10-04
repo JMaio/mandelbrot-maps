@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Paper, CardContent, Typography, Box, Fab } from '@material-ui/core';
 import { animated, useSpring, config } from 'react-spring';
-import { useDrag } from 'react-use-gesture';
+import { useDrag, addV } from 'react-use-gesture';
 
 export function RotationControlFun() {
   const [{ x }, set] = useSpring(() => ({ x: 0 }))
@@ -31,40 +31,47 @@ export function RotationControlFun() {
 
 export default function RotationControl() {
 
-  const [{ rotation, deltaTheta }, set] = useSpring(() => ({ rotation: 0, deltaTheta: 0 }))
+  const [{ theta, dt, xy }, set] = useSpring(() => ({ 
+    theta: 70, 
+    dt: 0,
+    xy: [0, 0],
+  }))
+
+  var elemProps = {x: 0, y: 0, width: 0, height: 0};
+  
+  const [elemOffset, setElemOffset] = useState([elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2]);
   
   const outerSize = 160;
   const innerSize = 70;
-  var pos = {x: 0, y: 0, width: 0, height: 0};
 
-  const bind = useDrag(({ down, direction, movement: [x, y], initial: [ix, iy], first, last }) => {
-    // if (first) {
-    //   console.log(ix, iy)
-    //   return
-    // }
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], first, last, memo = theta.getValue() }) => {
+
+    const [ox, oy] = elemOffset;
     
-    let elemOffset = {
-      x: pos.x - ix + pos.width / 2, 
-      y: pos.y - iy + pos.height / 2
-    };
-    console.log(elemOffset);
+    if (first) {
+      setElemOffset([elemProps.x - ix, elemProps.y - iy]);
+      return;
+      //   // remember initial angle
+      //   set({ initialTheta: Math.atan2(iy - (pos.y + pos.height / 2), ix - (pos.x + pos.width / 2)) });
+    }
+    set({ xy: [x, y] })
+    
+    console.log(ix, x, iy, y)
+
+    const newTheta = Math.atan2(oy - y, ox - x);
+    const dt       = (360 * newTheta / (Math.PI * 2));
   
-    const initialTheta = Math.atan2(iy - (pos.y + pos.height / 2), ix - (pos.x + pos.width / 2));
-    const newTheta     = Math.atan2( y - elemOffset.y,  x - elemOffset.x);
-    const dt           = (newTheta - initialTheta) / (Math.PI * 2) * 360 + 360;
-  
-    console.log(initialTheta, newTheta);
-    // console.log(ix, x);
-    // console.log(iy, y);
-  
-    set({ deltaTheta: dt })
+    // set current angle, delta since last
+    set({ 
+      theta: memo + dt, 
+      // xy: [x, y] 
+    })
 
     if (last) {
-      set({ rotation: (rotation.value + dt) % 360 })
+      set({ dt: 0 })
     }
-    // return {style: {
-    //   backgroundColor: "red",
-    // }}
+
+    return memo;
   })
 
   return (
@@ -74,27 +81,49 @@ export default function RotationControl() {
       display: 'flex',
       position: 'relative',
     }}>
+      <animated.div style={{
+          width: 10,
+          height: 10,
+          backgroundColor: "red",
+          transform: xy.interpolate((x, y) => `translate3d(${x - 5}px, ${y - 5}px, 0)`),
+          // transform: xy.interpolate(xy => `translate(${x}, ${y})`),
+          position: "fixed",
+          top: 0,
+          left: 0,
+        }} />
       <Paper { ...bind() } 
       ref={ el => {
         if (!el) return;
         let r = el.getBoundingClientRect();
-        pos = {x: r.x, y: r.y, width: r.width, height: r.height}
-        console.log(pos);
+        elemProps = {x: r.x, y: r.y, width: r.width, height: r.height}
+        // console.log(pos);
       }}
       style={{
         borderRadius: '50rem',
         width: outerSize,
         height: outerSize,
       }} >
+        <div style={{
+          width: 10,
+          height: 10,
+          backgroundColor: "aqua",
+          transform: `translate3d(${- 5}px, ${- 5}px, 0)`,
+          // transform: xy.interpolate(xy => `translate(${x}, ${y})`),
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          zIndex: 2,
+        }} />
         <animated.div 
           style= {{
-            transform: deltaTheta.interpolate(t => `rotate(${(rotation.value + t)}deg)`),
+            transform: theta.interpolate(t => `rotate(${t}deg)`),
             width: "100%",
             height: "100%"
           }}>
           <Typography style= {{ userSelect: "none" }} >hi</Typography>
         </animated.div>
       </Paper>
+      
       <Fab style={{
         width: innerSize,
         height: innerSize,
@@ -111,7 +140,7 @@ export default function RotationControl() {
           color: "#fff",
           margin: 'auto',
         }}>
-          <animated.span>{deltaTheta.interpolate(t => ((rotation.value + t) % 360).toFixed(1))}</animated.span>°
+          <animated.span>{theta.interpolate(t => ((360 + t) % 360).toFixed(1))}</animated.span>°
         </Typography>
       </Fab>
     </div>
