@@ -62,6 +62,16 @@ class ThingCard extends React.Component {
   }
 }
 
+function Separator() {
+  return (
+    <div
+      style= {{
+        margin: 10,
+      }}
+    />
+  )
+}
+
 function App() {
   let user = {
     first: "J",
@@ -89,13 +99,16 @@ function App() {
       // justifyItems: 'center',
       alignItems: 'center',
     }}>
+      <Separator />
+
       <ZoomBar />
-      {/* {springs.map(([f, t], i) => {
-        console.log(`spring ${i}: f=${f} t=${t}`)
-      })} */}
-      <ZoomBarPaper />
-      {/* <ZoomBarF diameter={70} zoom={100} setZoom={z => {null}} /> */}
+      
+      <Separator />
+      
       <RotationControl />
+      
+      <Separator />
+      
       <RotationControlFun />
 
       <Fab onClick={ e => {
