@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Typography, Button, Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CardActionArea, CardMedia, Fab, Paper, Grid, GridList, GridListTile } from '@material-ui/core';
+import { Typography, Button, Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CardActionArea, CardMedia, Fab, Paper, Grid, GridList, GridListTile, Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { width } from '@material-ui/system';
 import { ReactComponent as PlusIcon } from './plus-icon.svg';
@@ -93,59 +93,52 @@ function App() {
   // ]
 
   return (
-    <div className="App" style={{
-      display: 'flex',
-      flexDirection: 'column',
-      // justifyItems: 'center',
-      alignItems: 'center',
-    }}>
-      <Separator />
+    <Fragment>
+      <canvas 
+        id="mandelbrot"
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+        }}
+      />
 
-      <ZoomBar />
-      
-      <Separator />
-      
-      <RotationControl />
-      
-      <Separator />
-      
-      <RotationControlFun />
+      <Grid 
+        className="App"
+        container
+        direction="column"
+        justify="space-around"
+        alignItems="center"
+        style={{
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      >
 
-      <Fab onClick={ e => {
-        console.log("click")
-      }}>
-        Hello
-      </Fab>
+        <Grid 
+          container
+          direction="row"
+          justify="flex-end"
+          alignItems="center">
+          <ZoomBar />
+        </Grid>
+        
+        
+        <RotationControl />
+        
+        
+        <RotationControlFun />
 
-      {/* <GridList alignContent="center" cols={1}>
-        <GridListTile>
-        </GridListTile>
+        <Fab onClick={ e => {
+          console.log("click")
+        }}>
+          Hello
+        </Fab>
 
-        <GridListTile>
-        </GridListTile>
-      </GridList> */}
-
-
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-
-        <ThingCard id="jwow" />
-        <ThingCard id="jwow2" />
-
-        <Welcome name="Jwow" />
-        <Welcome name="Jwow 2" />
-        <Welcome name="Jwow 3" />
-        <div id="time" />
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
-    </div>
+      </Grid>
+    </Fragment>
   );
 }
 
