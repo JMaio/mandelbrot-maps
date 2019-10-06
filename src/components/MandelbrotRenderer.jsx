@@ -8,9 +8,9 @@ import { Typography, Button } from "@material-ui/core";
 export default function MandelbrotRenderer(props) {
 
   const canvas = useRef("canvas");
-  const canvasSize = 400;
+  const canvasSize = 600;
 
-  const bounds = {x: [-1, 1], y: [-1, 1]};
+  const bounds = {x: [-1.5, 0.5], y: [-1, 1]};
   const maxI = 63;
 
   const [ctx, setCtx] = useState(null)
@@ -19,7 +19,7 @@ export default function MandelbrotRenderer(props) {
 
   useEffect(() => {
     setCtx(canvas.current.getContext("2d"));
-  });
+  }, []);
 
   // function linspace(start, stop, cardinality) {
   //   var arr = [];
@@ -54,10 +54,14 @@ export default function MandelbrotRenderer(props) {
     // console.log(l);
     ctx.fillStyle = "#444";
 
-    linspace(xl, xr, canvasSize).forEach((re, x) => {
-      let l = linspace(yt, 0, canvasSize / 2)
-      l.push(0);
-      l.forEach((im, y) => {
+    const lsRe = linspace(xl, xr, canvasSize);
+    const lsIm = linspace(yt, 0, canvasSize / 2);
+    lsIm.push(0);
+
+    lsRe.forEach((re, x) => {
+      // let l = 
+      // l.push(0);
+      lsIm.forEach((im, y) => {
         // y > 180 && console.log(y);
         let c = Complex(re, im);
         var z = Complex.ZERO;
