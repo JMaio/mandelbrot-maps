@@ -11,6 +11,7 @@ import ZoomBar, { ZoomBarF, ZoomBarPaper } from './components/ZoomBar';
 import RotationControl, { RotationControlFun } from './components/RotationControl';
 
 import 'typeface-roboto';
+import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 
 function Welcome(props) {
   return (
@@ -94,7 +95,13 @@ function App() {
 
   return (
     <Fragment>
-      <canvas 
+      <MandelbrotRenderer 
+        style={{
+          position: 'absolute',
+          zIndex: 0,
+        }} 
+      />
+      {/* <canvas 
         id="mandelbrot"
         style={{
           position: 'absolute',
@@ -102,7 +109,7 @@ function App() {
           height: '100%',
           zIndex: 0,
         }}
-      />
+      /> */}
 
       <Grid 
         className="App"
@@ -129,13 +136,13 @@ function App() {
         <RotationControl />
         
         
-        <RotationControlFun />
+        {/* <RotationControlFun />
 
         <Fab onClick={ e => {
           console.log("click")
         }}>
           Hello
-        </Fab>
+        </Fab> */}
 
       </Grid>
     </Fragment>
