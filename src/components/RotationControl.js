@@ -32,9 +32,11 @@ export function RotationControlFun() {
 
 export default function RotationControl() {
 
-  const [{ theta, itheta, dt }, set] = useSpring(() => ({ 
+  const [{ theta, itheta, prevTheta, revs, dt }, set] = useSpring(() => ({ 
     theta: 150, 
     itheta: 0, 
+    prevTheta: 0,
+    revs: 0,
     dt: 0,
     // xy: [0, 0],
   }))
@@ -59,8 +61,9 @@ export default function RotationControl() {
       // setElemOffset([ix - cx, iy - cy]);
       set({ 
         // remember initial angle
-        itheta: 360 * Math.atan2(iy - cy, ix - cx) / (Math.PI * 2),
+        itheta: 360 * Math.atan2(-(ix - cx), iy - cy) / (Math.PI * 2),
         theta: theta.value + dt.value,
+        prevTheta: 0,
         dt: 0 
       })
       return;
@@ -73,12 +76,22 @@ export default function RotationControl() {
 
     // const 
     // if (abs(theta.value + dt.value) >)
-    const newTheta = Math.atan2(y - cy, x - cx);
-    const d        = (360 * newTheta / (Math.PI * 2)) - itheta.value;
+    const newTheta = Math.atan2(-(x - cx), y - cy);
+    const diff = prevTheta.value - newTheta;
+    // console.log(prevTheta);
+    if (Math.abs(diff) > Math.PI && Math.abs(prevTheta) > Math.PI / 2 - 0.5) {
+      console.log(diff);
+      set({
+        revs: revs.value + 1 * Math.sign(diff)
+      });
+    }
+
+    const d = (360 * newTheta / (Math.PI * 2)) - itheta.value;
   
     // set current angle, delta since last
     set({ 
       dt: d, 
+      prevTheta: newTheta,
       // xy: [x, y] 
     })
 
@@ -167,7 +180,7 @@ export default function RotationControl() {
               clampAngle(theta.value + dt)
               .toFixed(1)
             )
-          }</animated.span>°
+          }</animated.span>° (<animated.span>{revs.interpolate(r => r)}</animated.span>)
         </Typography>
       </Fab>
     </div>
