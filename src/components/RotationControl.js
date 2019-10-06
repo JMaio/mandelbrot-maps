@@ -39,6 +39,8 @@ export default function RotationControl() {
     // xy: [0, 0],
   }))
 
+  const clampAngle = t => ((t + 360) % 360 + 360) % 360
+
   var elemProps = {x: 0, y: 0, width: 0, height: 0};
   
   const [elemCenter, setElemCenter] = useState([0, 0]);
@@ -47,7 +49,7 @@ export default function RotationControl() {
   const outerSize = 160;
   const innerSize = 70;
 
-  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], first, last }) => {
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last }) => {
 
     
     if (first) {
@@ -70,6 +72,7 @@ export default function RotationControl() {
     const [cx, cy] = elemCenter;
 
     // const 
+    // if (abs(theta.value + dt.value) >)
     const newTheta = Math.atan2(y - cy, x - cx);
     const d        = (360 * newTheta / (Math.PI * 2)) - itheta.value;
   
@@ -79,12 +82,12 @@ export default function RotationControl() {
       // xy: [x, y] 
     })
 
-    if (last) {
-      set({ 
-        // theta: theta.value + dt,
-        // dt: 0 
-      })
-    }
+    // if (last) {
+    //   set({ 
+    //     // theta: theta.value + dt,
+    //     // dt: 0 
+    //   })
+    // }
 
     // return memo;
   })
@@ -160,8 +163,8 @@ export default function RotationControl() {
           margin: 'auto',
         }}>
           <animated.span>{
-            dt.interpolate(d => 
-              (((theta.value + d + 360) % 360 + 360) % 360)
+            dt.interpolate(dt => 
+              clampAngle(theta.value + dt)
               .toFixed(1)
             )
           }</animated.span>°
