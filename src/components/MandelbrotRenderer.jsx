@@ -106,7 +106,8 @@ export default function MandelbrotRenderer(props) {
     const ctx = canvas.current.getContext("2d");
     // canvas.current.ready(() => {
     fillProcFast(ctx);
-  }, [canvas, fillProcFast])
+  })
+
 
   return (
     <div 
@@ -125,10 +126,7 @@ export default function MandelbrotRenderer(props) {
         width={canvasSize}
         height={canvasSize}
         ref={canvas} 
-        // onLoad={fillProcFast()}
-      />{
-        // , [fillProcFast])
-      }
+      />
       {/* <Button color="primary" onClick={e => {
           let t0 = performance.now();
           fillProc();
