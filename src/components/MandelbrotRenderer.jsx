@@ -3,6 +3,8 @@ import Complex from 'complex.js';
 import _ from 'lodash';
 import { Typography, Button, Input, Slider } from "@material-ui/core";
 import { resolve } from "q";
+import { useDrag } from "react-use-gesture";
+import { useSpring, animated } from "react-spring";
 // import { performance } from 'perf_hooks';
 
 
@@ -12,15 +14,34 @@ export default function MandelbrotRenderer(props) {
   const canvasSize = 600;
 
   const bounds = {x: [-1.5, 0.5], y: [-1, 1]};
-  const [maxI, setMaxI] = useState(20);
+  const [maxI, setMaxI] = useState(23);
 
   const [ctx, setCtx] = useState(null);
 
   const [toggle, setToggle] = useState(false);
 
+
+  const [{x, y, dx, dy, zoom}, setGrid] = useSpring(() => ({
+    x: 0, 
+    y: 0, 
+
+    dx: 0,
+    dy: 0,
+
+    zoom: 100
+  }));
+
+  const [down, setDown] = useState(false);
+
+
   function linspace(start, stop, cardinality) {
     let step = (stop - start) / cardinality;
     return _.range(start, stop, step);
+  }
+
+  const clearCanvas = ctx => {
+    let c = canvas.current;
+    ctx.clearRect(0, 0, c.width, c.height)
   }
 
   const fillDiag = ctx => {
@@ -33,9 +54,10 @@ export default function MandelbrotRenderer(props) {
   }
 
   const fillProcFast = ctx => {
-    const [xl, xr] = bounds.x;
-    const [yb, yt] = bounds.y;
+    const [xl, xr] = [x.value-1, x.value+1];
+    const [yb, yt] = [y.value-1, y.value+1];
 
+    clearCanvas(ctx);
     console.log(canvasSize / 2);
     // let l = linspace(yt, 0, canvasSize / 2)
     // l.push(0);
@@ -57,7 +79,7 @@ export default function MandelbrotRenderer(props) {
         // console.log(z.toString());
         for (let iter = 0; iter < maxI; iter++) {
           z = z.mul(z).add(c);
-          if (z.abs() > 4) { draw = false; break; }
+          if (z.abs() > 2) { draw = false; break; }
         }
         if (draw) {
           ctx.fillRect(x, y, 1, 1);
@@ -71,8 +93,9 @@ export default function MandelbrotRenderer(props) {
 
 
   const fillProc = ctx => {
-    const [xl, xr] = bounds.x;
-    const [yb, yt] = bounds.y;
+    const [xs, ys] = [x.value + dx.value, y.value + dy.value]
+    const [xl, xr] = [xs-1, xs+1];
+    const [yb, yt] = [ys-1, ys+1];
     linspace(xl, xr, canvasSize).forEach((re, x) => {
       linspace(yb, yt, canvasSize).forEach((im, y) => {
         let c = Complex(re, im);
@@ -124,6 +147,31 @@ export default function MandelbrotRenderer(props) {
     // })
   }
 
+  const bind = useDrag(({ movement: [mx, my], down, last}) => {
+    down && setGrid({
+      dx: -2 * mx / canvasSize, 
+      dy: -2 * my / canvasSize,
+    });
+
+    setDown(down);
+
+    if (last) {
+      setGrid({
+        x: x.value + dx.value,
+        y: y.value + dy.value,
+        
+        dx: 0,
+        dy: 0,
+      })
+      clearCanvas(ctx)
+      fillProc(ctx)
+    }
+
+    // ()down ? fillProcFast(ctx) : null;
+  }, { event: { passive: false, capture: false }, domTarget: canvas })
+
+  useEffect(bind, [bind])
+
   const [ptime, setPtime] = useState(0);
   const [ptime2, setPtime2] = useState(0);
   const [ptime3, setPtime3] = useState(0);
@@ -132,9 +180,14 @@ export default function MandelbrotRenderer(props) {
     // console.log("canvas loaded");
     const ctx = canvas.current.getContext("2d");
     setCtx(ctx);
+    
+    // if(!down) {
+    //   clearCanvas(ctx)
+    //   fillProc(ctx)
+    // }
     // canvas.current.ready(() => {
     // fillProcFast(ctx);
-  })
+  }, [])
 
 
   return (
@@ -155,6 +208,10 @@ export default function MandelbrotRenderer(props) {
         height={canvasSize}
         ref={canvas} 
       />
+      <Typography>
+        x: <animated.span>{dx.interpolate(d => (x.value + d).toFixed(3))}</animated.span>, 
+        y: <animated.span>{dy.interpolate(d => (y.value + d).toFixed(3))}</animated.span>
+      </Typography>
       <Button variant="contained" color="primary" onClick={e => {
           let t0 = performance.now();
           fillProc(ctx);
@@ -178,10 +235,7 @@ export default function MandelbrotRenderer(props) {
         }()
       }>{ptime3.toFixed(2)}</Button>
 
-      <Button variant="outlined" onClick={e => {
-        let c = canvas.current;
-        ctx.clearRect(0, 0, c.width, c.height)
-      }}>clear</Button>
+      <Button variant="outlined" onClick={e => clearCanvas(ctx)}>clear</Button>
 
       <hr />
 
