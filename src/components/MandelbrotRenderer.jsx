@@ -148,17 +148,19 @@ export default function MandelbrotRenderer(props) {
   }
 
   const bind = useDrag(({ movement: [mx, my], down, last}) => {
-    down && setGrid({
-      dx: -2 * mx / canvasSize, 
-      dy: -2 * my / canvasSize,
+    const [dx, dy] = [mx, my].map(a => -2 * a / canvasSize);
+    
+    setGrid({
+      dx: dx, 
+      dy: dy,
     });
 
-    setDown(down);
+    // setDown(down);
 
     if (last) {
       setGrid({
-        x: x.value + dx.value,
-        y: y.value + dy.value,
+        x: x.value + dx,
+        y: y.value + dy,
         
         dx: 0,
         dy: 0,
