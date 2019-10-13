@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Complex from 'complex.js';
 import _ from 'lodash';
-import { Typography, Button, Input, Slider } from "@material-ui/core";
-import { resolve } from "q";
+import { Typography, Button, Slider } from "@material-ui/core";
 import { useDrag } from "react-use-gesture";
 import { useSpring, animated } from "react-spring";
 // import { performance } from 'perf_hooks';
@@ -18,7 +17,7 @@ export default function MandelbrotRenderer(props) {
 
   const [ctx, setCtx] = useState(null);
 
-  const [toggle, setToggle] = useState(false);
+  // const [toggle, setToggle] = useState(false);
 
 
   const [{x, y, dx, dy, zoom}, setGrid] = useSpring(() => ({
@@ -31,8 +30,7 @@ export default function MandelbrotRenderer(props) {
     zoom: 100
   }));
 
-  const [down, setDown] = useState(false);
-
+  // const [down, setDown] = useState(false);
 
   function linspace(start, stop, cardinality) {
     let step = (stop - start) / cardinality;
@@ -44,14 +42,14 @@ export default function MandelbrotRenderer(props) {
     ctx.clearRect(0, 0, c.width, c.height)
   }
 
-  const fillDiag = ctx => {
-    ctx.fillStyle = "#444";
+  // const fillDiag = ctx => {
+  //   ctx.fillStyle = "#444";
 
-    for (let i = 0; i < canvasSize; i++) {
-      console.log("square: " + i);
-      ctx.fillRect(i, i, 1, 1);
-    }
-  }
+  //   for (let i = 0; i < canvasSize; i++) {
+  //     console.log("square: " + i);
+  //     ctx.fillRect(i, i, 1, 1);
+  //   }
+  // }
 
   const fillProcFast = ctx => {
     const [xl, xr] = [x.value-1, x.value+1];
@@ -59,6 +57,8 @@ export default function MandelbrotRenderer(props) {
 
     clearCanvas(ctx);
     console.log(canvasSize / 2);
+    console.log(zoom);
+    console.log(yb);
     // let l = linspace(yt, 0, canvasSize / 2)
     // l.push(0);
     // console.log(l);
@@ -137,15 +137,15 @@ export default function MandelbrotRenderer(props) {
     })
   };
 
-  const toggleRect = ctx => {
-    const fill = () => ctx.fillRect(0, 0, 200, 200);
-    const clear = () => ctx.clearRect(0, 0, 200, 200);
-    toggle ? clear() : fill();
-    setToggle(!toggle);
-    // useEffect(() => {
-    //   console.log("click");
-    // })
-  }
+  // const toggleRect = ctx => {
+  //   const fill = () => ctx.fillRect(0, 0, 200, 200);
+  //   const clear = () => ctx.clearRect(0, 0, 200, 200);
+  //   toggle ? clear() : fill();
+  //   setToggle(!toggle);
+  //   // useEffect(() => {
+  //   //   console.log("click");
+  //   // })
+  // }
 
   const bind = useDrag(({ movement: [mx, my], down, last}) => {
     const [dx, dy] = [mx, my].map(a => -2 * a / canvasSize);
