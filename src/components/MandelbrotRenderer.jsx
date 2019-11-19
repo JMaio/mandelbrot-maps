@@ -2,15 +2,21 @@ import React, { useRef, useEffect, useState } from "react";
 import Complex from 'complex.js';
 import _ from 'lodash';
 import { Typography, Button, Slider } from "@material-ui/core";
-import { useDrag } from "react-use-gesture";
-import { useSpring, animated } from "react-spring";
+
+import { useDrag, addV, subV, useGesture } from "react-use-gesture";
+import { add, scale, dist } from 'vec-la'
+
+import { useSpring, animated, interpolate, config } from "react-spring";
 // import { performance } from 'perf_hooks';
 
 
 export default function MandelbrotRenderer(props) {
 
+  const touchTarget = useRef(null);
+  const testTouchTarget = useRef(null);
   const canvas = useRef(null);
-  const canvasSize = 600;
+  const canvasSize = 200;
+  const zoomFactor = 3;
 
   const bounds = {x: [-1.5, 0.5], y: [-1, 1]};
   const [maxI, setMaxI] = useState(23);
@@ -19,16 +25,25 @@ export default function MandelbrotRenderer(props) {
 
   // const [toggle, setToggle] = useState(false);
 
-
-  const [{x, y, dx, dy, zoom}, setGrid] = useSpring(() => ({
+  // {x, y, dx, dy, theta, zoom}
+  const [grid, setGrid] = useSpring(() => ({
     x: 0, 
     y: 0, 
 
     dx: 0,
     dy: 0,
 
-    zoom: 100
+    theta: 0,
+
+    zoom: 100,
+
   }));
+
+  const trans1 = ({x, y, theta, zoom}) => 
+    `translate3d(${x / 3.5}px,${y / 3.5}px,0)`
+  ;
+
+  let gridVals = () => [Object.values(grid)];
 
   // const [down, setDown] = useState(false);
 
@@ -52,6 +67,7 @@ export default function MandelbrotRenderer(props) {
   // }
 
   const fillProcFast = ctx => {
+    let {x, y, zoom} = grid;
     const [xl, xr] = [x.value-1, x.value+1];
     const [yb, yt] = [y.value-1, y.value+1];
 
@@ -93,6 +109,7 @@ export default function MandelbrotRenderer(props) {
 
 
   const fillProc = ctx => {
+    let {x, y, dx, dy} = grid;
     const [xs, ys] = [x.value + dx.value, y.value + dy.value]
     const [xl, xr] = [xs-1, xs+1];
     const [yb, yt] = [ys-1, ys+1];
@@ -146,9 +163,108 @@ export default function MandelbrotRenderer(props) {
   //   //   console.log("click");
   //   // })
   // }
+  // 
+  const [{pos, d_pos, theta_test, zoom_test}, setTestTouchGrid] = useSpring(() => ({
+    // testTouchGrid: [
+    // // [x, y, dx, dy, theta, zoom]
+    pos: [0, 0],
+    d_pos: [0, 0],
 
-  const bind = useDrag(({ movement: [mx, my], down, last}) => {
-    const [dx, dy] = [mx, my].map(a => -2 * a / canvasSize);
+    theta_test: 0,
+
+    zoom_test: 100,
+    config: {mass: 1, tension: 100 , friction: 200},
+
+  }));
+
+  // touch target bind for testing
+  const testTouchBind = useGesture({
+
+    // onDragStart: ({event}) => event.preventDefault(),
+    onDrag: ({ movement, down, velocity, direction, memo = pos.getValue()}) => {
+  
+      // change according to this formula:
+      // move (x, y) in the opposite direction of drag (pan with cursor)
+      // divide by canvas size to scale appropriately
+      // multiply by 2 to correct scaling on viewport
+      //                                    current img size
+      // const [dx, dy] = [mx, my].map(a => - a);
+      
+      // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
+  
+      setTestTouchGrid({ 
+        pos: add(movement, memo), 
+        immediate: down, 
+        config: { velocity: scale(direction, velocity), decay: true }
+      })
+      return memo
+    },
+    // onDragEnd: () => {},
+
+    onPinch: ({ offset: [d, a], down }) => setTestTouchGrid({ 
+      zoom_test: d / 200, 
+      theta_test: a,
+      immediate: down, 
+    }),
+
+  }, { event: { passive: false, capture: false }, domTarget: testTouchTarget })
+  // const testTouchBind = useDrag(({ movement, down, event, first, velocity, direction, memo = pos.getValue()}) => {
+  //   !first && event.preventDefault();
+
+  //   // change according to this formula:
+  //   // move (x, y) in the opposite direction of drag (pan with cursor)
+  //   // divide by canvas size to scale appropriately
+  //   // multiply by 2 to correct scaling on viewport
+  //   //                                    current img size
+  //   // const [dx, dy] = [mx, my].map(a => - a);
+    
+  //   // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
+
+  //   setTestTouchGrid({ 
+  //     pos: add(movement, memo), 
+  //     immediate: down, 
+  //     config: { velocity: scale(direction, velocity), decay: true }
+  //   })
+
+    
+  //   // if (last) {
+  //   //   // let [vx, vy] = vxvy //.map(v => _.clamp(v, -8, 8));
+  //   //   // // vy = _.clamp(vy, -8, 8);
+  //   //   // // extrapolate from last angle
+  //   //   // let [x, y] = pos.getValue()
+  //   //   // console.log(x, y)
+  //   //   // console.log(mx, my)
+  //   //   // console.log(vxvy)
+  //   //   setTestTouchGrid({
+  //   //     pos: addV(memo, movement),
+  //   //     d_pos: [0, 0],
+  //   //     // immediate: false,
+
+  //   //       // 0,
+  //   //       // 0,
+  //   //     // theta: 0,
+  //   //     // ]
+  //   //     // y: y.value + dy,
+  //   //   });
+  //   //   // clearCanvas(ctx);
+  //   //   // fillProc(ctx);
+  //   // }
+  //   return memo
+
+  //   // ()down ? fillProcFast(ctx) : null;
+  // }, { event: { passive: false, capture: false }, domTarget: testTouchTarget });
+
+  useEffect(testTouchBind, [testTouchBind]);
+
+  // the current binding for the canvas movement
+  const bind = useDrag(({ movement: [mx, my], down, event, first, last }) => {
+    !first && event.preventDefault();
+
+    // change according to this formula:
+    // move (x, y) in the opposite direction of drag (pan with cursor)
+    // divide by canvas size to scale appropriately
+    // multiply by 2 to correct scaling on viewport
+    const [dx, dy] = [mx, my].map(a => -2 * a / (canvasSize * zoomFactor));
     
     setGrid({
       dx: dx, 
@@ -156,6 +272,7 @@ export default function MandelbrotRenderer(props) {
     });
 
     // setDown(down);
+    let {x, y} = grid;
 
     if (last) {
       setGrid({
@@ -164,15 +281,15 @@ export default function MandelbrotRenderer(props) {
         
         dx: 0,
         dy: 0,
-      })
-      clearCanvas(ctx)
-      fillProc(ctx)
+      });
+      // clearCanvas(ctx);
+      // fillProc(ctx);
     }
 
     // ()down ? fillProcFast(ctx) : null;
-  }, { event: { passive: false, capture: false }, domTarget: canvas })
+  }, { event: { passive: false, capture: false }, domTarget: touchTarget });
 
-  useEffect(bind, [bind])
+  useEffect(bind, [bind]);
 
   const [ptime, setPtime] = useState(0);
   const [ptime2, setPtime2] = useState(0);
@@ -200,19 +317,70 @@ export default function MandelbrotRenderer(props) {
       //   height: "100%"
       // }} 
       {...props}
+      ref={touchTarget}
     >
-      <canvas 
+      <animated.canvas 
         id="mandelbrot" 
         // className="fullSize"
         // width={window.innerWidth}
         // height={window.innerHeight}
         width={canvasSize}
         height={canvasSize}
+        alt={grid.x.interpolate(d => grid.x.value + d)}
+        style= {{
+          width: canvasSize * zoomFactor,
+          height: canvasSize * zoomFactor,
+          transform: interpolate([pos], ([x, y]) =>
+            `matrix3d(
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1
+            )`
+          ),
+        }}
         ref={canvas} 
       />
+
+      <animated.div
+        id="touch-test"
+        ref={testTouchTarget}
+        style={{
+          position: 'absolute',
+          top: 0,
+          width: 500,
+          height: 500,
+          transform: interpolate([pos], ([x, y]) =>
+            `matrix3d(
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              ${x}, ${y}, 0, 1
+            )`
+          ),
+        }}
+      >
+        <div style={{
+          display: 'flex-column',
+          position: "relative",
+          // height: 0,
+        }}>
+          <p>theta = <animated.span>{theta_test.interpolate(t => `${t}`)}</animated.span></p>
+          <p>zoom = <animated.span>{zoom_test.interpolate(z => `${z}`)}</animated.span></p>
+        <img 
+          src={"https://media.stockinthechannel.com/pic/4AGEj7MMZkuSUvh25OpLUw.c-r.jpg"}
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            // position: 'relative',
+          }}
+        />
+        </div>
+      </animated.div>
+
       <Typography>
-        x: <animated.span>{dx.interpolate(d => (x.value + d).toFixed(3))}</animated.span>, 
-        y: <animated.span>{dy.interpolate(d => (y.value + d).toFixed(3))}</animated.span>
+        x: <animated.span>{grid.dx.interpolate(d => (grid.x.value + d).toFixed(3))}</animated.span>, 
+        y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span>
       </Typography>
       <Button variant="contained" color="primary" onClick={e => {
           let t0 = performance.now();

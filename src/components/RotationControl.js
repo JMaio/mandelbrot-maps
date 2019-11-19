@@ -25,9 +25,11 @@ export default function RotationControl() {
   const outerSize = 160;
   const innerSize = 70;
 
-  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last }) => {
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last, memo = prevTheta.getValue() }) => {
 
-
+    if (last) {
+      return
+    }
     if (first) {
       const [cx, cy] = [elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2];
       // console.log(cx, cy)
@@ -36,7 +38,7 @@ export default function RotationControl() {
       set({
         // remember initial angle
         itheta: 360 * Math.atan2(-(ix - cx), iy - cy) / (Math.PI * 2),
-        theta: theta.value + dt.value,
+        // theta: theta.value + dt.value,
         prevTheta: 0,
         dt: 0
       })
@@ -51,20 +53,20 @@ export default function RotationControl() {
     // const 
     // if (abs(theta.value + dt.value) >)
     const newTheta = Math.atan2(-(x - cx), y - cy);
-    const diff = prevTheta.value - newTheta;
+    // const diff = newTheta - memo - ;
     // console.log(prevTheta);
-    if (Math.abs(diff) > Math.PI && Math.abs(prevTheta) > Math.PI / 2 - 0.5) {
-      console.log(diff);
-      set({
-        revs: revs.value + 1 * Math.sign(diff)
-      });
-    }
+    // if (Math.abs(diff) > Math.PI && Math.abs(prevTheta) > Math.PI / 2 - 0.5) {
+    //   console.log(diff);
+    //   set({
+    //     revs: revs.value + 1 * Math.sign(diff)
+    //   });
+    // }
 
-    const d = (360 * newTheta / (Math.PI * 2)) - itheta.value;
+    const d = (360 * newTheta / (Math.PI * 2)) - itheta.getValue() - memo;
 
     // set current angle, delta since last
     set({
-      dt: d,
+      theta: theta.value + d,
       prevTheta: newTheta,
       // xy: [x, y] 
     });
@@ -76,7 +78,7 @@ export default function RotationControl() {
     //   })
     // }
 
-    // return memo;
+    return memo;
   })
 
   return (
@@ -121,8 +123,8 @@ export default function RotationControl() {
         }} /> */}
         <animated.div
           style={{
-            transform: dt.interpolate(d =>
-              `rotate(${theta.value + d}deg)`
+            transform: theta.interpolate(t =>
+              `rotate(${t}deg)`
               // ((360 + theta.value + dt) % 360)
               // .toFixed(1)
             ),
@@ -150,10 +152,11 @@ export default function RotationControl() {
           margin: 'auto',
         }}>
           <animated.span>{
-            dt.interpolate(dt =>
-              clampAngle(theta.value + dt)
-                .toFixed(1)
-            )
+            theta.interpolate(t => t.toFixed(1))
+            // dt.interpolate(dt =>
+            //   clampAngle(theta.value + dt)
+            //     .toFixed(1)
+            // )
           }</animated.span>° (<animated.span>{revs.interpolate(r => r)}</animated.span>)
         </Typography>
       </Fab>
