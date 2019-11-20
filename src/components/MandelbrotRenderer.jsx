@@ -201,9 +201,9 @@ export default function MandelbrotRenderer(props) {
   // touch target bind for testing
   const testTouchBind = useGesture({
 
-    // onPinchStart: ({ event }) => {
-    //   event.preventDefault();
-    // },
+    onPinchStart: ({ event }) => {
+      event.preventDefault();
+    },
     onPinch: ({ offset: [d, a], down, movement: [mx, my], vdva: [vd, va], last, memo = [theta_test.getValue(), last_pointer_angle.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
@@ -217,27 +217,34 @@ export default function MandelbrotRenderer(props) {
         immediate: down, 
         config: { velocity: va, decay: true }
       })
-      if (last) {
-        setTestTouchGridTheta({ 
-          // zoom_test: d / 200, 
-          // // pos: [a, a],
-          theta_test: va,
-          // immediate: down, 
-          config: { velocity: va, decay: true }
-        })
-        // memo += a
-        // return memo + a
-      }
+      // if (last) {
+      //   setTestTouchGridTheta({ 
+      //     // zoom_test: d / 200, 
+      //     // // pos: [a, a],
+      //     theta_test: va,
+      //     // immediate: down, 
+      //     config: { velocity: va, decay: true }
+      //   })
+      //   // memo += a
+      //   // return memo + a
+      // }
 
       return memo
     //   // alert(theta_test.getValue())
     },
-    // onPinchEnd: ({ vdva: [vd, va], memo = theta_test.getValue() }) => {
-    //   // alert(`va = ${va}`)
-      
-    //   return memo
-    //   // alert(theta_test.getValue())
-    // },
+    onPinchEnd: ({ vdva: [vd, va] }) => {
+      // alert(`va = ${va}`)
+      setTestTouchGridTheta({ 
+        // zoom_test: d / 200, 
+        // // pos: [a, a],
+        theta_test: va,
+        // immediate: down, 
+        config: { velocity: va, decay: true }
+      })
+      // alert(theta_test.getValue())
+    },
+
+
     // onDragStart: ({event}) => event.preventDefault(),
 
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue()}) => {
@@ -407,11 +414,12 @@ export default function MandelbrotRenderer(props) {
           // transform: theta_test.interpolate(t => 
           //   `rotateZ(${t}deg)`  
           // )
-          transform: interpolate([pos, theta_test], ([x, y], t) =>
+          transform: interpolate([pos, theta_test, zoom_test], ([x, y], t, z) =>
           // transform: pos.interpolate((x, y) =>
             `
             translate(${x}px, ${y}px)
             rotate(${t}deg)
+            scale(${z/100})
             `
             // `matrix3d(
             //   1, 0, 0, 0,
