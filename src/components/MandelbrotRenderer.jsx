@@ -163,25 +163,84 @@ export default function MandelbrotRenderer(props) {
   //   //   console.log("click");
   //   // })
   // }
-  // 
-  const [{pos, d_pos, theta_test, zoom_test}, setTestTouchGrid] = useSpring(() => ({
+  // // 
+  // const [{pos, d_pos, theta_test, zoom_test}, setTestTouchGrid] = useSpring(() => ({
+  //   // testTouchGrid: [
+  //   // // [x, y, dx, dy, theta, zoom]
+  //   pos: [0, 0],
+  //   d_pos: [0, 0],
+
+  //   theta_test: 0,
+
+  //   zoom_test: 100,
+  //   config: {mass: 1, tension: 100 , friction: 200},
+
+  // }));
+
+  const [{ pos, d_pos, zoom_test }, setTestTouchGridPos] = useSpring(() => ({
     // testTouchGrid: [
     // // [x, y, dx, dy, theta, zoom]
     pos: [0, 0],
     d_pos: [0, 0],
 
-    theta_test: 0,
-
+    
     zoom_test: 100,
     config: {mass: 1, tension: 100 , friction: 200},
 
   }));
 
+  const [{ theta_test, last_pointer_angle }, setTestTouchGridTheta] = useSpring(() => ({
+
+    theta_test: 0,
+    last_pointer_angle: 0,
+
+    config: {mass: 1, tension: 100 , friction: 200},
+
+  }))
+
   // touch target bind for testing
   const testTouchBind = useGesture({
 
+    // onPinchStart: ({ event }) => {
+    //   event.preventDefault();
+    // },
+    onPinch: ({ offset: [d, a], down, movement: [mx, my], vdva: [vd, va], last, memo = [theta_test.getValue(), last_pointer_angle.getValue()] }) => {
+      // alert(mx, my)
+      // let [theta, lpa] = memo
+      console.log(va);
+
+      setTestTouchGridTheta({ 
+        zoom_test: d / 200, 
+        // pos: [a, a],
+        theta_test: memo[0] + (a - memo[1]),
+        last_pointer_angle: a,
+        immediate: down, 
+        config: { velocity: va, decay: true }
+      })
+      if (last) {
+        setTestTouchGridTheta({ 
+          // zoom_test: d / 200, 
+          // // pos: [a, a],
+          theta_test: va,
+          // immediate: down, 
+          config: { velocity: va, decay: true }
+        })
+        // memo += a
+        // return memo + a
+      }
+
+      return memo
+    //   // alert(theta_test.getValue())
+    },
+    // onPinchEnd: ({ vdva: [vd, va], memo = theta_test.getValue() }) => {
+    //   // alert(`va = ${va}`)
+      
+    //   return memo
+    //   // alert(theta_test.getValue())
+    // },
     // onDragStart: ({event}) => event.preventDefault(),
-    onDrag: ({ movement, down, velocity, direction, memo = pos.getValue()}) => {
+
+    onDrag: ({ down, movement, velocity, direction, memo = pos.getValue()}) => {
   
       // change according to this formula:
       // move (x, y) in the opposite direction of drag (pan with cursor)
@@ -192,20 +251,15 @@ export default function MandelbrotRenderer(props) {
       
       // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
   
-      setTestTouchGrid({ 
+      setTestTouchGridPos({ 
         pos: add(movement, memo), 
         immediate: down, 
         config: { velocity: scale(direction, velocity), decay: true }
       })
       return memo
     },
-    // onDragEnd: () => {},
 
-    onPinch: ({ offset: [d, a], down }) => setTestTouchGrid({ 
-      zoom_test: d / 200, 
-      theta_test: a,
-      immediate: down, 
-    }),
+    // onDragEnd: () => {},
 
   }, { event: { passive: false, capture: false }, domTarget: testTouchTarget })
   // const testTouchBind = useDrag(({ movement, down, event, first, velocity, direction, memo = pos.getValue()}) => {
@@ -350,13 +404,21 @@ export default function MandelbrotRenderer(props) {
           top: 0,
           width: 500,
           height: 500,
-          transform: interpolate([pos], ([x, y]) =>
-            `matrix3d(
-              1, 0, 0, 0,
-              0, 1, 0, 0,
-              0, 0, 1, 0,
-              ${x}, ${y}, 0, 1
-            )`
+          // transform: theta_test.interpolate(t => 
+          //   `rotateZ(${t}deg)`  
+          // )
+          transform: interpolate([pos, theta_test], ([x, y], t) =>
+          // transform: pos.interpolate((x, y) =>
+            `
+            translate(${x}px, ${y}px)
+            rotate(${t}deg)
+            `
+            // `matrix3d(
+            //   1, 0, 0, 0,
+            //   0, 1, 0, 0,
+            //   0, 0, 1, 0,
+            //   ${x}, ${y}, 0, 1
+            // )`
           ),
         }}
       >
@@ -365,20 +427,24 @@ export default function MandelbrotRenderer(props) {
           position: "relative",
           // height: 0,
         }}>
-          <p>theta = <animated.span>{theta_test.interpolate(t => `${t}`)}</animated.span></p>
-          <p>zoom = <animated.span>{zoom_test.interpolate(z => `${z}`)}</animated.span></p>
-        <img 
-          src={"https://media.stockinthechannel.com/pic/4AGEj7MMZkuSUvh25OpLUw.c-r.jpg"}
-          style={{
-            maxWidth: '100%',
-            maxHeight: '100%',
-            // position: 'relative',
-          }}
-        />
+          <Typography>
+            pos: <animated.span>{pos.interpolate((x, y) => `x=${x.toFixed(3)}, y=${y.toFixed(3)}`)}</animated.span>; 
+            theta = <animated.span>{theta_test.interpolate(t => t.toFixed(3))}</animated.span>,
+            {/* zoom = {zoom_test.getValue()} */}
+          </Typography>
+          <img 
+            src={"https://media.stockinthechannel.com/pic/4AGEj7MMZkuSUvh25OpLUw.c-r.jpg"}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              // position: 'relative',
+            }}
+          />
         </div>
       </animated.div>
 
       <Typography>
+        theta: <animated.span>{theta_test.interpolate(t => t)}</animated.span>, 
         x: <animated.span>{grid.dx.interpolate(d => (grid.x.value + d).toFixed(3))}</animated.span>, 
         y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span>
       </Typography>
