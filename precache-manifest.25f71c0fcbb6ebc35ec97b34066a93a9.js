@@ -1,31 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "084eab611512254f5bd3ae5c2903ae86",
+    "revision": "691f243acd95e76b949df5d2e85b78cd",
     "url": "/react-component-playground/index.html"
   },
   {
-    "revision": "d70d724cdb7d6a23b05e",
+    "revision": "332b82883d39521d52a6",
     "url": "/react-component-playground/static/css/2.90990c7b.chunk.css"
   },
   {
-    "revision": "d1ef5a4c5de1a29fd840",
-    "url": "/react-component-playground/static/css/main.345914aa.chunk.css"
+    "revision": "8a5bb5c4d6c841b724a4",
+    "url": "/react-component-playground/static/css/main.e6a4de1e.chunk.css"
   },
   {
-    "revision": "d70d724cdb7d6a23b05e",
-    "url": "/react-component-playground/static/js/2.fda05770.chunk.js"
+    "revision": "332b82883d39521d52a6",
+    "url": "/react-component-playground/static/js/2.85301314.chunk.js"
   },
   {
-    "revision": "d1ef5a4c5de1a29fd840",
-    "url": "/react-component-playground/static/js/main.77b065e7.chunk.js"
+    "revision": "8a5bb5c4d6c841b724a4",
+    "url": "/react-component-playground/static/js/main.0bddf5aa.chunk.js"
   },
   {
     "revision": "34cfc604f90a2ce29b41",
     "url": "/react-component-playground/static/js/runtime~main.93cd9cec.js"
-  },
-  {
-    "revision": "ee7cd8ed2dcec943251eb2763684fc6f",
-    "url": "/react-component-playground/static/media/logo.ee7cd8ed.svg"
   },
   {
     "revision": "8bace023134a55b1a56ccdc819f6fbc1",
