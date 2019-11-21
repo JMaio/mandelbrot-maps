@@ -177,22 +177,24 @@ export default function MandelbrotRenderer(props) {
 
   // }));
 
-  const [{ pos, d_pos, zoom_test }, setTestTouchGridPos] = useSpring(() => ({
+  const [{ pos, d_pos }, setTestTouchGridPos] = useSpring(() => ({
     // testTouchGrid: [
     // // [x, y, dx, dy, theta, zoom]
     pos: [0, 0],
     d_pos: [0, 0],
 
     
-    zoom_test: 100,
     config: {mass: 1, tension: 100 , friction: 200},
 
   }));
 
-  const [{ theta_test, last_pointer_angle }, setTestTouchGridTheta] = useSpring(() => ({
+  const [{ theta_test, last_pointer_angle, zoom_test, last_pointer_dist }, setTestTouchGridTheta] = useSpring(() => ({
 
     theta_test: 0,
     last_pointer_angle: 0,
+
+    zoom_test: 1,
+    last_pointer_dist: 0,
 
     config: {mass: 1, tension: 100 , friction: 200},
 
@@ -204,15 +206,18 @@ export default function MandelbrotRenderer(props) {
     onPinchStart: ({ event }) => {
       event.preventDefault();
     },
-    onPinch: ({ offset: [d, a], down, movement: [mx, my], vdva: [vd, va], last, memo = [theta_test.getValue(), last_pointer_angle.getValue()] }) => {
+    onPinch: ({ offset: [d, a], down, vdva: [vd, va], last, memo = [theta_test.getValue(), last_pointer_angle.getValue(), zoom_test.getValue(), last_pointer_dist.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
-      console.log(va);
+      let [theta, last_pointer_angle, zoom_test, last_pointer_dist] = memo;
+      console.log(d);
+      let d_rel = d/250;
 
       setTestTouchGridTheta({ 
-        zoom_test: d / 200, 
+        zoom_test: zoom_test + (d_rel - last_pointer_dist), 
+        last_pointer_dist: d_rel,
         // pos: [a, a],
-        theta_test: memo[0] + (a - memo[1]),
+        theta_test: theta + (a - last_pointer_angle),
         last_pointer_angle: a,
         immediate: down, 
         config: { velocity: va, decay: true }
@@ -419,7 +424,7 @@ export default function MandelbrotRenderer(props) {
             `
             translate(${x}px, ${y}px)
             rotate(${t}deg)
-            scale(${z/100})
+            scale(${z})
             `
             // `matrix3d(
             //   1, 0, 0, 0,
@@ -452,7 +457,8 @@ export default function MandelbrotRenderer(props) {
       </animated.div>
 
       <Typography>
-        theta: <animated.span>{theta_test.interpolate(t => t)}</animated.span>, 
+        theta: <animated.span>{theta_test.interpolate(t => t.toFixed(3))}</animated.span>, 
+        zoom: <animated.span>{zoom_test.interpolate(z => z.toFixed(3))}</animated.span>, 
         x: <animated.span>{grid.dx.interpolate(d => (grid.x.value + d).toFixed(3))}</animated.span>, 
         y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span>
       </Typography>
