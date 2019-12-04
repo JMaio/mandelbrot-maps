@@ -22,6 +22,7 @@ function App() {
   const controlRot = useSpring(() => ({
     theta: 0,
     last_pointer_angle: 0,
+    itheta: 0,
 
     config: defaultSpringConfig,
   }))
@@ -59,7 +60,10 @@ function App() {
         />
 
 
-        <RotationControl />
+        <RotationControl 
+          className="Control"
+          controller={controlRot} 
+        />
       </Grid>
     </Fragment>
   );

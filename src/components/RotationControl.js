@@ -1,21 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Fab } from '@material-ui/core';
 import { animated, useSpring } from 'react-spring';
 import { useDrag } from 'react-use-gesture';
 
 
-export default function RotationControl() {
+export default function RotationControl(props) {
 
-  const [{ theta, itheta, prevTheta, revs, dt }, set] = useSpring(() => ({
-    theta: 150,
-    itheta: 0,
-    prevTheta: 0,
-    revs: 0,
-    dt: 0,
-    // xy: [0, 0],
-  }))
+  const [{ theta, itheta }, set] = props.controller;
 
-  const clampAngle = t => ((t + 360) % 360 + 360) % 360
+  const clampAngle = t => ((t % 360) + 360) % 360;
+
+  const radToDeg = r => (360 * r) / (2 * Math.PI);
 
   var elemProps = { x: 0, y: 0, width: 0, height: 0 };
 
@@ -25,72 +20,46 @@ export default function RotationControl() {
   const outerSize = 160;
   const innerSize = 70;
 
-  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last, memo = prevTheta.getValue() }) => {
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last, memo = theta.getValue() }) => {
 
-    if (last) {
-      return
-    }
+    const [cx, cy] = [elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2];
     if (first) {
-      const [cx, cy] = [elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2];
       // console.log(cx, cy)
       setElemCenter([cx, cy]);
       // setElemOffset([ix - cx, iy - cy]);
       set({
-        // remember initial angle
-        itheta: 360 * Math.atan2(-(ix - cx), iy - cy) / (Math.PI * 2),
-        // theta: theta.value + dt.value,
-        prevTheta: 0,
-        dt: 0
+        theta: memo,
+        // remember initial angle (of the cursor)
+        itheta: radToDeg(Math.atan2(-(ix - cx), iy - cy)),
       })
-      return;
-      //   set({ initialTheta: Math.atan2(iy - (pos.y + pos.height / 2), ix - (pos.x + pos.width / 2)) });
+      return memo;
     }
-    // set({ xy: [x, y] })
 
-    // console.log(ix, x, iy, y)
-    const [cx, cy] = elemCenter;
+    const newTheta = radToDeg(Math.atan2(-(x - cx), y - cy));
 
-    // const 
-    // if (abs(theta.value + dt.value) >)
-    const newTheta = Math.atan2(-(x - cx), y - cy);
-    // const diff = newTheta - memo - ;
-    // console.log(prevTheta);
-    // if (Math.abs(diff) > Math.PI && Math.abs(prevTheta) > Math.PI / 2 - 0.5) {
-    //   console.log(diff);
-    //   set({
-    //     revs: revs.value + 1 * Math.sign(diff)
-    //   });
-    // }
-
-    const d = (360 * newTheta / (Math.PI * 2)) - itheta.getValue() - memo;
+    // const d = (360 * newTheta / (Math.PI * 2)) // - itheta.getValue() - memo;
 
     // set current angle, delta since last
     set({
-      theta: theta.value + d,
-      prevTheta: newTheta,
+      theta: memo + clampAngle(newTheta - itheta.getValue()),
+      // prevTheta: theta.value,
       // xy: [x, y] 
+      immediate: true,
     });
-
-    // if (last) {
-    //   set({ 
-    //     // theta: theta.value + dt,
-    //     // dt: 0 
-    //   })
-    // }
 
     return memo;
   })
 
   return (
     <div 
-    className="Control" 
+    {...props}
     style={{
       width: outerSize,
       height: outerSize,
       display: 'flex',
       position: 'relative',
     }}>
-      <animated.div style={{
+      {/* <animated.div style={{
         width: 10,
         height: 10,
         backgroundColor: "red",
@@ -99,7 +68,7 @@ export default function RotationControl() {
         position: "fixed",
         top: 0,
         left: 0,
-      }} />
+      }} /> */}
       <Paper {...bind()}
         ref={el => {
           if (!el) return;
@@ -131,9 +100,11 @@ export default function RotationControl() {
               // .toFixed(1)
             ),
             width: "100%",
-            height: "100%"
+            height: "100%",
+            display: "flex",
+            justifyContent: 'center',
           }}>
-          <Typography style={{ userSelect: "none" }}>hi</Typography>
+          <Typography style={{ userSelect: "none" }}>(N)</Typography>
         </animated.div>
       </Paper>
 
@@ -154,12 +125,13 @@ export default function RotationControl() {
           margin: 'auto',
         }}>
           <animated.span>{
-            theta.interpolate(t => t.toFixed(1))
+            theta.interpolate(t => clampAngle(t).toFixed(0))
             // dt.interpolate(dt =>
             //   clampAngle(theta.value + dt)
             //     .toFixed(1)
             // )
-          }</animated.span>° (<animated.span>{revs.interpolate(r => r)}</animated.span>)
+          }</animated.span>° 
+          {/* (<animated.span>{revs.interpolate(r => r)}</animated.span>) */}
         </Typography>
       </Fab>
     </div>
