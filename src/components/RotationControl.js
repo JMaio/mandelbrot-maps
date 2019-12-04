@@ -82,7 +82,9 @@ export default function RotationControl() {
   })
 
   return (
-    <div style={{
+    <div 
+    className="Control" 
+    style={{
       width: outerSize,
       height: outerSize,
       display: 'flex',
