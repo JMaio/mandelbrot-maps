@@ -39,11 +39,11 @@ export default function MandelbrotRenderer(props) {
 
   }));
 
-  const trans1 = ({x, y, theta, zoom}) => 
-    `translate3d(${x / 3.5}px,${y / 3.5}px,0)`
-  ;
+  // const trans1 = ({x, y, theta, zoom}) => 
+  //   `translate3d(${x / 3.5}px,${y / 3.5}px,0)`
+  // ;
 
-  let gridVals = () => [Object.values(grid)];
+  // let gridVals = () => [Object.values(grid)];
 
   // const [down, setDown] = useState(false);
 
@@ -177,7 +177,7 @@ export default function MandelbrotRenderer(props) {
 
   // }));
 
-  const [{ pos, d_pos }, setTestTouchGridPos] = useSpring(() => ({
+  const [{ pos }, setTestTouchGridPos] = useSpring(() => ({
     // testTouchGrid: [
     // // [x, y, dx, dy, theta, zoom]
     pos: [0, 0],
@@ -209,15 +209,15 @@ export default function MandelbrotRenderer(props) {
     onPinch: ({ offset: [d, a], down, vdva: [vd, va], last, memo = [theta_test.getValue(), last_pointer_angle.getValue(), zoom_test.getValue(), last_pointer_dist.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
-      let [theta, last_pointer_angle, zoom_test, last_pointer_dist] = memo;
+      let [theta, lpa, zt, lpd] = memo;
       console.log(d);
       let d_rel = d/250;
 
       setTestTouchGridTheta({ 
-        zoom_test: zoom_test + (d_rel - last_pointer_dist), 
+        zoom_test: zt + (d_rel - lpd), 
         last_pointer_dist: d_rel,
         // pos: [a, a],
-        theta_test: theta + (a - last_pointer_angle),
+        theta_test: theta + (a - lpa),
         last_pointer_angle: a,
         immediate: down, 
         config: { velocity: va, decay: true }
@@ -446,7 +446,7 @@ export default function MandelbrotRenderer(props) {
             {/* zoom = {zoom_test.getValue()} */}
           </Typography>
           <img 
-            src={"https://media.stockinthechannel.com/pic/4AGEj7MMZkuSUvh25OpLUw.c-r.jpg"}
+            src={"https://upload.wikimedia.org/wikipedia/commons/2/21/Mandel_zoom_00_mandelbrot_set.jpg"}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',
