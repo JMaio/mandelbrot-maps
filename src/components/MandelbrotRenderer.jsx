@@ -250,8 +250,7 @@ export default function MandelbrotRenderer(props) {
     },
 
 
-    // onDragStart: ({event}) => event.preventDefault(),
-
+    onDragStart: ({event}) => event.preventDefault(),
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue()}) => {
   
       // change according to this formula:
@@ -274,88 +273,43 @@ export default function MandelbrotRenderer(props) {
     // onDragEnd: () => {},
 
   }, { event: { passive: false, capture: false }, domTarget: testTouchTarget })
-  // const testTouchBind = useDrag(({ movement, down, event, first, velocity, direction, memo = pos.getValue()}) => {
+  
+  useEffect(testTouchBind, [testTouchBind]);
+
+  // the current binding for the canvas movement
+  // const bind = useDrag(({ movement: [mx, my], down, event, first, last }) => {
   //   !first && event.preventDefault();
 
   //   // change according to this formula:
   //   // move (x, y) in the opposite direction of drag (pan with cursor)
   //   // divide by canvas size to scale appropriately
   //   // multiply by 2 to correct scaling on viewport
-  //   //                                    current img size
-  //   // const [dx, dy] = [mx, my].map(a => - a);
+  //   const [dx, dy] = [mx, my].map(a => -2 * a / (canvasSize * zoomFactor));
     
-  //   // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
+  //   setGrid({
+  //     dx: dx, 
+  //     dy: dy,
+  //   });
 
-  //   setTestTouchGrid({ 
-  //     pos: add(movement, memo), 
-  //     immediate: down, 
-  //     config: { velocity: scale(direction, velocity), decay: true }
-  //   })
+  //   // setDown(down);
+  //   let {x, y} = grid;
 
-    
-  //   // if (last) {
-  //   //   // let [vx, vy] = vxvy //.map(v => _.clamp(v, -8, 8));
-  //   //   // // vy = _.clamp(vy, -8, 8);
-  //   //   // // extrapolate from last angle
-  //   //   // let [x, y] = pos.getValue()
-  //   //   // console.log(x, y)
-  //   //   // console.log(mx, my)
-  //   //   // console.log(vxvy)
-  //   //   setTestTouchGrid({
-  //   //     pos: addV(memo, movement),
-  //   //     d_pos: [0, 0],
-  //   //     // immediate: false,
-
-  //   //       // 0,
-  //   //       // 0,
-  //   //     // theta: 0,
-  //   //     // ]
-  //   //     // y: y.value + dy,
-  //   //   });
-  //   //   // clearCanvas(ctx);
-  //   //   // fillProc(ctx);
-  //   // }
-  //   return memo
+  //   if (last) {
+  //     setGrid({
+  //       x: x.value + dx,
+  //       y: y.value + dy,
+        
+  //       dx: 0,
+  //       dy: 0,
+  //     });
+  //     // clearCanvas(ctx);
+  //     // fillProc(ctx);
+  //   }
 
   //   // ()down ? fillProcFast(ctx) : null;
-  // }, { event: { passive: false, capture: false }, domTarget: testTouchTarget });
+  // }, { event: { passive: false, capture: false }, domTarget: touchTarget });
 
-  useEffect(testTouchBind, [testTouchBind]);
-
-  // the current binding for the canvas movement
-  const bind = useDrag(({ movement: [mx, my], down, event, first, last }) => {
-    !first && event.preventDefault();
-
-    // change according to this formula:
-    // move (x, y) in the opposite direction of drag (pan with cursor)
-    // divide by canvas size to scale appropriately
-    // multiply by 2 to correct scaling on viewport
-    const [dx, dy] = [mx, my].map(a => -2 * a / (canvasSize * zoomFactor));
-    
-    setGrid({
-      dx: dx, 
-      dy: dy,
-    });
-
-    // setDown(down);
-    let {x, y} = grid;
-
-    if (last) {
-      setGrid({
-        x: x.value + dx,
-        y: y.value + dy,
-        
-        dx: 0,
-        dy: 0,
-      });
-      // clearCanvas(ctx);
-      // fillProc(ctx);
-    }
-
-    // ()down ? fillProcFast(ctx) : null;
-  }, { event: { passive: false, capture: false }, domTarget: touchTarget });
-
-  useEffect(bind, [bind]);
+  // useEffect(bind, [bind]);
 
   const [ptime, setPtime] = useState(0);
   const [ptime2, setPtime2] = useState(0);
@@ -383,7 +337,7 @@ export default function MandelbrotRenderer(props) {
       //   height: "100%"
       // }} 
       {...props}
-      ref={touchTarget}
+      ref={testTouchTarget}
     >
       <animated.canvas 
         id="mandelbrot" 
@@ -410,7 +364,6 @@ export default function MandelbrotRenderer(props) {
 
       <animated.div
         id="touch-test"
-        ref={testTouchTarget}
         style={{
           position: 'absolute',
           top: 0,
