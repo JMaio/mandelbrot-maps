@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import './App.css';
-import { Grid, Typography, Container } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import ZoomBar, { } from './components/ZoomBar';
+import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
 
 import 'typeface-roboto';
@@ -13,9 +14,20 @@ function App() {
 
   let defaultSpringConfig = {mass: 1, tension: 100 , friction: 200};
 
+  let maxIter = useState(45);
+
+  // render function passed from renderer
+  let [render, setRender] = useState();
+
+  // const changeRenderFunc = f => setRender(f);
+
   const controlPos = useSpring(() => ({
     pos: [0, 0],
 
+    onRest: () => {
+      // render the fractal
+      // render();
+    },
     config: defaultSpringConfig,
   }));
 
@@ -48,6 +60,7 @@ function App() {
         pos={controlPos}
         rot={controlRot}
         zoom={controlZoom}
+        maxiter={maxIter}
       />
       <Grid
         container
@@ -59,6 +72,10 @@ function App() {
           controller={controlZoom}
         />
 
+        {/* <IterationSlider
+          maxIter={maxIter}
+          setMaxIter={setMaxIter}
+        /> */}
 
         <RotationControl 
           className="Control"
