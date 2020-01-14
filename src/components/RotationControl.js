@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Paper, Typography, Fab } from '@material-ui/core';
-import { animated, useSpring } from 'react-spring';
+import { animated } from 'react-spring';
 import { useDrag } from 'react-use-gesture';
 
 
@@ -14,18 +14,18 @@ export default function RotationControl(props) {
 
   var elemProps = { x: 0, y: 0, width: 0, height: 0 };
 
-  const [elemCenter, setElemCenter] = useState([0, 0]);
+  // const [elemCenter, setElemCenter] = useState([0, 0]);
   // const [elemOffset, setElemOffset] = useState([0, 0]);
 
   const outerSize = 160;
   const innerSize = 70;
 
-  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], previous: [px, py], first, last, memo = theta.getValue() }) => {
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], first, memo = theta.getValue() }) => {
 
     const [cx, cy] = [elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2];
     if (first) {
       // console.log(cx, cy)
-      setElemCenter([cx, cy]);
+      // setElemCenter([cx, cy]);
       // setElemOffset([ix - cx, iy - cy]);
       set({
         theta: memo,
