@@ -9,7 +9,7 @@ export default function IterationSlider(props) {
       valueLabelDisplay="on"
       step={1}
       min={1}
-      max={100}
+      max={300}
       style={{
         width: 200,
         margin: 30,
