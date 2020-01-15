@@ -40,11 +40,11 @@ function App() {
   }))
 
   const controlZoom = useSpring(() => ({
-    zoom: 100,
+    zoom: 1,
     last_pointer_dist: 0,
 
-    minZoom: 50,
-    maxZoom: 1000000,
+    minZoom: 0.5,
+    maxZoom: 100000,
 
     config: {mass: 1, tension: 600 , friction: 50},
   }))

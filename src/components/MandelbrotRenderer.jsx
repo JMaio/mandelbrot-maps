@@ -59,11 +59,16 @@ export default function MandelbrotRenderer(props) {
     if (globalCtx == null) { return; }
     // default to global context
     let ctx = newCtx ? newCtx : globalCtx;
+    let zRes = resolution * zoom.getValue();
     clearCanvas(ctx);
-    let [xc, yc] = pos.getValue().map(a => -a / canvasSize);
+    // get center position in coordinate space from screen space
+    let [xc, yc] = pos.getValue() //.map(a => (-a / zRes));
     console.log(`x: ${xc}, y: ${yc}`);
-    const [z_range_x, z_range_y] = [canvasSize, canvasSize].map(s => (s / 2) / (zoom.getValue() / 10) );
-    console.log(z_range_x)
+
+    // range dictated by resolution:
+    const [z_range_x, z_range_y] = [canvasSize, canvasSize].map(s => s / (2 * zRes));
+    console.log(`xmin: ${xc - z_range_x}, xmax: ${xc + z_range_x}`);
+    // console.log(z_range_x)
     const [xl, xr] = [-1, 1].map(d => xc + d * z_range_x);
     const [yb, yt] = [-1, 1].map(d => yc + d * z_range_y);
     linspace(xl, xr, canvasSize).forEach((re, x) => {
@@ -83,7 +88,7 @@ export default function MandelbrotRenderer(props) {
           if (a2 + b2 > 4.0) { break; }
         }
         // console.log()
-        ctx.fillStyle = `hsl(0, 0%, ${draw * 4}%)`;
+        ctx.fillStyle = `hsl(0, 0%, ${iterToGray(draw)}%)`;
         // console.log(`drawing (${re}, ${im})`);
         ctx.fillRect(x, y, 1, 1);
       });

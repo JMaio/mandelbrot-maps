@@ -105,7 +105,7 @@ export function ZoomBarFab(props) {
   const ref = React.useRef(null);
   
   const reset = () => {
-    setZoom({ zoom: 100 });
+    setZoom({ zoom: 1 });
   }
 
   // determine speed to zoom at based on distance from center of the control
@@ -167,7 +167,7 @@ export function ZoomBarFab(props) {
           height: props.diameter,
         }}>
         <Typography style={{ color: "#fff" }}>
-          <animated.span>{zoom.interpolate(z => (z/100).toPrecision(5))}</animated.span>
+          <animated.span>{zoom.interpolate(z => (z).toPrecision(5))}</animated.span>
         </Typography>
       </Fab>
     </animated.div>
