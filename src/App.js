@@ -15,14 +15,16 @@ function App() {
   let defaultSpringConfig = {mass: 1, tension: 100 , friction: 200};
 
   let maxIter = useState(45);
+  let [maxI, setMaxI] = maxIter;
+
 
   // render function passed from renderer
-  let [render, setRender] = useState();
+  // let [render, setRender] = useState();
 
   // const changeRenderFunc = f => setRender(f);
 
   const controlPos = useSpring(() => ({
-    pos: [0, 0],
+    pos: [-0.743030, -0.126433],
 
     onRest: () => {
       // render the fractal
@@ -60,7 +62,7 @@ function App() {
         pos={controlPos}
         rot={controlRot}
         zoom={controlZoom}
-        maxiter={maxIter}
+        maxiter={maxI}
       />
       <Grid
         container
@@ -72,15 +74,20 @@ function App() {
           controller={controlZoom}
         />
 
-        {/* <IterationSlider
-          maxIter={maxIter}
-          setMaxIter={setMaxIter}
-        /> */}
-
         <RotationControl 
           className="Control"
           controller={controlRot} 
+          style={{
+            display: "none",
+          }}
         />
+
+        <IterationSlider
+          maxIter={maxI}
+          setMaxIter={setMaxI}
+        />
+
+        {/* <Swit */}
       </Grid>
     </Fragment>
   );

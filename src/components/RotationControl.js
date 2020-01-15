@@ -52,13 +52,15 @@ export default function RotationControl(props) {
 
   return (
     <div 
-    {...props}
     style={{
       width: outerSize,
       height: outerSize,
       display: 'flex',
       position: 'relative',
-    }}>
+      zIndex: 2,
+    }}
+    {...props}
+    >
       {/* <animated.div style={{
         width: 10,
         height: 10,
