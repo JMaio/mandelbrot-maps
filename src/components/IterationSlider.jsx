@@ -3,9 +3,12 @@ import { Slider } from "@material-ui/core";
 
 export default function IterationSlider(props) {
 
+
+  let [maxI, setMaxI] = props.maxiter;
+  
   return (
     <Slider
-      defaultValue={props.maxIter}
+      defaultValue={maxI}
       valueLabelDisplay="on"
       step={1}
       min={1}
@@ -14,7 +17,8 @@ export default function IterationSlider(props) {
         width: 200,
         margin: 30,
       }}
-      onChange={(e, v) => props.setMaxIter(v)}
+      onChange={(e, v) => setMaxI(v)}
+      {...props}
     />
   )
 }

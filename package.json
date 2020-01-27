@@ -16,6 +16,7 @@
     "react-scripts": "3.0.1",
     "react-spring": "^8.0.27",
     "react-use-gesture": "^6.0.1",
+    "twgl.js": "^4.14.2",
     "typeface-roboto": "^0.0.75",
     "vec-la": "^1.5.0"
   },

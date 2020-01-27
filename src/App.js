@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import './App.css';
-import { Grid } from '@material-ui/core';
+import { Grid, Switch, FormControlLabel } from '@material-ui/core';
 import ZoomBar, { } from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
+// import * from "./renderers/";
 
 import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
@@ -12,10 +13,13 @@ import { useSpring } from 'react-spring';
 
 function App() {
 
-  let defaultSpringConfig = {mass: 1, tension: 100 , friction: 200};
+  let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
-  let maxIter = useState(45);
+  let maxIter = useState(100);
   let [maxI, setMaxI] = maxIter;
+
+  let [glRenderer, setGlRenderer] = useState(false);
+  // let toggleRenderer = () => {};
 
 
   // render function passed from renderer
@@ -24,7 +28,9 @@ function App() {
   // const changeRenderFunc = f => setRender(f);
 
   const controlPos = useSpring(() => ({
-    pos: [-0.743030, -0.126433],
+    // pos: [-1, 0],
+    pos: [0.45193823302480385, -0.3963913556925211],
+    // pos: [-0.743030, -0.126433],
 
     onRest: () => {
       // render the fractal
@@ -42,15 +48,18 @@ function App() {
   }))
 
   const controlZoom = useSpring(() => ({
-    zoom: 1,
+    zoom: 1.7,
     last_pointer_dist: 0,
 
     minZoom: 0.5,
     maxZoom: 100000,
 
-    config: {mass: 1, tension: 600 , friction: 50},
+    config: { mass: 1, tension: 600, friction: 50 },
   }))
-  
+
+  // return (
+  //   <canvas id="glCanvas" width="640" height="480" />
+  // )
 
   return (
     <Fragment>
@@ -63,31 +72,43 @@ function App() {
         rot={controlRot}
         zoom={controlZoom}
         maxiter={maxI}
+        // renderer={glRenderer ? }
       />
       <Grid
         container
         direction="column"
         justify="space-evenly"
         alignItems="flex-end"
-      > 
-        <ZoomBar 
+      >
+        <ZoomBar
           controller={controlZoom}
         />
 
-        <RotationControl 
+        <RotationControl
           className="Control"
-          controller={controlRot} 
+          controller={controlRot}
           style={{
             display: "none",
           }}
         />
 
         <IterationSlider
-          maxIter={maxI}
-          setMaxIter={setMaxI}
+          maxiter={maxIter}
+          style={{
+            display: "none",
+          }}
         />
 
-        {/* <Swit */}
+        <FormControlLabel
+          control={
+            // <Switch checked={state.checkedA} onChange={handleChange('checkedA')} value="checkedA" />
+            <Switch onChange={() => setGlRenderer(!glRenderer)} />
+          }
+          label="use GL"
+          style={{
+            display: "none",
+          }}
+        />
       </Grid>
     </Fragment>
   );

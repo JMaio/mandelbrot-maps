@@ -7,17 +7,38 @@ import { scale } from 'vec-la';
 
 import { animated } from "react-spring";
 
+import { resizeCanvasToDisplaySize, createBufferInfoFromArrays, setBuffersAndAttributes, setUniforms, drawBufferInfo, createProgramInfo } from "twgl.js";
+
+import fullVertexShader from "../shaders/fullVertexShader";
+import smoothFragmentShader from "../shaders/smoothFragmentShader";
 
 export default function MandelbrotRenderer(props) {
+
+  const requestRef = useRef(null);
+  const gl = useRef(null);
+  const bufferInfo = useRef(null);
+  const programInfo = useRef(null);
 
   const touchTarget = useRef(null);
   const canvasRef = useRef(null);
   const [globalCtx, setGlobalCtx] = useState(null);
+
+  const arrays = {
+    position: [
+      -1, -1, 0, 
+       1, -1, 0, 
+      -1,  1, 0, 
+      -1,  1, 0, 
+       1, -1, 0, 
+       1,  1, 0
+    ],
+  };
+  
   // canvas size must be calculated dynamically
-  const canvasSize = 400;
-  const zoomFactor = 1;
-  // 300px per axis unit
-  const resolution = 300;
+  // const canvasSize = 800;
+  // const zoomFactor = 1;
+  // // 300px per axis unit
+  // const resolution = 200;
 
   // const bounds = { x: [-1.5, 0.5], y: [-1, 1] };
   const maxI = props.maxiter;
@@ -27,67 +48,6 @@ export default function MandelbrotRenderer(props) {
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.zoom;
 
   var [lastRenderTime, setLastRenderTime] = useState(0);
-
-  function linspace(start, stop, cardinality) {
-    let step = (stop - start) / cardinality;
-    return _.range(start, stop, step);
-  }
-
-  const clearCanvas = ctx => {
-    let c = canvasRef.current;
-    ctx.clearRect(0, 0, c.width, c.height)
-  }
-
-  const iterToGray = i => (
-    // map 0 to 0, maxI to 255
-    100 - Math.round(100 * i / maxI)
-  );
-
-
-  const fillProc = newCtx => {
-    if (globalCtx == null) { return; }
-    // default to global context
-    let ctx = newCtx ? newCtx : globalCtx;
-    let zRes = resolution * zoom.getValue();
-    clearCanvas(ctx);
-    // get center position in coordinate space from screen space
-    let [xc, yc] = pos.getValue() //.map(a => (-a / zRes));
-    console.log(`x: ${xc}, y: ${yc}`);
-
-    // range dictated by resolution:
-    const [z_range_x, z_range_y] = [canvasSize, canvasSize].map(s => s / (2 * zRes));
-    console.log(`xmin: ${xc - z_range_x}, xmax: ${xc + z_range_x}`);
-    // console.log(z_range_x)
-    const [xl, xr] = [-1, 1].map(d => xc + d * z_range_x);
-    const [yb, yt] = [-1, 1].map(d => yc + d * z_range_y);
-    linspace(xl, xr, canvasSize).forEach((re, x) => {
-      linspace(yb, yt, canvasSize).forEach((im, y) => {
-        // let c = Complex(re, im);
-        // var z = Complex.ZERO;
-        // console.log(re, im);
-        var draw = 0;
-        var a = 0, b = 0;
-        var a2 = 0, b2 = 0;
-        for (let iter = 0; iter < maxI; iter++) {
-          //  Re(c), Im(c) 
-          [a, b] = [a2 - b2 + re, 2 * a * b + im];
-          [a2, b2] = [a * a, b * b]
-          // z = z.mul(z).add(c);
-          draw = iter;
-          if (a2 + b2 > 4.0) { break; }
-        }
-        // console.log()
-        ctx.fillStyle = `hsl(0, 0%, ${iterToGray(draw)}%)`;
-        // console.log(`drawing (${re}, ${im})`);
-        ctx.fillRect(x, y, 1, 1);
-      });
-    });
-    console.log("render complete!");
-  };
-
-  // const [{ newVd_test }, setNewVdDebug] = useSpring(() => ({
-  //   newVd_test: 0,
-  // }));
 
   // touch target bind for testing
   const touchBind = useGesture({
@@ -157,8 +117,9 @@ export default function MandelbrotRenderer(props) {
       // const [dx, dy] = [mx, my].map(a => - a);
 
       // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
-      let realZoom = resolution * zoom.getValue();
-      let plotMovement = movement.map(m => -m / realZoom);
+      let realZoom = (gl.current.canvas.height / 2) * (zoom.getValue());
+      // let plotMovement = movement.map(m => -m / realZoom);
+      let plotMovement = [movement[0], movement[1] * -1].map(m => -m / realZoom);
 
       setControlPos({
         pos: addV(plotMovement, memo),
@@ -169,7 +130,7 @@ export default function MandelbrotRenderer(props) {
     },
 
     onDragEnd: () => {
-      fillProc(globalCtx);
+      // fillProc(globalCtx);
       // setControlPos({
       //   pos: addV(movement, memo), 
       //   config: { velocity: scale(direction, velocity), decay: true }
@@ -181,41 +142,40 @@ export default function MandelbrotRenderer(props) {
 
   }, { event: { passive: false, capture: false }, domTarget: touchTarget });
 
-  useEffect(touchBind, [touchBind]);
+  useEffect(touchBind, [touchBind]);  
 
+  const render = time => {
+    resizeCanvasToDisplaySize(gl.current.canvas);
+    gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
 
+    const uniforms = {
+      // time: time * 0.001,
+      resolution: [gl.current.canvas.width, gl.current.canvas.height],
+      u_zoom: zoom.getValue(),
+      u_pos: pos.getValue(),
+      u_maxI: maxI,
+    };
+
+    gl.current.useProgram(programInfo.current.program);
+    setBuffersAndAttributes(gl.current, programInfo.current, bufferInfo.current);
+    setUniforms(programInfo.current, uniforms);
+    drawBufferInfo(gl.current, bufferInfo.current);
+    // The 'state' will always be the initial value here
+    requestRef.current = requestAnimationFrame(render);
+  }
+  
   useEffect(() => {
-    const startCtx = canvasRef.current.getContext('2d');
-    console.log(`got canvas context: ${startCtx}`);
-    setGlobalCtx(startCtx); // globalCtx
-    // return () => fillProc(globalCtx);
-  }, []);
+    gl.current = canvasRef.current.getContext('webgl');
+    console.log(`got canvas context: ${gl.current}`);
 
-  useEffect(() => {
-    fillProc(globalCtx);
-  }, [globalCtx])
+    // TODO : figure out shader sources!
+    programInfo.current = createProgramInfo(gl.current, [fullVertexShader, smoothFragmentShader])
 
-  // useEffect(() => {
-  //   // console.log(pos.getValue(), zoom.getValue());
-  //   fillProc(globalCtx);
-  // }, [fillProc, globalCtx, maxI]);
+    bufferInfo.current = createBufferInfoFromArrays(gl.current, arrays);
 
-  // const [ptime, setPtime] = useState(0);
-  // const [ptime2, setPtime2] = useState(0);
-  // const [ptime3, setPtime3] = useState(0);
-
-  // useEffect(() => {
-  //   // console.log("canvas loaded");
-  //   const ctx = canvas.current.getContext("2d");
-  //   setCtx(ctx);
-
-  //   // if(!down) {
-  //   //   clearCanvas(ctx)
-  //   //   fillProc(ctx)
-  //   // }
-  //   // canvas.current.ready(() => {
-  //   // fillProcFast(ctx);
-  // }, [])
+    requestRef.current = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []); // Make sure the effect runs only onc
 
 
   return (
@@ -232,18 +192,21 @@ export default function MandelbrotRenderer(props) {
         // {...props}
         ref={touchTarget}
       >
-        <animated.canvas
+        <canvas
           id="mandelbrot"
           // className="fullSize"
           // width={window.innerWidth}
           // height={window.innerHeight}
-          width={canvasSize}
-          height={canvasSize}
-          rotation={theta.interpolate(t => `${t}`)}
+          // width={canvasSize}
+          // height={canvasSize}
+          // rotation={theta.interpolate(t => `${t}`)}
           // alt={pos.interpolate((x, y) => x)}
           style={{
-            width: canvasSize * zoomFactor,
-            height: canvasSize * zoomFactor,
+            // width: canvasSize * zoomFactor,
+            // height: canvasSize * zoomFactor,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 1,
             // transform: theta.interpolate(t =>
             //   `rotate(${t}deg)`
             //   // ((360 + theta.value + dt) % 360)
@@ -270,9 +233,9 @@ export default function MandelbrotRenderer(props) {
             position: "absolute",
             top: 300 - 10,
             left: 300 - 10,
-            transform: pos.interpolate((x, y) =>
-              `translate(${-x * resolution * zoom.getValue()}px, ${-y * resolution * zoom.getValue()}px)`
-            ),
+            // transform: pos.interpolate((x, y) =>
+            //   `translate(${-x * resolution * zoom.getValue()}px, ${-y * resolution * zoom.getValue()}px)`
+            // ),
           }}
         />
       </div>
@@ -292,17 +255,17 @@ export default function MandelbrotRenderer(props) {
             y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span> */}
           </Typography>
         </Card>
-        <Button variant="contained" color="primary" 
+        {/* <Button variant="contained" color="primary" 
         onClick={e => {
           let t0 = performance.now();
-          fillProc();
+          fillProc(globalCtx);
           let t1 = performance.now()
           let t = t1 - t0;
           console.log(`rendered in ${t}`);
           setLastRenderTime(t);
           // setPtime(t1 - t0);
         }}>render</Button>
-        <Typography>render time: { lastRenderTime.toFixed(4) }</Typography>
+        <Typography>render time: { lastRenderTime.toFixed(4) }</Typography> */}
 
       </div>
 

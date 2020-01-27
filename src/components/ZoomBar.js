@@ -167,7 +167,7 @@ export function ZoomBarFab(props) {
           height: props.diameter,
         }}>
         <Typography style={{ color: "#fff" }}>
-          <animated.span>{zoom.interpolate(z => (z).toPrecision(5))}</animated.span>
+          <animated.span>{zoom.interpolate(z => (z).toPrecision(6))}</animated.span>
         </Typography>
       </Fab>
     </animated.div>
