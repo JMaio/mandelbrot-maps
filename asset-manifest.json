@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/react-component-playground/static/css/main.70689427.chunk.css",
-    "main.js": "/react-component-playground/static/js/main.3c28bd79.chunk.js",
-    "main.js.map": "/react-component-playground/static/js/main.3c28bd79.chunk.js.map",
-    "runtime~main.js": "/react-component-playground/static/js/runtime~main.93cd9cec.js",
-    "runtime~main.js.map": "/react-component-playground/static/js/runtime~main.93cd9cec.js.map",
-    "static/css/2.90990c7b.chunk.css": "/react-component-playground/static/css/2.90990c7b.chunk.css",
-    "static/js/2.b03980c8.chunk.js": "/react-component-playground/static/js/2.b03980c8.chunk.js",
-    "static/js/2.b03980c8.chunk.js.map": "/react-component-playground/static/js/2.b03980c8.chunk.js.map",
-    "index.html": "/react-component-playground/index.html",
-    "precache-manifest.1ae393d893c0a9c321a111b99ade55c4.js": "/react-component-playground/precache-manifest.1ae393d893c0a9c321a111b99ade55c4.js",
-    "service-worker.js": "/react-component-playground/service-worker.js",
-    "static/css/2.90990c7b.chunk.css.map": "/react-component-playground/static/css/2.90990c7b.chunk.css.map",
-    "static/css/main.70689427.chunk.css.map": "/react-component-playground/static/css/main.70689427.chunk.css.map",
-    "static/media/minus-icon.8bace023.svg": "/react-component-playground/static/media/minus-icon.8bace023.svg",
-    "static/media/plus-icon.e4581c1a.svg": "/react-component-playground/static/media/plus-icon.e4581c1a.svg",
-    "static/media/index.css": "/react-component-playground/static/media/roboto-latin-900italic.ebf6d164.woff2"
+    "main.css": "/mandelbrot-maps/static/css/main.70689427.chunk.css",
+    "main.js": "/mandelbrot-maps/static/js/main.6ce3439d.chunk.js",
+    "main.js.map": "/mandelbrot-maps/static/js/main.6ce3439d.chunk.js.map",
+    "runtime~main.js": "/mandelbrot-maps/static/js/runtime~main.aa57a893.js",
+    "runtime~main.js.map": "/mandelbrot-maps/static/js/runtime~main.aa57a893.js.map",
+    "static/css/2.04511d68.chunk.css": "/mandelbrot-maps/static/css/2.04511d68.chunk.css",
+    "static/js/2.5753b1d9.chunk.js": "/mandelbrot-maps/static/js/2.5753b1d9.chunk.js",
+    "static/js/2.5753b1d9.chunk.js.map": "/mandelbrot-maps/static/js/2.5753b1d9.chunk.js.map",
+    "index.html": "/mandelbrot-maps/index.html",
+    "precache-manifest.40918634b9e4b76fc83c0726a76e6a8a.js": "/mandelbrot-maps/precache-manifest.40918634b9e4b76fc83c0726a76e6a8a.js",
+    "service-worker.js": "/mandelbrot-maps/service-worker.js",
+    "static/css/2.04511d68.chunk.css.map": "/mandelbrot-maps/static/css/2.04511d68.chunk.css.map",
+    "static/css/main.70689427.chunk.css.map": "/mandelbrot-maps/static/css/main.70689427.chunk.css.map",
+    "static/media/minus-icon.8bace023.svg": "/mandelbrot-maps/static/media/minus-icon.8bace023.svg",
+    "static/media/plus-icon.e4581c1a.svg": "/mandelbrot-maps/static/media/plus-icon.e4581c1a.svg",
+    "static/media/index.css": "/mandelbrot-maps/static/media/roboto-latin-900italic.ebf6d164.woff2"
   }
 }
