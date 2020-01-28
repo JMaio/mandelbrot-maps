@@ -1,8 +1,8 @@
 {
-  "name": "jwow-react-component-playground",
+  "name": "jwow-mandelbrot-maps",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://jmaio.github.io/react-component-playground/",
+  "homepage": "https://jmaio.github.io/mandelbrot-maps/",
   "dependencies": {
     "@material-ui/core": "^4.4.2",
     "@mdi/js": "^4.4.95",
