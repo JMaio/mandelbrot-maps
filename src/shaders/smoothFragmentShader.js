@@ -13,7 +13,7 @@ precision highp float;
 uniform vec2 resolution;
 
 // zoom, pos should be passed as uniforms
-uniform int   u_maxI;
+uniform int   u_maxI;  
 uniform vec2  u_pos;
 uniform float u_zoom;
 uniform float u_theta;
