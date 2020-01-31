@@ -1,19 +1,20 @@
-import React, { Fragment, useRef, useEffect, useState } from "react";
+import React, { Fragment, useRef, useEffect, useCallback } from "react";
 import _ from 'lodash';
-import { Typography, Button, Card } from "@material-ui/core";
+import { Typography, Card } from "@material-ui/core";
 
 import { addV, useGesture } from "react-use-gesture";
 import { scale } from 'vec-la';
 
 import { animated } from "react-spring";
 
-import { resizeCanvasToDisplaySize, createBufferInfoFromArrays, setBuffersAndAttributes, setUniforms, drawBufferInfo, createProgramInfo } from "twgl.js";
+import * as twgl from "twgl.js";
 
 import fullVertexShader from "../shaders/fullVertexShader";
 import smoothFragmentShader from "../shaders/smoothFragmentShader";
 
 export default function MandelbrotRenderer(props) {
 
+  // variables to hold canvas and webgl information
   const requestRef = useRef(null);
   const gl = useRef(null);
   const bufferInfo = useRef(null);
@@ -21,8 +22,23 @@ export default function MandelbrotRenderer(props) {
 
   const touchTarget = useRef(null);
   const canvasRef = useRef(null);
-  const [globalCtx, setGlobalCtx] = useState(null);
 
+  // this multiplier subdivides the screen space into smaller increments
+  // to allow for velocity calculations to not immediately decay, due to the
+  // otherwise small scale that is being mapped to the screen.
+  const screenScaleMultiplier = -1e-7;
+
+  // temporary bounds to prevent excessive panning
+  // eslint-disable-next-line
+  const bounds = {
+    x: [ -2,  2],
+    y: [ -2,  2],
+  };
+
+  // This "position" array specifies the vertex positions of the element 
+  // to be displayed by the vertex shader. It represents two triangles,
+  // each filling half of the screen diagonally, and together filling the
+  // full canvas space to allow the fragment shader to act on the full canvas.
   const arrays = {
     position: [
       -1, -1, 0, 
@@ -34,25 +50,21 @@ export default function MandelbrotRenderer(props) {
     ],
   };
   
-  // canvas size must be calculated dynamically
-  // const canvasSize = 800;
-  // const zoomFactor = 1;
-  // // 300px per axis unit
-  // const resolution = 200;
 
-  // const bounds = { x: [-1.5, 0.5], y: [-1, 1] };
-  const maxI = props.maxiter;
-
+  // read incoming props
   const [{ pos }, setControlPos] = props.pos;
   const [{ theta, last_pointer_angle }, setControlRot] = props.rot;
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.zoom;
+  const maxI = props.maxiter;
 
-  var [lastRenderTime, setLastRenderTime] = useState(0);
-
-  // touch target bind for testing
+  // the hook responsible for handling gestures
   const touchBind = useGesture({
 
+    // prevent some browser events such as swipe-based navigation or
+    // pinch-based zoom and instead redirect them to this handler
+    onDragStart:  ({ event }) => event.preventDefault(),
     onPinchStart: ({ event }) => event.preventDefault(),
+
     onPinch: ({ offset: [d, a], down, vdva: [vd, va], last, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
@@ -81,22 +93,6 @@ export default function MandelbrotRenderer(props) {
     },
 
     onPinchEnd: ({ vdva: [vd, va] }) => {
-      // alert(`va = ${va}`)
-      // let scaleVd = (
-      //   vd/100 * (zoom.getValue() - minZoom.getValue()) * (maxZoom.getValue() - minZoom.getValue())
-      // );
-      // let limit = 2
-      // let newZoom = _.clamp(zoom.getValue() + vd, minZoom.getValue(), maxZoom.getValue());
-      // let newVd = vd * (newZoom - 50); //_.clamp(vd/100, -limit, limit)
-      // let vd_norm = scale;
-      // setNewVdDebug({
-      //   newVd_test: newVd
-      // })
-      // setControlZoom({
-      //   zoom: newZoom, 
-      //   // new velocity relative to proximity to min/max values
-      //   config: { velocity: newVd, decay: true }
-      // })
       setControlRot({
         // set theta so it's remembered next time
         theta: va,
@@ -105,124 +101,120 @@ export default function MandelbrotRenderer(props) {
       });
     },
 
-
-    onDragStart: ({ event }) => event.preventDefault(),
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue() }) => {
 
       // change according to this formula:
       // move (x, y) in the opposite direction of drag (pan with cursor)
       // divide by canvas size to scale appropriately
       // multiply by 2 to correct scaling on viewport
-      //                                    current img size
-      // const [dx, dy] = [mx, my].map(a => - a);
-
-      // let [x, y, dx, dy, theta, zoom] = testTouchGrid;
-      let realZoom = (gl.current.canvas.height / 2) * (zoom.getValue());
-      // let plotMovement = movement.map(m => -m / realZoom);
-      let plotMovement = [movement[0], movement[1] * -1].map(m => -m / realZoom);
+      // use screen multiplier for more granularity
+      let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
+      
+      let plotMovement = scale(movement, 2/realZoom);
 
       setControlPos({
-        pos: addV(plotMovement, memo),
-        immediate: down,
-        config: { velocity: scale(direction, -velocity / realZoom), decay: true }
+        pos: addV(memo, plotMovement),                    // add the displacement to the starting position
+        immediate: down,                                  // immediately apply if the gesture is active
+        config: { 
+          velocity: scale(direction, velocity/realZoom),  // set the velocity (gesture momentum)
+          decay: true,
+        },
       });
+
       return memo;
     },
 
-    onDragEnd: () => {
-      // fillProc(globalCtx);
-      // setControlPos({
-      //   pos: addV(movement, memo), 
-      //   config: { velocity: scale(direction, velocity), decay: true }
-      // })
-    },
-
-    // re-render when all animations come to a stand-still
-
-
-  }, { event: { passive: false, capture: false }, domTarget: touchTarget });
+  }, { 
+    event: { passive: false, capture: false }, 
+    domTarget: touchTarget,
+    // The config object passed to useGesture has drag, wheel, scroll, pinch and move keys
+    // for specific gesture options. See here for more details.
+    // drag: {
+    //   bounds: { left: -100, right: 100, top: -100, bottom: 100 },
+    //   rubberband: true,
+    // }
+  });
 
   useEffect(touchBind, [touchBind]);  
 
-  const render = time => {
-    resizeCanvasToDisplaySize(gl.current.canvas);
+  // the main render function for WebGL
+  const render = useCallback(time => {
+    twgl.resizeCanvasToDisplaySize(gl.current.canvas);
     gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
 
+    // values to pass to the shader
     const uniforms = {
-      // time: time * 0.001,
       resolution: [gl.current.canvas.width, gl.current.canvas.height],
       u_zoom: zoom.getValue(),
-      u_pos: pos.getValue(),
+      u_pos:  scale(pos.getValue(), -screenScaleMultiplier),  // re-scale from screen coordinates to plot coordinates
       u_maxI: maxI,
     };
 
     gl.current.useProgram(programInfo.current.program);
-    setBuffersAndAttributes(gl.current, programInfo.current, bufferInfo.current);
-    setUniforms(programInfo.current, uniforms);
-    drawBufferInfo(gl.current, bufferInfo.current);
+    twgl.setBuffersAndAttributes(gl.current, programInfo.current, bufferInfo.current);
+    twgl.setUniforms(programInfo.current, uniforms);
+    twgl.drawBufferInfo(gl.current, bufferInfo.current);
     // The 'state' will always be the initial value here
     requestRef.current = requestAnimationFrame(render);
-  }
+  }, [maxI, pos, screenScaleMultiplier, zoom]);
   
   useEffect(() => {
     gl.current = canvasRef.current.getContext('webgl');
     console.log(`got canvas context: ${gl.current}`);
+    // var glc = gl.current;
+    // var prec = glc.getShaderPrecisionFormat(glc.FRAGMENT_SHADER, glc.HIGH_FLOAT);
+//     alert(`\
+// precision = ${prec.precision},
+// rangeMin = ${prec.rangeMin},
+// rangeMax = ${prec.rangeMax} 
+//     `);
 
     // TODO : figure out shader sources!
-    programInfo.current = createProgramInfo(gl.current, [fullVertexShader, smoothFragmentShader])
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothFragmentShader])
 
-    bufferInfo.current = createBufferInfoFromArrays(gl.current, arrays);
+    bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, arrays);
 
     requestRef.current = requestAnimationFrame(render);
     return () => cancelAnimationFrame(requestRef.current);
-  }, []); // Make sure the effect runs only onc
+  }, [arrays, render]); // Make sure the effect runs only once
 
 
   return (
     <Fragment>
 
       <div
-        // className="fullSize"
+        className="fullSize"
         style={{
           position: "absolute",
-          //   width: "100%",
-          //   height: "100%"
           zIndex: 1,
         }}
         // {...props}
         ref={touchTarget}
       >
+        <Card
+          style={{
+            width: "auto",
+            position: "absolute",
+            zIndex: 2,
+            right: 0,
+            top: 0,
+            margin: 20,
+            padding: 5,
+          }}
+          >
+          <Typography align="right">
+            <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{pos.interpolate((x, y) => ( y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+          </Typography>
+        </Card>
         <canvas
           id="mandelbrot"
-          // className="fullSize"
-          // width={window.innerWidth}
-          // height={window.innerHeight}
-          // width={canvasSize}
-          // height={canvasSize}
-          // rotation={theta.interpolate(t => `${t}`)}
-          // alt={pos.interpolate((x, y) => x)}
+          className="fullSize"
           style={{
-            // width: canvasSize * zoomFactor,
-            // height: canvasSize * zoomFactor,
-            width: "100vw",
-            height: "100vh",
             zIndex: 1,
-            // transform: theta.interpolate(t =>
-            //   `rotate(${t}deg)`
-            //   // ((360 + theta.value + dt) % 360)
-            //   // .toFixed(1)
-            // ),
-            // transform: interpolate([pos], ([x, y]) =>
-            //   `matrix3d(
-            //     1, 0, 0, 0,
-            //     0, 1, 0, 0,
-            //     0, 0, 1, 0,
-            //     0, 0, 0, 1
-            //   )`
-            // ),
+            transform: "rotateX(180deg)",
           }}
           ref={canvasRef}
-        // onMouseUp={() => fillProc(ctx)}
         />
         <animated.div
           style={{
@@ -233,9 +225,6 @@ export default function MandelbrotRenderer(props) {
             position: "absolute",
             top: 300 - 10,
             left: 300 - 10,
-            // transform: pos.interpolate((x, y) =>
-            //   `translate(${-x * resolution * zoom.getValue()}px, ${-y * resolution * zoom.getValue()}px)`
-            // ),
           }}
         />
       </div>
