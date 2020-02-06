@@ -9,7 +9,7 @@ import { animated } from "react-spring";
 
 import * as twgl from "twgl.js";
 
-import fullVertexShader from "../shaders/fullVertexShader";
+import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import smoothFragmentShader from "../shaders/smoothFragmentShader";
 
 export default function MandelbrotRenderer(props) {
@@ -35,21 +35,6 @@ export default function MandelbrotRenderer(props) {
     y: [ -2,  2],
   };
 
-  // This "position" array specifies the vertex positions of the element 
-  // to be displayed by the vertex shader. It represents two triangles,
-  // each filling half of the screen diagonally, and together filling the
-  // full canvas space to allow the fragment shader to act on the full canvas.
-  const arrays = {
-    position: [
-      -1, -1, 0, 
-       1, -1, 0, 
-      -1,  1, 0, 
-      -1,  1, 0, 
-       1, -1, 0, 
-       1,  1, 0
-    ],
-  };
-  
 
   // read incoming props
   const [{ pos }, setControlPos] = props.pos;
@@ -170,13 +155,13 @@ export default function MandelbrotRenderer(props) {
 //     `);
 
     // TODO : figure out shader sources!
-    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothFragmentShader])
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothFragmentShader]);
 
-    bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, arrays);
+    bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
 
     requestRef.current = requestAnimationFrame(render);
     return () => cancelAnimationFrame(requestRef.current);
-  }, [arrays, render]); // Make sure the effect runs only once
+  }, [render]); // Make sure the effect runs only once
 
 
   return (
