@@ -91,7 +91,7 @@ void main() {
     // add crosshair
     float thresh = 1.0;
     if (abs(2.0*gl_FragCoord.x - resolution.x) <= thresh || abs(2.0*gl_FragCoord.y - resolution.y) <= thresh) {
-        col = .5 - col;
+        col = .9 - col;
     }
 
     // Output to screen
