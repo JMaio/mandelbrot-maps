@@ -1,4 +1,4 @@
-// TODO set max iterations as parameter
+// TODO set max iterations as parameter, crosshair as parameter
 
 const smoothMandelbrotShader = `
 // Created by inigo quilez - iq/2013
@@ -65,6 +65,12 @@ void main() {
         l = l - log2(log2(dz)) + 4.0; 
         //    a 0.405 multiplier here  vvvv  also looks good
         col += 0.5 + 0.5*cos( 3.0 +  l*0.15 + vec3(0.0, 0.6, 1.0));
+    }
+
+    // add crosshair
+    float thresh = 1.0;
+    if (abs(2.0*gl_FragCoord.x - resolution.x) <= thresh || abs(2.0*gl_FragCoord.y - resolution.y) <= thresh) {
+        col = .5 - col;
     }
 
     // Output to screen
