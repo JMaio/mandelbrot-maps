@@ -11,6 +11,7 @@ const smoothMandelbrotShader = `
 
 // TODO: make parameter
 #define AA 1
+#define MAXI 200
 
 // set high float precision (lower than this may break colours on mobile)
 precision highp float;
@@ -63,7 +64,7 @@ void main() {
         const float B = 32.0;
         float l = 0.0;
         vec2 z  = vec2(0.0);
-        for( int i=0; i<600; i++ )
+        for( int i=0; i<MAXI; i++ )
         {
             // z = z*z + c		
             z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
