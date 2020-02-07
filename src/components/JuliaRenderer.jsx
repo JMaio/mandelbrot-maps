@@ -1,18 +1,15 @@
-import React, { Fragment, useRef, useEffect, useCallback } from "react";
-import _ from 'lodash';
-import { Typography, Card } from "@material-ui/core";
-
-import { addV, useGesture } from "react-use-gesture";
-import { scale } from 'vec-la';
-
-import { animated } from "react-spring";
-
+import React, { useRef, useEffect, useCallback, Fragment } from "react";
+import { useGesture, addV } from "react-use-gesture";
+import { scale } from "vec-la";
 import * as twgl from "twgl.js";
-
+import { Card, Typography } from "@material-ui/core";
+import { animated } from "react-spring";
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
-import smoothMandelbrotShader from "../shaders/smoothMandelbrotShader";
+import smoothJuliaShader from "../shaders/smoothJuliaShader";
+import _ from "lodash";
 
-export default function MandelbrotRenderer(props) {
+
+export default function JuliaRenderer(props) {
 
   // variables to hold canvas and webgl information
   const requestRef = useRef(null);
@@ -28,23 +25,12 @@ export default function MandelbrotRenderer(props) {
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = -1e-7;
 
-  // temporary bounds to prevent excessive panning
-  // eslint-disable-next-line
-  const radialBound = 1;
-  const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
-  const bounds = {
-    top:    relativeRadialBound,
-    bottom: relativeRadialBound,
-    left:   relativeRadialBound,
-    right:  relativeRadialBound,
-  };
-
-
   // read incoming props
   const [{ pos }, setControlPos] = props.controls.pos;
   const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
+
 
   // the hook responsible for handling gestures
   const touchBind = useGesture({
@@ -126,6 +112,7 @@ export default function MandelbrotRenderer(props) {
 
   useEffect(touchBind, [touchBind]);  
 
+
   // the main render function for WebGL
   const render = useCallback(time => {
     twgl.resizeCanvasToDisplaySize(gl.current.canvas);
@@ -159,7 +146,7 @@ export default function MandelbrotRenderer(props) {
 //     `);
 
     // TODO : figure out shader sources!
-    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothMandelbrotShader]);
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothJuliaShader]);
 
     bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
 
@@ -167,10 +154,9 @@ export default function MandelbrotRenderer(props) {
     return () => cancelAnimationFrame(requestRef.current);
   }, [render]); // Make sure the effect runs only once
 
-
+  
   return (
     <Fragment>
-
       <div
         className="fullSize"
         style={{
@@ -192,12 +178,13 @@ export default function MandelbrotRenderer(props) {
           }}
           >
           <Typography align="right">
-            <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x
+            <br />
             <animated.span>{pos.interpolate((x, y) => ( y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
           </Typography>
         </Card>
         <canvas
-          id="mandelbrot"
+          id="julia"
           className="fullSize"
           style={{
             zIndex: 1,
@@ -217,39 +204,6 @@ export default function MandelbrotRenderer(props) {
           }}
         />
       </div>
-
-      <div style={{
-        position: "absolute",
-        bottom: 0,
-      }}>
-        <Card>
-          <Typography
-            style={{
-              zIndex: 1
-            }}>
-            theta: <animated.span>{theta.interpolate(t => t.toFixed(3))}</animated.span>,
-            zoom: <animated.span>{zoom.interpolate(z => z.toFixed(3))}</animated.span>,
-            {/* x: <animated.span>{grid.dx.interpolate(d => (grid.x.value + d).toFixed(3))}</animated.span>, 
-            y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span> */}
-          </Typography>
-        </Card>
-        {/* <Button variant="contained" color="primary" 
-        onClick={e => {
-          let t0 = performance.now();
-          fillProc(globalCtx);
-          let t1 = performance.now()
-          let t = t1 - t0;
-          console.log(`rendered in ${t}`);
-          setLastRenderTime(t);
-          // setPtime(t1 - t0);
-        }}>render</Button>
-        <Typography>render time: { lastRenderTime.toFixed(4) }</Typography> */}
-
-      </div>
-
-
     </Fragment>
   )
-
-
 }

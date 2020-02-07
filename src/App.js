@@ -9,6 +9,7 @@ import RotationControl from './components/RotationControl';
 import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 import { useSpring } from 'react-spring';
+import JuliaRenderer from './components/JuliaRenderer';
 
 
 function App() {
@@ -19,70 +20,78 @@ function App() {
   // eslint-disable-next-line
   let [maxI, setMaxI] = maxIter;
 
-  // let [glRenderer, setGlRenderer] = useState(false);
-  // let toggleRenderer = () => {};
+  const mandelbrotControls = {
+    pos: useSpring(() => ({
+      pos: [0, 0],
+      config: defaultSpringConfig,
+    })),
 
+    rot: useSpring(() => ({
+      theta: 0,
+      last_pointer_angle: 0,
+      itheta: 0,
+      config: defaultSpringConfig,
+    })),
 
-  // render function passed from renderer
-  // let [render, setRender] = useState();
-
-  // const changeRenderFunc = f => setRender(f);
-
-  const controlPos = useSpring(() => ({
-    // pos: [-1, 0],
-    pos: [0, 0],
-    // pos: [0.45193823302480385, -0.3963913556925211],
-    // pos: [-0.743030, -0.126433],
-
-    // onRest: () => {
-    //   // render the fractal
-    //   // render();
-    // },
-    config: defaultSpringConfig,
-  }));
+    zoom: useSpring(() => ({
+      zoom: 1.0,
+      last_pointer_dist: 0,
   
-  // const controlScreenPos = useSpring(() => ({
-  //   screenpos: [0, 0],
-    
+      minZoom: 0.5,
+      maxZoom: 100000,
+  
+      config: { mass: 1, tension: 600, friction: 50 },
+    })),
+  }
+  // const controlPos = useSpring(() => ({
+  //   pos: [0, 0],
   //   config: defaultSpringConfig,
-  //   //  {
-  //   //   ...
-  //   //   immediate: true,
-  //   // }
+  // }));
+
+  // const controlRot = useSpring(() => ({
+  //   theta: 0,
+  //   last_pointer_angle: 0,
+  //   itheta: 0,
+
+  //   config: defaultSpringConfig,
   // }))
 
-  const controlRot = useSpring(() => ({
-    theta: 0,
-    last_pointer_angle: 0,
-    itheta: 0,
+  // const controlZoom = useSpring(() => ({
+  //   zoom: 1.0,
+  //   last_pointer_dist: 0,
 
-    config: defaultSpringConfig,
-  }))
+  //   minZoom: 0.5,
+  //   maxZoom: 100000,
 
-  const controlZoom = useSpring(() => ({
-    zoom: 1.0,
-    last_pointer_dist: 0,
-
-    minZoom: 0.5,
-    maxZoom: 100000,
-
-    config: { mass: 1, tension: 600, friction: 50 },
-  }))
+  //   config: { mass: 1, tension: 600, friction: 50 },
+  // }))
 
   return (
     <Fragment>
-      <MandelbrotRenderer
-        style={{
-          position: 'absolute',
-          zIndex: 0,
-        }}
-        pos={controlPos}
-        // screenpos={controlScreenPos}
-        rot={controlRot}
-        zoom={controlZoom}
-        maxiter={maxI}
-        // renderer={glRenderer ? }
-      />
+      <Grid
+        container
+        direction="column"
+        justify="space-evenly"
+        alignItems="flex-end"
+      >
+        <MandelbrotRenderer
+          // style={{
+          //   position: 'absolute',
+          //   zIndex: 0,
+          // }}
+          controls={mandelbrotControls}
+          // pos={controlPos}
+          // // screenpos={controlScreenPos}
+          // rot={controlRot}
+          // zoom={controlZoom}
+          maxiter={maxI}
+          // renderer={glRenderer ? }
+        />
+        <JuliaRenderer
+          controls={mandelbrotControls}
+          maxiter={maxI}
+        />
+      </Grid>
       <Grid
         container
         direction="column"
@@ -90,12 +99,12 @@ function App() {
         alignItems="flex-end"
       >
         <ZoomBar
-          controller={controlZoom}
+          controller={mandelbrotControls.zoom}
         />
 
         <RotationControl
           className="Control"
-          controller={controlRot}
+          controller={mandelbrotControls.rot}
           style={{
             display: "none",
           }}
@@ -107,17 +116,6 @@ function App() {
             display: "none",
           }}
         />
-
-        {/* <FormControlLabel
-          control={
-            // <Switch checked={state.checkedA} onChange={handleChange('checkedA')} value="checkedA" />
-            <Switch onChange={() => setGlRenderer(!glRenderer)} />
-          }
-          label="use GL"
-          style={{
-            display: "none",
-          }}
-        /> */}
       </Grid>
     </Fragment>
   );
