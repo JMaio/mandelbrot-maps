@@ -87,11 +87,14 @@ export default function JuliaRenderer(props) {
       
       let plotMovement = scale(movement, 2/realZoom);
 
+      let relMove = [plotMovement[0], -plotMovement[1]];
+      let relDir  = [direction[0], -direction[1]];
+
       setControlPos({
-        pos: addV(memo, plotMovement),                    // add the displacement to the starting position
+        pos: addV(memo, relMove),                    // add the displacement to the starting position
         immediate: down,                                  // immediately apply if the gesture is active
         config: { 
-          velocity: scale(direction, velocity/realZoom),  // set the velocity (gesture momentum)
+          velocity: scale(relDir, velocity/realZoom),  // set the velocity (gesture momentum)
           decay: true,
         },
       });
@@ -161,7 +164,7 @@ export default function JuliaRenderer(props) {
       className="renderer"
       style={{
         zIndex: 1,
-        transform: "rotateX(180deg)",
+        // transform: "rotateX(180deg)",
         // width: "100%",
         // height: "100%",
       }}
