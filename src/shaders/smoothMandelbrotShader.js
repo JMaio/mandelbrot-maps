@@ -59,11 +59,13 @@ void main() {
     }
     
     // float al = smoothstep( -0.1, 0.0, 1.0);
-    l = l - log2(log2(dot(z,z))) + 4.0; 
-    // float sl = l - log2(log2(dot(z,z))) + 4.0; 
-    // l = sl;
-    //    a 0.405 multiplier here  vvvv  also looks good
-    col += 0.5 + 0.5*cos( 3.0 +  l*0.15 + vec3(0.0, 0.6, 1.0));
+    // log2 is undefined for dot(z,z) = 0; strange colouring in bulbs otherwise
+    float dz = dot(z,z);
+    if (dz > 1.0) {
+        l = l - log2(log2(dz)) + 4.0; 
+        //    a 0.405 multiplier here  vvvv  also looks good
+        col += 0.5 + 0.5*cos( 3.0 +  l*0.15 + vec3(0.0, 0.6, 1.0));
+    }
 
     // Output to screen
     gl_FragColor = vec4( col, 1.0 );
