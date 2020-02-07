@@ -101,7 +101,7 @@ export default function JuliaRenderer(props) {
 
   }, { 
     event: { passive: false, capture: false }, 
-    domTarget: touchTarget,
+    domTarget: canvasRef,
     // The config object passed to useGesture has drag, wheel, scroll, pinch and move keys
     // for specific gesture options. See here for more details.
     // drag: {
@@ -156,54 +156,16 @@ export default function JuliaRenderer(props) {
 
   
   return (
-    <Fragment>
-      <div
-        className="fullSize"
-        style={{
-          // position: "absolute",
-          zIndex: 1,
-        }}
-        // {...props}
-        ref={touchTarget}
-      >
-        <Card
-          style={{
-            width: "auto",
-            position: "absolute",
-            zIndex: 2,
-            right: 0,
-            top: 0,
-            margin: 20,
-            padding: 5,
-          }}
-          >
-          <Typography align="right">
-            <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x
-            <br />
-            <animated.span>{pos.interpolate((x, y) => ( y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
-          </Typography>
-        </Card>
-        <canvas
-          id="julia"
-          className="fullSize"
-          style={{
-            zIndex: 1,
-            transform: "rotateX(180deg)",
-          }}
-          ref={canvasRef}
-        />
-        <animated.div
-          style={{
-            display: "none",
-            width: 20,
-            height: 20,
-            backgroundColor: "red",
-            position: "absolute",
-            top: 300 - 10,
-            left: 300 - 10,
-          }}
-        />
-      </div>
-    </Fragment>
+    <canvas
+      id="julia"
+      className="renderer"
+      style={{
+        zIndex: 1,
+        transform: "rotateX(180deg)",
+        // width: "100%",
+        // height: "100%",
+      }}
+      ref={canvasRef}
+    />
   )
 }

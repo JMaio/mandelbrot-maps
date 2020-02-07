@@ -11,6 +11,7 @@ import * as twgl from "twgl.js";
 
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import smoothMandelbrotShader from "../shaders/smoothMandelbrotShader";
+import { useWindowSize } from "./utils";
 
 export default function MandelbrotRenderer(props) {
 
@@ -115,7 +116,7 @@ export default function MandelbrotRenderer(props) {
 
   }, { 
     event: { passive: false, capture: false }, 
-    domTarget: touchTarget,
+    domTarget: canvasRef,
     // The config object passed to useGesture has drag, wheel, scroll, pinch and move keys
     // for specific gesture options. See here for more details.
     // drag: {
@@ -169,85 +170,33 @@ export default function MandelbrotRenderer(props) {
 
 
   return (
+
     <Fragment>
-
-      <div
-        className="fullSize"
+      <Card
         style={{
-          // position: "absolute",
-          zIndex: 1,
+          width: "auto",
+          position: "absolute",
+          zIndex: 2,
+          left: 0,
+          bottom: 0,
+          margin: 20,
+          padding: 5,
         }}
-        // {...props}
-        ref={touchTarget}
-      >
-        <Card
-          style={{
-            width: "auto",
-            position: "absolute",
-            zIndex: 2,
-            right: 0,
-            top: 0,
-            margin: 20,
-            padding: 5,
-          }}
-          >
-          <Typography align="right">
-            <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
-            <animated.span>{pos.interpolate((x, y) => ( y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
-          </Typography>
-        </Card>
-        <canvas
-          id="mandelbrot"
-          className="fullSize"
-          style={{
-            zIndex: 1,
-            transform: "rotateX(180deg)",
-          }}
-          ref={canvasRef}
-        />
-        <animated.div
-          style={{
-            display: "none",
-            width: 20,
-            height: 20,
-            backgroundColor: "red",
-            position: "absolute",
-            top: 300 - 10,
-            left: 300 - 10,
-          }}
-        />
-      </div>
-
-      <div style={{
-        position: "absolute",
-        bottom: 0,
-      }}>
-        <Card>
-          <Typography
-            style={{
-              zIndex: 1
-            }}>
-            theta: <animated.span>{theta.interpolate(t => t.toFixed(3))}</animated.span>,
-            zoom: <animated.span>{zoom.interpolate(z => z.toFixed(3))}</animated.span>,
-            {/* x: <animated.span>{grid.dx.interpolate(d => (grid.x.value + d).toFixed(3))}</animated.span>, 
-            y: <animated.span>{grid.dy.interpolate(d => (grid.y.value + d).toFixed(3))}</animated.span> */}
-          </Typography>
-        </Card>
-        {/* <Button variant="contained" color="primary" 
-        onClick={e => {
-          let t0 = performance.now();
-          fillProc(globalCtx);
-          let t1 = performance.now()
-          let t = t1 - t0;
-          console.log(`rendered in ${t}`);
-          setLastRenderTime(t);
-          // setPtime(t1 - t0);
-        }}>render</Button>
-        <Typography>render time: { lastRenderTime.toFixed(4) }</Typography> */}
-
-      </div>
-
-
+        >
+        <Typography align="right">
+          <animated.span>{pos.interpolate((x, y) => (-x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+          <animated.span>{pos.interpolate((x, y) => ( y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+        </Typography>
+      </Card>
+      <canvas
+        id="mandelbrot"
+        className="renderer"
+        style={{
+          // zIndex: 1,
+          transform: "rotateX(180deg)",
+        }}
+        ref={canvasRef}
+      />
     </Fragment>
   )
 
