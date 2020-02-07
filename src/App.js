@@ -72,7 +72,9 @@ function App() {
             screenmult={screenScaleMultiplier}
           />
         </Grid>
-        <Grid item xs className="renderer">
+        <Grid item xs className="renderer" 
+          // style={{ display: "none" }}
+          >
           <JuliaRenderer
             controls={mandelbrotControls}
             maxiter={maxI}
