@@ -1,20 +1,21 @@
 {
   "files": {
-    "main.css": "/mandelbrot-maps/static/css/main.de3eb9ee.chunk.css",
-    "main.js": "/mandelbrot-maps/static/js/main.34f16301.chunk.js",
-    "main.js.map": "/mandelbrot-maps/static/js/main.34f16301.chunk.js.map",
+    "main.css": "/mandelbrot-maps/static/css/main.5a00706f.chunk.css",
+    "main.js": "/mandelbrot-maps/static/js/main.faf7d3d1.chunk.js",
+    "main.js.map": "/mandelbrot-maps/static/js/main.faf7d3d1.chunk.js.map",
     "runtime~main.js": "/mandelbrot-maps/static/js/runtime~main.aa57a893.js",
     "runtime~main.js.map": "/mandelbrot-maps/static/js/runtime~main.aa57a893.js.map",
     "static/css/2.04511d68.chunk.css": "/mandelbrot-maps/static/css/2.04511d68.chunk.css",
-    "static/js/2.504de79c.chunk.js": "/mandelbrot-maps/static/js/2.504de79c.chunk.js",
-    "static/js/2.504de79c.chunk.js.map": "/mandelbrot-maps/static/js/2.504de79c.chunk.js.map",
+    "static/js/2.73a66539.chunk.js": "/mandelbrot-maps/static/js/2.73a66539.chunk.js",
+    "static/js/2.73a66539.chunk.js.map": "/mandelbrot-maps/static/js/2.73a66539.chunk.js.map",
     "index.html": "/mandelbrot-maps/index.html",
-    "precache-manifest.c7395c017650ac9422fe4650c30d7a0a.js": "/mandelbrot-maps/precache-manifest.c7395c017650ac9422fe4650c30d7a0a.js",
+    "precache-manifest.c398c8bfadeee2c1dec9c3f24e682487.js": "/mandelbrot-maps/precache-manifest.c398c8bfadeee2c1dec9c3f24e682487.js",
     "service-worker.js": "/mandelbrot-maps/service-worker.js",
     "static/css/2.04511d68.chunk.css.map": "/mandelbrot-maps/static/css/2.04511d68.chunk.css.map",
-    "static/css/main.de3eb9ee.chunk.css.map": "/mandelbrot-maps/static/css/main.de3eb9ee.chunk.css.map",
+    "static/css/main.5a00706f.chunk.css.map": "/mandelbrot-maps/static/css/main.5a00706f.chunk.css.map",
     "static/media/minus-icon.8bace023.svg": "/mandelbrot-maps/static/media/minus-icon.8bace023.svg",
     "static/media/plus-icon.e4581c1a.svg": "/mandelbrot-maps/static/media/plus-icon.e4581c1a.svg",
-    "static/media/index.css": "/mandelbrot-maps/static/media/roboto-latin-900italic.ebf6d164.woff2"
+    "static/media/index.css": "/mandelbrot-maps/static/media/roboto-latin-900italic.ebf6d164.woff2",
+    "static/media/smooth_mandelbrot_shader.glsl": "/mandelbrot-maps/static/media/smooth_mandelbrot_shader.d018da26.glsl"
   }
 }
