@@ -11,7 +11,6 @@ import * as twgl from "twgl.js";
 
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import smoothMandelbrotShader from "../shaders/smoothMandelbrotShader";
-import { useWindowSize } from "./utils";
 
 export default function MandelbrotRenderer(props) {
 
@@ -21,13 +20,12 @@ export default function MandelbrotRenderer(props) {
   const bufferInfo = useRef(null);
   const programInfo = useRef(null);
 
-  const touchTarget = useRef(null);
   const canvasRef = useRef(null);
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = -1e-7;
+  const screenScaleMultiplier = props.screenmult;
 
   // temporary bounds to prevent excessive panning
   // eslint-disable-next-line
@@ -42,7 +40,7 @@ export default function MandelbrotRenderer(props) {
 
 
   // read incoming props
-  const [{ pos }, setControlPos] = props.controls.pos;
+  const [{ pos, realPos }, setControlPos] = props.controls.pos;
   const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;

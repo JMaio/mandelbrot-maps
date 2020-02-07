@@ -22,9 +22,17 @@ function App() {
   // eslint-disable-next-line
   let [maxI, setMaxI] = maxIter;
 
+  // this multiplier subdivides the screen space into smaller increments
+  // to allow for velocity calculations to not immediately decay, due to the
+  // otherwise small scale that is being mapped to the screen.
+  const screenScaleMultiplier = -1e-7;
+
+  const startPos = [-.743030, -.126433];
+  const startZoom = 150.0;
+
   const mandelbrotControls = {
     pos: useSpring(() => ({
-      pos: [0, 0],
+      pos: startPos.map(x => -x / screenScaleMultiplier),
       config: defaultSpringConfig,
     })),
 
@@ -36,7 +44,7 @@ function App() {
     })),
 
     zoom: useSpring(() => ({
-      zoom: 1.0,
+      zoom: startZoom,
       last_pointer_dist: 0,
   
       minZoom: 0.5,
@@ -61,6 +69,7 @@ function App() {
           <MandelbrotRenderer
             controls={mandelbrotControls}
             maxiter={maxI}
+            screenmult={screenScaleMultiplier}
           />
         </Grid>
         <Grid item xs className="renderer">
