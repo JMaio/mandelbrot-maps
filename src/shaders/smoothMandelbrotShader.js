@@ -1,4 +1,6 @@
-const smoothFragmentShader = `
+// TODO set max iterations as parameter
+
+const smoothMandelbrotShader = `
 // Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
@@ -68,4 +70,4 @@ void main() {
 }
 `;
 
-export default smoothFragmentShader;
+export default smoothMandelbrotShader;
