@@ -9,6 +9,9 @@ const smoothMandelbrotShader = `
 //
 // http://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
 
+// TODO: make parameter
+#define AA 1
+
 // set high float precision (lower than this may break colours on mobile)
 precision highp float;
 
@@ -25,9 +28,20 @@ void main() {
     // set the initial colour to black
     vec3 col = vec3(0.0);
 
-    // vec2 p = (-resolution.xy + 2.0*vec2(gl_FragCoord.x, -gl_FragCoord.y))/resolution.y;
-    // adjust pixels to range from [-1, 1]
-    vec2 p = (2.0*gl_FragCoord.xy - resolution.xy)/resolution.y;
+    // anti-aliasing
+    #if AA>1
+    for( int m=0; m<AA; m++ )
+    for( int n=0; n<AA; n++ )
+    {
+        // vec2 p = (-iResolution.xy + 2.0*(fragCoord.xy+vec2(float(m),float(n))/float(AA)))/iResolution.y;
+        vec2 p = (2.0*(gl_FragCoord.xy + vec2(float(m), float(n)) / float(AA) ) - resolution.xy)/resolution.y;
+        float w = float(AA*m+n);
+    #else    
+        // adjust pixels to range from [-1, 1]
+        vec2 p = (2.0*gl_FragCoord.xy - resolution.xy)/resolution.y;
+    #endif
+
+    // vec2 p = (2.0*gl_FragCoord.xy - resolution.xy)/resolution.y;
     
     // float theta = 0.7;
     
@@ -37,35 +51,41 @@ void main() {
     // float coa = cos(u_theta);
     // float sia = sin(u_theta);    
     
-    // use to rotate viewer (tbd)
-    // vec2 xy = vec2(p.x*coa-p.y*sia, p.x*sia+p.y*coa);
-    vec2 xy = p;
-    vec2 c = u_pos + xy/u_zoom;
-    // vec2 c = 2. * u_pos / (resolution.y * u_zoom) + xy/u_zoom;
-    // vec2 c = (2. * u_pos/(resolution.y * u_zoom)) + xy/(u_zoom);
-
-    // smoothing factor (original = 256.0)
-    const float B = 32.0;
-    float l = 0.0;
-    vec2 z  = vec2(0.0);
-    for( int i=0; i<200; i++ )
-    {
-        // z = z*z + c		
-        z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
-
-        if( dot(z,z)>(B*B) ) break;
-
-        l += 1.0;
-    }
     
-    // float al = smoothstep( -0.1, 0.0, 1.0);
-    // log2 is undefined for dot(z,z) = 0; strange colouring in bulbs otherwise
-    float dz = dot(z,z);
-    if (dz > 1.0) {
-        l = l - log2(log2(dz)) + 4.0; 
-        //    a 0.405 multiplier here  vvvv  also looks good
-        col += 0.5 + 0.5*cos( 3.0 +  l*0.15 + vec3(0.0, 0.6, 1.0));
+
+
+        // use to rotate viewer (tbd)
+        // vec2 xy = vec2(p.x*coa-p.y*sia, p.x*sia+p.y*coa);
+        vec2 xy = p;
+        vec2 c = u_pos + xy/u_zoom;
+
+        // smoothing factor (original = 256.0)
+        const float B = 32.0;
+        float l = 0.0;
+        vec2 z  = vec2(0.0);
+        for( int i=0; i<600; i++ )
+        {
+            // z = z*z + c		
+            z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
+
+            if( dot(z,z)>(B*B) ) break;
+
+            l += 1.0;
+        }
+        
+        // log2 is undefined for dot(z,z) = 0; strange colouring in bulbs otherwise
+        float dz = dot(z,z);
+        if (dz > 1.0) {
+            l = l - log2(log2(dz)) + 4.0; 
+            //    a 0.405 multiplier here  vvvv  also looks good
+            col += 0.5 + 0.5*cos( 3.0 +  l*0.15 + vec3(0.0, 0.6, 1.0));
+        }
+
+    #if AA>1
     }
+    col /= float(AA*AA);
+    #endif
+
 
     // add crosshair
     float thresh = 1.0;
