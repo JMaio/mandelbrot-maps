@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "20fee6ab535c91de571aca1428874019",
+    "revision": "b4ea409ca68e96c2d8d250120dfe92da",
     "url": "/mandelbrot-maps/index.html"
   },
   {
