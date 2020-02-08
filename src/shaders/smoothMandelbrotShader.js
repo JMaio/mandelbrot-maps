@@ -13,6 +13,10 @@ const smoothMandelbrotShader = `
 #define AA 1
 #define MAXI 200
 
+// crosshair parameters
+#define cross_stroke 2.
+#define cross_size   70.
+
 // set high float precision (lower than this may break colours on mobile)
 precision highp float;
 
@@ -88,9 +92,14 @@ void main() {
     #endif
 
 
-    // add crosshair
-    float thresh = 1.0;
-    if (abs(2.0*gl_FragCoord.x - resolution.x) <= thresh || abs(2.0*gl_FragCoord.y - resolution.y) <= thresh) {
+    
+    if (
+        // 1px crosshair in centre of screen
+        (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_stroke || abs(2.0*gl_FragCoord.y - resolution.y) <= cross_stroke)
+        &&
+        // crosshair size / "radius"
+        (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_size && abs(2.0*gl_FragCoord.y - resolution.y) <= cross_size)
+    ) {
         col = .9 - col;
     }
 
