@@ -3,7 +3,7 @@
 const newSmoothJuliaShader = `
 
 #define AA 1
-#define MAXI 500
+#define MAXI 300
 #define B 64.0
 
 // set high float precision (lower than this may break colours on mobile)

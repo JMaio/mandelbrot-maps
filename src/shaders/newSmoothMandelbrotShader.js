@@ -11,7 +11,7 @@ const newSmoothMandelbrotShader = `
 
 // TODO: make parameter
 #define AA 1
-#define MAXI 500
+#define MAXI 300
 #define B 64.0
 
 // crosshair parameters
