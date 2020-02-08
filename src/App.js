@@ -27,8 +27,10 @@ function App() {
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = -1e-7;
 
-  const startPos = [-.743030, -.126433];
-  const startZoom = 150.0;
+  const startPos = [-.743030, .126433];
+  // const startPos = [-.7426482, .1271875 ];
+  // const startPos = [-0.1251491, -0.8599647];
+  const startZoom = 165.0;
 
   const mandelbrotControls = {
     pos: useSpring(() => ({

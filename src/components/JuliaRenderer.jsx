@@ -6,6 +6,7 @@ import { Card, Typography } from "@material-ui/core";
 import { animated } from "react-spring";
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import smoothJuliaShader from "../shaders/smoothJuliaShader";
+import newSmoothJuliaShader from "../shaders/newSmoothJuliaShader";
 import _ from "lodash";
 
 
@@ -149,7 +150,7 @@ export default function JuliaRenderer(props) {
 //     `);
 
     // TODO : figure out shader sources!
-    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothJuliaShader]);
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, newSmoothJuliaShader]);
 
     bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
 

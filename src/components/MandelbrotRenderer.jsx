@@ -11,6 +11,7 @@ import * as twgl from "twgl.js";
 
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import smoothMandelbrotShader from "../shaders/smoothMandelbrotShader";
+import newSmoothMandelbrotShader from "../shaders/newSmoothMandelbrotShader";
 
 export default function MandelbrotRenderer(props) {
 
@@ -161,7 +162,7 @@ export default function MandelbrotRenderer(props) {
 //     `);
 
     // TODO : figure out shader sources!
-    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, smoothMandelbrotShader]);
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, newSmoothMandelbrotShader]);
 
     bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
 
