@@ -104,6 +104,27 @@ export default function MandelbrotRenderer(props) {
       });
     },
 
+    onWheel: ({ event, movement: [mx, my], vxvy: [vx, vy] }) => {
+      // x, y obtained from event
+      let z = zoom.getValue();
+
+      // let newZ = z * (1.05 - Math.sign(my) * (Math.abs(my)/1000));
+      // let newZ = z * (1.05 - Math.sign(my) * d**2 - d);
+      let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
+
+      console.log(newZ, my, vy);
+      // console.log(vy);
+
+      setControlZoom({
+        zoom: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+        config: {
+          // bias velocity towards zooming in (vy negative )
+          // if zooming
+          velocity: _.clamp(vy * (vy < 0 ? 2.5 : 1.5), -10, 10), // * z**0.9 - my/15,
+        }
+      });
+    },
+
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue() }) => {
 
       // change according to this formula:
@@ -145,7 +166,9 @@ export default function MandelbrotRenderer(props) {
 
 
   return (
-    <div className="renderer">
+    <div className="renderer" style={{
+      position: "relative"
+    }}>
       <WebGLCanvas 
         id="mandelbrot"
         fragShader={fragShader}
@@ -159,16 +182,19 @@ export default function MandelbrotRenderer(props) {
         ref={canvasRef}
         glRef={gl}
       />
-      <div style={{
+      <animated.div style={{
         position: "absolute",
         zIndex: 2,
+        margin: 20,
         left: 0,
         bottom: 0,
-        margin: 20,
-        height: 150,
-        width: 150,
-        borderRadius: ".5em",
-        overflow: "hidden"
+        height: "5rem",
+        width: "5rem",
+        // border: "1px solid #000",
+        boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
+        borderRadius: "50em",
+        overflow: "hidden",
+        opacity: zoom.interpolate(z => _.clamp(z / 10 - .5, 0, 1)),
       }}>
         <WebGLCanvas 
           id="mini-mandelbrot"
@@ -186,7 +212,7 @@ export default function MandelbrotRenderer(props) {
           mini={true}
           variableOpacity={true}
         />
-      </div>
+      </animated.div>
     </div>
   )
 
