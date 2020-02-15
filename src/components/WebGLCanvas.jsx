@@ -23,12 +23,11 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
   const programInfo      = useRef(null);
 
   // have a zoom callback
-  const zoom = mini ? () => 1.0 : () => props.u.zoom.getValue();
+  const zoom = mini ? () => Math.max(0.5, props.u.zoom.getValue() / 10) : () => props.u.zoom.getValue();
   const currZoom = useRef(zoom);
 
   useEffect(() => {
     currZoom.current = props.u.zoom.getValue();
-    console.log(currZoom.current);
   }, [props.u]);
 
   // initial context-getter
@@ -74,7 +73,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
       id={props.id}
       className="renderer"
       style={{
-        opacity: props.variableOpacity ? props.u.zoom.interpolate(z => _.clamp(z / 50 - 0.05, 0, 1)) : 1.0,
+        opacity: props.variableOpacity ? props.u.zoom.interpolate(z => _.clamp(z / 10 - .5, 0, 1)) : 1.0,
       }}
       ref={ref} />
   );
