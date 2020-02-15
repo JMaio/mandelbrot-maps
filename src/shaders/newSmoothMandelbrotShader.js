@@ -13,9 +13,7 @@ const newSmoothMandelbrotShader = ({
 // Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
-
 // See here for more information on smooth iteration count:
-//
 // http://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
 
 // render parameters
@@ -51,7 +49,6 @@ bool crosshair( float x, float y ) {
 }
 
 float mandelbrot( in vec2 c ) {
-    // #if 1
     {
         float c2 = dot(c, c);
         // skip computation inside M1 - http://iquilezles.org/www/articles/mset_1bulb/mset1bulb.htm
@@ -59,10 +56,7 @@ float mandelbrot( in vec2 c ) {
         // skip computation inside M2 - http://iquilezles.org/www/articles/mset_2bulb/mset2bulb.htm
         if( 16.0*(c2+2.0*c.x+1.0) - 1.0 < 0.0 ) return 0.0;
     }
-    // #endif
 
-
-    // const float B = 256.0;
     float l = 0.0;
     vec2 z  = vec2(0.0);
     for( int i=0; i<MAXI; i++ )
@@ -72,13 +66,10 @@ float mandelbrot( in vec2 c ) {
         l += 1.0;
     }
 
+    // maxed out iterations
     if( l>float(MAXI)-1.0 ) return 0.0;
     
-    // ------------------------------------------------------
-    // smooth interation count
-    //float sl = l - log(log(length(z))/log(B))/log(2.0);
-
-    // equivalent optimized smooth interation count
+    // optimized smooth interation count
     l = l - log2(log2(dot(z,z))) + 4.0;
 
     return l;
@@ -101,8 +92,8 @@ void main() {
         vec2 p = (2.0*gl_FragCoord.xy - resolution.xy)/resolution.y;
     #endif
 
-    vec2 xy = p;
-    vec2 c = u_pos + xy/u_zoom;
+    // c is based on offset and grid position, z_0 = 0
+    vec2 c = u_pos + p/u_zoom;
     
     float l = mandelbrot(c);
     col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
@@ -113,20 +104,10 @@ void main() {
     col /= float(AA*AA);
     #endif
 
-
+    // add crosshair
     if (crosshair(gl_FragCoord.x, gl_FragCoord.y)) {
         col = 1. - col;
     }
-    
-    // if (
-    // // 1px crosshair in centre of screen
-    // (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_stroke || abs(2.0*gl_FragCoord.y - resolution.y) <= cross_stroke)
-    // &&
-    // // crosshair size / "radius"
-    // (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_radius && abs(2.0*gl_FragCoord.y - resolution.y) <= cross_radius)
-    // ) {
-    //     col = 1. - col;
-    // }
 
     // Output to screen
     gl_FragColor = vec4( col, 1.0 );

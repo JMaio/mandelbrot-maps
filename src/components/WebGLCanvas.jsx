@@ -3,7 +3,6 @@ import * as twgl from "twgl.js";
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import { scale } from 'vec-la';
 import { animated } from "react-spring";
-import _ from "lodash";
 
 export default React.forwardRef(({mini = false, ...props}, ref) => {
   // props:
@@ -45,6 +44,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
     const uniforms = {
       resolution: [gl.current.canvas.width, gl.current.canvas.height],
       u_zoom: zoom(),
+      u_c:    props.u.c === undefined ? 0 : props.u.c.getValue().map(x => x * props.u.screenScaleMultiplier),
       u_pos:  scale(props.u.pos.getValue(), props.u.screenScaleMultiplier),
       u_maxI: props.u.maxI,
     };
@@ -72,9 +72,6 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
     <animated.canvas
       id={props.id}
       className="renderer"
-      style={{
-        opacity: props.variableOpacity ? props.u.zoom.interpolate(z => _.clamp(z / 10 - .5, 0, 1)) : 1.0,
-      }}
       ref={ref} />
   );
 });
