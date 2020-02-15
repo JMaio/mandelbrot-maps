@@ -8,11 +8,11 @@ export default function IterationSlider(props) {
   
   return (
     <Slider
-      defaultValue={maxI}
+      value={maxI}
       valueLabelDisplay="on"
-      step={1}
-      min={1}
-      max={300}
+      step={2}
+      min={3}
+      max={500}
       style={{
         width: 200,
         margin: 30,
