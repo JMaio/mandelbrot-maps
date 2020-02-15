@@ -8,23 +8,20 @@ import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexSh
 import smoothJuliaShader from "../shaders/smoothJuliaShader";
 import newSmoothJuliaShader from "../shaders/newSmoothJuliaShader";
 import _ from "lodash";
+import WebGLCanvas from "./WebGLCanvas";
 
 
 export default function JuliaRenderer(props) {
 
   // variables to hold canvas and webgl information
-  const requestRef = useRef(null);
   const gl = useRef(null);
-  const bufferInfo = useRef(null);
-  const programInfo = useRef(null);
 
-  const touchTarget = useRef(null);
   const canvasRef = useRef(null);
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = -1e-7;
+  const screenScaleMultiplier = props.screenmult;
 
   // read incoming props
   const [{ pos }, setControlPos] = props.controls.pos;
@@ -32,6 +29,9 @@ export default function JuliaRenderer(props) {
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
 
+  const AA = 1;
+
+  const fragShader = newSmoothJuliaShader(maxI, AA);
 
   // the hook responsible for handling gestures
   const touchBind = useGesture({
@@ -86,7 +86,7 @@ export default function JuliaRenderer(props) {
       // use screen multiplier for more granularity
       let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
       
-      let plotMovement = scale(movement, 2/realZoom);
+      let plotMovement = scale(movement, -2/realZoom);
 
       let relMove = [plotMovement[0], -plotMovement[1]];
       let relDir  = [direction[0], -direction[1]];
@@ -95,7 +95,7 @@ export default function JuliaRenderer(props) {
         pos: addV(memo, relMove),                    // add the displacement to the starting position
         immediate: down,                                  // immediately apply if the gesture is active
         config: { 
-          velocity: scale(relDir, velocity/realZoom),  // set the velocity (gesture momentum)
+          velocity: scale(relDir, -velocity/realZoom),  // set the velocity (gesture momentum)
           decay: true,
         },
       });
@@ -115,61 +115,19 @@ export default function JuliaRenderer(props) {
   });
 
   useEffect(touchBind, [touchBind]);  
-
-
-  // the main render function for WebGL
-  const render = useCallback(time => {
-    twgl.resizeCanvasToDisplaySize(gl.current.canvas);
-    gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
-
-    // values to pass to the shader
-    const uniforms = {
-      resolution: [gl.current.canvas.width, gl.current.canvas.height],
-      u_zoom: zoom.getValue(),
-      u_pos:  scale(pos.getValue(), -screenScaleMultiplier),  // re-scale from screen coordinates to plot coordinates
-      u_maxI: maxI,
-    };
-
-    gl.current.useProgram(programInfo.current.program);
-    twgl.setBuffersAndAttributes(gl.current, programInfo.current, bufferInfo.current);
-    twgl.setUniforms(programInfo.current, uniforms);
-    twgl.drawBufferInfo(gl.current, bufferInfo.current);
-    // The 'state' will always be the initial value here
-    requestRef.current = requestAnimationFrame(render);
-  }, [maxI, pos, screenScaleMultiplier, zoom]);
-  
-  useEffect(() => {
-    gl.current = canvasRef.current.getContext('webgl');
-    console.log(`got canvas context: ${gl.current}`);
-    // var glc = gl.current;
-    // var prec = glc.getShaderPrecisionFormat(glc.FRAGMENT_SHADER, glc.HIGH_FLOAT);
-//     alert(`\
-// precision = ${prec.precision},
-// rangeMin = ${prec.rangeMin},
-// rangeMax = ${prec.rangeMax} 
-//     `);
-
-    // TODO : figure out shader sources!
-    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, newSmoothJuliaShader]);
-
-    bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
-
-    requestRef.current = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, [render]); // Make sure the effect runs only once
-
   
   return (
-    <canvas
-      id="julia"
-      className="renderer"
-      style={{
-        zIndex: 1,
-        // transform: "rotateX(180deg)",
-        // width: "100%",
-        // height: "100%",
-      }}
-      ref={canvasRef}
-    />
+    <WebGLCanvas
+        id="julia"
+        fragShader={fragShader}
+        u={{
+          zoom: zoom,
+          pos: pos,
+          maxI: maxI,
+          screenScaleMultiplier: screenScaleMultiplier,
+        }}
+        ref={canvasRef}
+        glRef={gl}
+      />
   )
 }
