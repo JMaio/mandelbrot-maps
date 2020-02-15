@@ -159,29 +159,34 @@ export default function MandelbrotRenderer(props) {
         ref={canvasRef}
         glRef={gl}
       />
-      <WebGLCanvas 
-        id="mini-mandelbrot"
-        fragShader={miniFragShader}
-        // touchBind={touchBind}
-        u={{
-          pos: pos,
-          maxI: maxI,
-          screenScaleMultiplier: screenScaleMultiplier,
-        }}
-        ref={miniCanvasRef}
-        glRef={miniGl}
-        style={{
-          position: "absolute",
-          zIndex: 2,
-          left: 0,
-          bottom: 0,
-          margin: 20,
-          padding: 5,
-          height: 150,
-          width: 200,
-        }}
-        mini={true}
-      />
+      <div style={{
+        position: "absolute",
+        zIndex: 2,
+        left: 0,
+        bottom: 0,
+        margin: 20,
+        height: 150,
+        width: 150,
+        borderRadius: ".5em",
+        overflow: "hidden"
+      }}>
+        <WebGLCanvas 
+          id="mini-mandelbrot"
+          fragShader={miniFragShader}
+          // touchBind={touchBind}
+          u={{
+            zoom: zoom,
+            pos: pos,
+            maxI: maxI,
+            screenScaleMultiplier: screenScaleMultiplier,
+          }}
+          ref={miniCanvasRef}
+          glRef={miniGl}
+          
+          mini={true}
+          variableOpacity={true}
+        />
+      </div>
     </div>
   )
 

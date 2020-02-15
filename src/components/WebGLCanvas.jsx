@@ -2,6 +2,8 @@ import React, { useEffect, useCallback, useRef } from "react";
 import * as twgl from "twgl.js";
 import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
 import { scale } from 'vec-la';
+import { animated } from "react-spring";
+import _ from "lodash";
 
 export default React.forwardRef(({mini = false, ...props}, ref) => {
   // props:
@@ -22,6 +24,12 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
 
   // have a zoom callback
   const zoom = mini ? () => 1.0 : () => props.u.zoom.getValue();
+  const currZoom = useRef(zoom);
+
+  useEffect(() => {
+    currZoom.current = props.u.zoom.getValue();
+    console.log(currZoom.current);
+  }, [props.u]);
 
   // initial context-getter
   useEffect(() => {
@@ -48,7 +56,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
     twgl.drawBufferInfo(gl.current, bufferInfo.current);
     // The 'state' will always be the initial value here
     renderRequestRef.current = requestAnimationFrame(render);
-  }, [gl, props.u]);
+  }, [gl, props.u, zoom]);
 
   // re-compile program if shader changes
   useEffect(() => {
@@ -62,10 +70,12 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
   }, [render]);
 
   return (
-    <canvas
+    <animated.canvas
       id={props.id}
-      className={mini ? "renderer-mini" : "renderer"}
-      style={{...props.style}}
+      className="renderer"
+      style={{
+        opacity: props.variableOpacity ? props.u.zoom.interpolate(z => _.clamp(z / 50 - 0.05, 0, 1)) : 1.0,
+      }}
       ref={ref} />
   );
 });
