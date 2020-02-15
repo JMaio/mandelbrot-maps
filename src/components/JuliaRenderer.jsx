@@ -77,6 +77,24 @@ export default function JuliaRenderer(props) {
       });
     },
 
+    onWheel: ({ event, movement: [mx, my], vxvy: [vx, vy] }) => {
+      // x, y obtained from event
+      let z = zoom.getValue();
+      let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
+
+      console.log(newZ, my, vy);
+      // console.log(vy);
+
+      setControlZoom({
+        zoom: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+        config: {
+          // bias velocity towards zooming in (vy negative )
+          // if zooming
+          velocity: _.clamp(vy * (vy < 0 ? 2.5 : 1.5), -10, 10), // * z**0.9 - my/15,
+        }
+      });
+    },
+    
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue() }) => {
 
       // change according to this formula:
@@ -123,6 +141,7 @@ export default function JuliaRenderer(props) {
         u={{
           zoom: zoom,
           pos: pos,
+          c: props.c,
           maxI: maxI,
           screenScaleMultiplier: screenScaleMultiplier,
         }}

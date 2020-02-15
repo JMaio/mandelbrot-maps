@@ -42,7 +42,7 @@ export default function MandelbrotRenderer(props) {
 
 
   // read incoming props
-  const [{ pos, realPos }, setControlPos] = props.controls.pos;
+  const [{ pos }, setControlPos] = props.controls.pos;
   const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;

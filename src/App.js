@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from 'react';
 import './App.css';
-import { Grid } from '@material-ui/core';
+import { Grid, Card, Typography } from '@material-ui/core';
 import ZoomBar from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
 
 import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
-import { useSpring } from 'react-spring';
+import { useSpring, animated } from 'react-spring';
 import JuliaRenderer from './components/JuliaRenderer';
 import { useWindowSize } from './components/utils';
 
@@ -18,23 +18,23 @@ function App() {
 
   let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
-  let maxIter = useState(100);
+  let maxIter = useState(250);
   // eslint-disable-next-line
   let [maxI, setMaxI] = maxIter;
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = -1e-7;
+  const screenScaleMultiplier = 1e-7;
 
-  const startPos = [-.743030, .126433];
+  const startPos = [-0.743030, 0.126433];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
   const startZoom = 165.0;
 
   const mandelbrotControls = {
     pos: useSpring(() => ({
-      pos: startPos.map(x => -x / screenScaleMultiplier),
+      pos: startPos.map(x => x / screenScaleMultiplier),
       config: defaultSpringConfig,
     })),
 
@@ -54,7 +54,33 @@ function App() {
   
       config: { mass: 1, tension: 600, friction: 50 },
     })),
-  }
+  };
+
+  const juliaControls = {
+    pos: useSpring(() => ({
+      pos: [0, 0],
+      config: defaultSpringConfig,
+    })),
+
+    rot: useSpring(() => ({
+      theta: 0,
+      last_pointer_angle: 0,
+      itheta: 0,
+      config: defaultSpringConfig,
+    })),
+
+    zoom: useSpring(() => ({
+      zoom: 0.5,
+      last_pointer_dist: 0,
+  
+      minZoom: 0.5,
+      maxZoom: 100000,
+  
+      config: { mass: 1, tension: 600, friction: 50 },
+    })),
+  };
+
+  // const [{ pos }, setPos] = mandelbrotControls.pos;
   
   return (
     <Fragment>
@@ -67,6 +93,26 @@ function App() {
           position: "absolute",
         }}
       >
+        <Card
+        style={{
+          width: "auto",
+          position: "absolute",
+          zIndex: 2,
+          right: 0,
+          top: 0,
+          margin: 20,
+          padding: 5,
+        }}
+        >
+          <Typography align="right">
+            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+          </Typography>
+          {/* <Typography align="right">
+            <animated.span>{juliaControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{juliaControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+          </Typography> */}
+        </Card>
         <Grid item xs className="renderer">
           <MandelbrotRenderer
             controls={mandelbrotControls}
@@ -78,8 +124,10 @@ function App() {
           // style={{ display: "none" }}
           >
           <JuliaRenderer
-            controls={mandelbrotControls}
+            c={mandelbrotControls.pos[0].pos}
+            controls={juliaControls}
             maxiter={maxI}
+            screenmult={screenScaleMultiplier}
           />
         </Grid>
       </Grid>
@@ -90,7 +138,7 @@ function App() {
         alignItems="flex-end"
       >
         <ZoomBar
-          controller={mandelbrotControls.zoom}
+          controller={juliaControls.zoom}
         />
 
         <RotationControl
@@ -103,9 +151,9 @@ function App() {
 
         <IterationSlider
           maxiter={maxIter}
-          style={{
-            display: "none",
-          }}
+          // style={{
+          //   display: "none",
+          // }}
         />
       </Grid>
     </Fragment>
