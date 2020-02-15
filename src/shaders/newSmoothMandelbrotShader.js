@@ -1,6 +1,15 @@
 // TODO set max iterations as parameter, crosshair as parameter
 
-const newSmoothMandelbrotShader = `
+const newSmoothMandelbrotShader = ({
+        maxI = 300, 
+        AA = 1, 
+        B = 64
+    },
+    crosshair = {
+        stroke: 2, 
+        radius: 100, 
+    }
+) => `
 // Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
@@ -9,14 +18,14 @@ const newSmoothMandelbrotShader = `
 //
 // http://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
 
-// TODO: make parameter
-#define AA 1
-#define MAXI 300
-#define B 64.0
+// render parameters
+#define AA ${AA}
+#define MAXI ${maxI}
+#define B ${B.toFixed(1)}
 
 // crosshair parameters
-#define cross_stroke 2.
-#define cross_size   100.
+#define cross_stroke ${crosshair.stroke.toFixed(1)}
+#define cross_radius ${crosshair.radius.toFixed(1)}
 
 // set high float precision (lower than this may break colours on mobile)
 precision highp float;
@@ -38,7 +47,7 @@ bool crosshair( float x, float y ) {
     // crosshair in centre of screen
     (abs_x <= cross_stroke || abs_y <= cross_stroke) &&
     // crosshair size / "radius"
-    (abs_x <= cross_size && abs_y <= cross_size);
+    (abs_x <= cross_radius && abs_y <= cross_radius);
 }
 
 float mandelbrot( in vec2 c ) {
@@ -114,7 +123,7 @@ void main() {
     // (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_stroke || abs(2.0*gl_FragCoord.y - resolution.y) <= cross_stroke)
     // &&
     // // crosshair size / "radius"
-    // (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_size && abs(2.0*gl_FragCoord.y - resolution.y) <= cross_size)
+    // (abs(2.0*gl_FragCoord.x - resolution.x) <= cross_radius && abs(2.0*gl_FragCoord.y - resolution.y) <= cross_radius)
     // ) {
     //     col = 1. - col;
     // }
