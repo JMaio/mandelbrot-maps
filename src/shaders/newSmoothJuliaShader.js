@@ -1,6 +1,6 @@
 // TODO set max iterations as parameter
 
-const newSmoothJuliaShader = (
+const newSmoothJuliaShader = ({
   maxI = 300, 
   AA = 1, 
   B = 64, 
@@ -8,7 +8,7 @@ const newSmoothJuliaShader = (
   //     stroke: 0, 
   //     radius: 0
   // },
-) => `
+}) => `
 
 #define AA ${AA}
 #define MAXI ${maxI}

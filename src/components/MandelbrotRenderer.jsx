@@ -54,7 +54,7 @@ export default function MandelbrotRenderer(props) {
   });
   const miniFragShader = newSmoothMandelbrotShader({
     maxI: maxI,
-    AA: AA, 
+    AA: 2, 
     }, {
     stroke: 1, 
     radius: 30,
@@ -84,13 +84,13 @@ export default function MandelbrotRenderer(props) {
         // config: { velocity: vd, decay: true }
       });
 
-      setControlRot({
-        theta: t + (a - lpa),
-        last_pointer_angle: a,
+      // setControlRot({
+      //   theta: t + (a - lpa),
+      //   last_pointer_angle: a,
 
-        immediate: down,
-        // config: { velocity: va, decay: true }
-      });
+      //   immediate: down,
+      //   // config: { velocity: va, decay: true }
+      // });
 
       return memo;
     },
@@ -100,20 +100,14 @@ export default function MandelbrotRenderer(props) {
         // set theta so it's remembered next time
         theta: va,
 
-        config: { velocity: va, decay: true }
+        // config: { velocity: va, decay: true }
       });
     },
 
     onWheel: ({ event, movement: [mx, my], vxvy: [vx, vy] }) => {
       // x, y obtained from event
       let z = zoom.getValue();
-
-      // let newZ = z * (1.05 - Math.sign(my) * (Math.abs(my)/1000));
-      // let newZ = z * (1.05 - Math.sign(my) * d**2 - d);
       let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
-
-      console.log(newZ, my, vy);
-      // console.log(vy);
 
       setControlZoom({
         zoom: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
@@ -185,7 +179,7 @@ export default function MandelbrotRenderer(props) {
       <animated.div style={{
         position: "absolute",
         zIndex: 2,
-        margin: 20,
+        margin: "1rem",
         left: 0,
         bottom: 0,
         height: "5rem",
@@ -195,7 +189,9 @@ export default function MandelbrotRenderer(props) {
         borderRadius: "50em",
         overflow: "hidden",
         opacity: zoom.interpolate(z => _.clamp(z / 10 - .5, 0, 1)),
-      }}>
+      }}
+      onClick={() => setControlZoom({ zoom: 1, })}
+      >
         <WebGLCanvas 
           id="mini-mandelbrot"
           fragShader={miniFragShader}
@@ -210,7 +206,6 @@ export default function MandelbrotRenderer(props) {
           glRef={miniGl}
           
           mini={true}
-          variableOpacity={true}
         />
       </animated.div>
     </div>

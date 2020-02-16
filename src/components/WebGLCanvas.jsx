@@ -22,7 +22,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
   const programInfo      = useRef(null);
 
   // have a zoom callback
-  const zoom = mini ? () => Math.max(0.5, props.u.zoom.getValue() / 10) : () => props.u.zoom.getValue();
+  const zoom = mini ? () => 1.0 : () => props.u.zoom.getValue();
   const currZoom = useRef(zoom);
 
   useEffect(() => {
