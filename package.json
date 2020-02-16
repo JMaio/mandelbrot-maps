@@ -18,6 +18,7 @@
     "react-use-gesture": "^6.0.1",
     "twgl.js": "^4.14.2",
     "typeface-roboto": "^0.0.75",
+    "typescript": "^3.7.5",
     "vec-la": "^1.5.0"
   },
   "scripts": {
