@@ -1,17 +1,13 @@
-import React, { Fragment, useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 import _ from 'lodash';
-import { Typography, Card, Grid } from "@material-ui/core";
 
 import { addV, useGesture } from "react-use-gesture";
 import { scale } from 'vec-la';
 
 import { animated } from "react-spring";
 
-import * as twgl from "twgl.js";
 
-import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
-import smoothMandelbrotShader from "../shaders/smoothMandelbrotShader";
-import newSmoothMandelbrotShader, {newSmoothMandelbrotShader as mandelbrotShader} from "../shaders/newSmoothMandelbrotShader";
+import newSmoothMandelbrotShader from "../shaders/newSmoothMandelbrotShader";
 import WebGLCanvas from "./WebGLCanvas";
 // import mShader from "../shaders/smooth_mandelbrot_shader.glsl";
 
@@ -32,13 +28,7 @@ export default function MandelbrotRenderer(props) {
   // temporary bounds to prevent excessive panning
   // eslint-disable-next-line
   const radialBound = 1;
-  const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
-  const bounds = {
-    top:    relativeRadialBound,
-    bottom: relativeRadialBound,
-    left:   relativeRadialBound,
-    right:  relativeRadialBound,
-  };
+  // const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
 
 
   // read incoming props
@@ -68,11 +58,11 @@ export default function MandelbrotRenderer(props) {
     onDragStart:  ({ event }) => event.preventDefault(),
     onPinchStart: ({ event }) => event.preventDefault(),
 
-    onPinch: ({ offset: [d, a], down, vdva: [vd, va], last, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
+    onPinch: ({ offset: [d], down, vdva, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
-      let [t, lpa, z, lpd] = memo;
-      console.log(d);
+      let [,, z, lpd] = memo;
+      // console.log(d);
       let d_rel = d / 250;
       let curr_zoom = zoom.getValue();
 
@@ -95,7 +85,7 @@ export default function MandelbrotRenderer(props) {
       return memo;
     },
 
-    onPinchEnd: ({ vdva: [vd, va] }) => {
+    onPinchEnd: ({ vdva: [, va] }) => {
       setControlRot({
         // set theta so it's remembered next time
         theta: va,
@@ -104,7 +94,7 @@ export default function MandelbrotRenderer(props) {
       });
     },
 
-    onWheel: ({ event, movement: [mx, my], vxvy: [vx, vy] }) => {
+    onWheel: ({ movement: [, my], vxvy: [, vy] }) => {
       // x, y obtained from event
       let z = zoom.getValue();
       let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
@@ -188,7 +178,7 @@ export default function MandelbrotRenderer(props) {
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         borderRadius: "50em",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z / 10 - .5, 0, 1)),
+        opacity: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1)),
       }}
       onClick={() => setControlZoom({ zoom: 1, })}
       >

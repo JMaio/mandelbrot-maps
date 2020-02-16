@@ -1,11 +1,7 @@
-import React, { useRef, useEffect, useCallback, Fragment } from "react";
+import React, { useRef, useEffect } from "react";
 import { useGesture, addV } from "react-use-gesture";
 import { scale } from "vec-la";
-import * as twgl from "twgl.js";
-import { Card, Typography } from "@material-ui/core";
 import { animated } from "react-spring";
-import { fullVertexShader, fullscreenVertexArray } from "../shaders/fullVertexShader";
-import smoothJuliaShader from "../shaders/smoothJuliaShader";
 import newSmoothJuliaShader from "../shaders/newSmoothJuliaShader";
 import _ from "lodash";
 import WebGLCanvas from "./WebGLCanvas";
@@ -48,11 +44,11 @@ export default function JuliaRenderer(props) {
     onDragStart:  ({ event }) => event.preventDefault(),
     onPinchStart: ({ event }) => event.preventDefault(),
 
-    onPinch: ({ offset: [d, a], down, vdva: [vd, va], last, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
+    onPinch: ({ offset: [d], down, vdva, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
       // alert(mx, my)
       // let [theta, lpa] = memo
-      let [t, lpa, z, lpd] = memo;
-      console.log(d);
+      let [,, z, lpd] = memo;
+      // console.log(d);
       let d_rel = d / 250;
       let curr_zoom = zoom.getValue();
 
@@ -75,7 +71,7 @@ export default function JuliaRenderer(props) {
       return memo;
     },
 
-    onPinchEnd: ({ vdva: [vd, va] }) => {
+    onPinchEnd: ({ vdva: [, va] }) => {
       setControlRot({
         // set theta so it's remembered next time
         theta: va,
@@ -84,7 +80,7 @@ export default function JuliaRenderer(props) {
       });
     },
 
-    onWheel: ({ event, movement: [mx, my], vxvy: [vx, vy] }) => {
+    onWheel: ({ movement: [, my], vxvy: [, vy] }) => {
       // x, y obtained from event
       let z = zoom.getValue();
       let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
@@ -167,7 +163,7 @@ export default function JuliaRenderer(props) {
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         borderRadius: "50em",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z / 5 - .5, 0, 1)),
+        opacity: zoom.interpolate(z => _.clamp(z / 5 - 0.5, 0, 1)),
       }}
       onClick={() => setControlZoom({ zoom: 1, })}
       >

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { Grid, Card, Typography } from '@material-ui/core';
 import ZoomBar from './components/ZoomBar';
@@ -83,8 +83,9 @@ function App() {
   // const [{ pos }, setPos] = mandelbrotControls.pos;
   
   return (
-    <Fragment>
+    <Grid container>
       <Grid
+        item
         container
         direction={size.width < size.height ? "column" : "row"}
         justify="center"
@@ -108,10 +109,6 @@ function App() {
             <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
             <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
           </Typography>
-          {/* <Typography align="right">
-            <animated.span>{juliaControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
-            <animated.span>{juliaControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
-          </Typography> */}
         </Card>
         <Grid item xs className="renderer">
           <MandelbrotRenderer
@@ -132,6 +129,7 @@ function App() {
         </Grid>
       </Grid>
       <Grid
+        item
         container
         direction="column"
         justify="space-evenly"
@@ -156,7 +154,7 @@ function App() {
           }}
         />
       </Grid>
-    </Fragment>
+    </Grid>
   );
 }
 

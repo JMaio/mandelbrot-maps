@@ -45,6 +45,8 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.1.1"
+    "gh-pages": "^2.1.1",
+    "jest-canvas-mock": "^2.2.0",
+    "jest-webgl-canvas-mock": "^0.2.3"
   }
 }

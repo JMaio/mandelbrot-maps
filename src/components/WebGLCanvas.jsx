@@ -32,7 +32,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
   // initial context-getter
   useEffect(() => {
     gl.current = ref.current.getContext('webgl');
-    console.log(`got canvas context: ${gl.current}`);
+    // console.log(`got canvas context: ${gl.current}`);
     bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
   }, [gl, ref]);
 
