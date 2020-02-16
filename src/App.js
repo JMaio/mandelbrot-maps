@@ -151,9 +151,9 @@ function App() {
 
         <IterationSlider
           maxiter={maxIter}
-          // style={{
-          //   display: "none",
-          // }}
+          style={{
+            display: "none",
+          }}
         />
       </Grid>
     </Fragment>

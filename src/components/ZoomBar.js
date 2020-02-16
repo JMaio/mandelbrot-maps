@@ -52,7 +52,7 @@ export default function ZoomBar(props) {
     style={{
       width: fabSize,
       display: "flex",
-      zIndex: 2,
+      zIndex: 10,
     }}>
         <Paper style={{
           borderRadius: "5em",
