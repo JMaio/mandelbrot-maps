@@ -136,7 +136,7 @@ export function ZoomBarFab(props) {
     
   }, { event: { passive: false, capture: false }, domTarget: ref })
   
-  React.useEffect(bind, [bind])
+  useEffect(bind, [bind])
 
   return (
     <animated.div 
