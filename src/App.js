@@ -1,101 +1,153 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { Grid } from '@material-ui/core';
-import ZoomBar, { } from './components/ZoomBar';
+import { Grid, Card, Typography } from '@material-ui/core';
+import ZoomBar from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
-// import * from "./renderers/";
 
 import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
-import { useSpring } from 'react-spring';
+import { useSpring, animated } from 'react-spring';
+import JuliaRenderer from './components/JuliaRenderer';
+import { useWindowSize } from './components/utils';
 
 
 function App() {
 
+  const size = useWindowSize();
+
   let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
-  let maxIter = useState(100);
+  let maxIter = useState(250);
   // eslint-disable-next-line
   let [maxI, setMaxI] = maxIter;
 
-  // let [glRenderer, setGlRenderer] = useState(false);
-  // let toggleRenderer = () => {};
+  // this multiplier subdivides the screen space into smaller increments
+  // to allow for velocity calculations to not immediately decay, due to the
+  // otherwise small scale that is being mapped to the screen.
+  const screenScaleMultiplier = 1e-7;
 
+  const startPos = [-0.743030, 0.126433];
+  // const startPos = [-.7426482, .1271875 ];
+  // const startPos = [-0.1251491, -0.8599647];
+  const startZoom = 165.0;
+  const miniSize = useState(100);
 
-  // render function passed from renderer
-  // let [render, setRender] = useState();
+  const mandelbrotControls = {
+    pos: useSpring(() => ({
+      pos: startPos.map(x => x / screenScaleMultiplier),
+      config: defaultSpringConfig,
+    })),
 
-  // const changeRenderFunc = f => setRender(f);
+    rot: useSpring(() => ({
+      theta: 0,
+      last_pointer_angle: 0,
+      itheta: 0,
+      config: defaultSpringConfig,
+    })),
 
-  const controlPos = useSpring(() => ({
-    // pos: [-1, 0],
-    pos: [0, 0],
-    // pos: [0.45193823302480385, -0.3963913556925211],
-    // pos: [-0.743030, -0.126433],
-
-    // onRest: () => {
-    //   // render the fractal
-    //   // render();
-    // },
-    config: defaultSpringConfig,
-  }));
+    zoom: useSpring(() => ({
+      zoom: startZoom,
+      last_pointer_dist: 0,
   
-  // const controlScreenPos = useSpring(() => ({
-  //   screenpos: [0, 0],
-    
-  //   config: defaultSpringConfig,
-  //   //  {
-  //   //   ...
-  //   //   immediate: true,
-  //   // }
-  // }))
+      minZoom: 0.5,
+      maxZoom: 100000,
+  
+      config: { mass: 1, tension: 600, friction: 50 },
+    })),
+  };
 
-  const controlRot = useSpring(() => ({
-    theta: 0,
-    last_pointer_angle: 0,
-    itheta: 0,
+  const juliaControls = {
+    pos: useSpring(() => ({
+      pos: [0, 0],
+      config: defaultSpringConfig,
+    })),
 
-    config: defaultSpringConfig,
-  }))
+    rot: useSpring(() => ({
+      theta: 0,
+      last_pointer_angle: 0,
+      itheta: 0,
+      config: defaultSpringConfig,
+    })),
 
-  const controlZoom = useSpring(() => ({
-    zoom: 1.0,
-    last_pointer_dist: 0,
+    zoom: useSpring(() => ({
+      zoom: 0.5,
+      last_pointer_dist: 0,
+  
+      minZoom: 0.5,
+      maxZoom: 100000,
+  
+      config: { mass: 1, tension: 600, friction: 50 },
+    })),
+  };
 
-    minZoom: 0.5,
-    maxZoom: 100000,
-
-    config: { mass: 1, tension: 600, friction: 50 },
-  }))
-
+  // const [{ pos }, setPos] = mandelbrotControls.pos;
+  
   return (
-    <Fragment>
-      <MandelbrotRenderer
-        style={{
-          position: 'absolute',
-          zIndex: 0,
-        }}
-        pos={controlPos}
-        // screenpos={controlScreenPos}
-        rot={controlRot}
-        zoom={controlZoom}
-        maxiter={maxI}
-        // renderer={glRenderer ? }
-      />
+    <Grid container>
       <Grid
+        item
+        container
+        direction={size.width < size.height ? "column" : "row"}
+        justify="center"
+        className="fullSize"
+        style={{
+          position: "absolute",
+        }}
+      >
+        <Card
+        style={{
+          width: "auto",
+          position: "absolute",
+          zIndex: 2,
+          right: 0,
+          top: 0,
+          margin: 20,
+          padding: 5,
+        }}
+        >
+          <Typography align="right">
+            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+          </Typography>
+        </Card>
+        <Grid item xs className="renderer">
+          <MandelbrotRenderer
+            controls={mandelbrotControls}
+            maxiter={maxI}
+            screenmult={screenScaleMultiplier}
+            miniSize={miniSize}
+          />
+        </Grid>
+        <Grid item xs className="renderer" 
+          // style={{ display: "none" }}
+          >
+          <JuliaRenderer
+            c={mandelbrotControls.pos[0].pos}
+            controls={juliaControls}
+            maxiter={maxI}
+            screenmult={screenScaleMultiplier}
+            miniSize={miniSize}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        item
         container
         direction="column"
         justify="space-evenly"
         alignItems="flex-end"
       >
         <ZoomBar
-          controller={controlZoom}
+          controller={mandelbrotControls.zoom}
+          style={{
+            display: "none",
+          }}
         />
 
         <RotationControl
           className="Control"
-          controller={controlRot}
+          controller={mandelbrotControls.rot}
           style={{
             display: "none",
           }}
@@ -107,19 +159,8 @@ function App() {
             display: "none",
           }}
         />
-
-        {/* <FormControlLabel
-          control={
-            // <Switch checked={state.checkedA} onChange={handleChange('checkedA')} value="checkedA" />
-            <Switch onChange={() => setGlRenderer(!glRenderer)} />
-          }
-          label="use GL"
-          style={{
-            display: "none",
-          }}
-        /> */}
       </Grid>
-    </Fragment>
+    </Grid>
   );
 }
 

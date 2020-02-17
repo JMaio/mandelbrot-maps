@@ -52,7 +52,8 @@ export default function ZoomBar(props) {
     style={{
       width: fabSize,
       display: "flex",
-      zIndex: 2,
+      zIndex: 10,
+      ...props.style,
     }}>
         <Paper style={{
           borderRadius: "5em",
@@ -136,7 +137,7 @@ export function ZoomBarFab(props) {
     
   }, { event: { passive: false, capture: false }, domTarget: ref })
   
-  React.useEffect(bind, [bind])
+  useEffect(bind, [bind])
 
   return (
     <animated.div 

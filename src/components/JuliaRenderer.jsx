@@ -1,17 +1,13 @@
 import React, { useRef, useEffect } from "react";
-import _ from 'lodash';
-
-import { addV, useGesture } from "react-use-gesture";
-import { scale } from 'vec-la';
-
+import { useGesture, addV } from "react-use-gesture";
+import { scale } from "vec-la";
 import { animated } from "react-spring";
-
-
-import newSmoothMandelbrotShader from "../shaders/newSmoothMandelbrotShader";
+import newSmoothJuliaShader from "../shaders/newSmoothJuliaShader";
+import _ from "lodash";
 import WebGLCanvas from "./WebGLCanvas";
-// import mShader from "../shaders/smooth_mandelbrot_shader.glsl";
 
-export default function MandelbrotRenderer(props) {
+
+export default function JuliaRenderer(props) {
 
   // variables to hold canvas and webgl information
   const canvasRef = useRef(null);
@@ -25,30 +21,20 @@ export default function MandelbrotRenderer(props) {
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = props.screenmult;
 
-  // temporary bounds to prevent excessive panning
-  // eslint-disable-next-line
-  const radialBound = 1;
-  // const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
-
-
   // read incoming props
   const [{ pos }, setControlPos] = props.controls.pos;
   const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
+
   const AA = 1;
 
-  const fragShader = newSmoothMandelbrotShader({
-    maxI: maxI,
-    AA: AA
-  });
-  const miniFragShader = newSmoothMandelbrotShader({
+  const fragShader = newSmoothJuliaShader(maxI, AA);
+
+  const miniFragShader = newSmoothJuliaShader({
     maxI: maxI,
     AA: 2, 
-    }, {
-    stroke: 1, 
-    radius: 30,
-  });
+    });
 
   // the hook responsible for handling gestures
   const touchBind = useGesture({
@@ -108,7 +94,7 @@ export default function MandelbrotRenderer(props) {
         }
       });
     },
-
+    
     onDrag: ({ down, movement, velocity, direction, memo = pos.getValue() }) => {
 
       // change according to this formula:
@@ -147,29 +133,28 @@ export default function MandelbrotRenderer(props) {
   });
 
   useEffect(touchBind, [touchBind]);  
-
-
+  
   return (
     <div className="renderer" style={{
       position: "relative"
     }}>
-      <WebGLCanvas 
-        id="mandelbrot"
-        fragShader={fragShader}
-        touchBind={touchBind}
-        u={{
-          zoom: zoom,
-          pos: pos,
-          maxI: maxI,
-          screenScaleMultiplier: screenScaleMultiplier,
-        }}
-        ref={canvasRef}
-        glRef={gl}
-      />
+      <WebGLCanvas
+          id="julia"
+          fragShader={fragShader}
+          u={{
+            zoom: zoom,
+            pos: pos,
+            c: props.c,
+            maxI: maxI,
+            screenScaleMultiplier: screenScaleMultiplier,
+          }}
+          ref={canvasRef}
+          glRef={gl}
+        />
       <animated.div style={{
         position: "absolute",
         zIndex: 2,
-        margin: "0.5rem",
+        margin: 20,
         left: 0,
         bottom: 0,
         height: props.miniSize[0],
@@ -178,8 +163,8 @@ export default function MandelbrotRenderer(props) {
         // border: "1px solid #000",
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1)),
-        display: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1) === 0 ? "none" : "block"),
+        opacity: zoom.interpolate(z => _.clamp(z / 5 - 0.5, 0, 1)),
+        display: zoom.interpolate(z => _.clamp(z / 5 - 0.5, 0, 1) === 0 ? "none" : "block"),
       }}
       onClick={() => setControlZoom({ zoom: 1 })}
       >
@@ -190,6 +175,7 @@ export default function MandelbrotRenderer(props) {
           u={{
             zoom: zoom,
             pos: pos,
+            c: props.c,
             maxI: maxI,
             screenScaleMultiplier: screenScaleMultiplier,
           }}
@@ -201,6 +187,4 @@ export default function MandelbrotRenderer(props) {
       </animated.div>
     </div>
   )
-
-
 }
