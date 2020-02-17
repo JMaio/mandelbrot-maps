@@ -136,7 +136,10 @@ function App() {
         alignItems="flex-end"
       >
         <ZoomBar
-          controller={juliaControls.zoom}
+          controller={mandelbrotControls.zoom}
+          style={{
+            display: "none",
+          }}
         />
 
         <RotationControl
