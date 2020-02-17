@@ -157,15 +157,16 @@ export default function JuliaRenderer(props) {
         margin: 20,
         left: 0,
         bottom: 0,
-        height: "5rem",
-        width: "5rem",
+        height: props.miniSize[0],
+        width: props.miniSize[0],
+        borderRadius: props.miniSize[0],
         // border: "1px solid #000",
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
-        borderRadius: "50em",
         overflow: "hidden",
         opacity: zoom.interpolate(z => _.clamp(z / 5 - 0.5, 0, 1)),
+        display: zoom.interpolate(z => _.clamp(z / 5 - 0.5, 0, 1) === 0 ? "none" : "block"),
       }}
-      onClick={() => setControlZoom({ zoom: 1, })}
+      onClick={() => setControlZoom({ zoom: 1 })}
       >
         <WebGLCanvas 
           id="mini-mandelbrot"

@@ -31,6 +31,7 @@ function App() {
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
   const startZoom = 165.0;
+  const miniSize = useState(100);
 
   const mandelbrotControls = {
     pos: useSpring(() => ({
@@ -115,6 +116,7 @@ function App() {
             controls={mandelbrotControls}
             maxiter={maxI}
             screenmult={screenScaleMultiplier}
+            miniSize={miniSize}
           />
         </Grid>
         <Grid item xs className="renderer" 
@@ -125,6 +127,7 @@ function App() {
             controls={juliaControls}
             maxiter={maxI}
             screenmult={screenScaleMultiplier}
+            miniSize={miniSize}
           />
         </Grid>
       </Grid>
