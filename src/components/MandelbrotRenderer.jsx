@@ -93,8 +93,8 @@ export default function MandelbrotRenderer(props) {
         // border: "1px solid #000",
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1)),
-        display: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1) === 0 ? "none" : "block"),
+        opacity: zoom.interpolate(z => _.clamp(z - 1.5, 0, 1)),
+        display: zoom.interpolate(z => _.clamp(z - 1.5, 0, 1) === 0 ? "none" : "block"),
       }}
       onClick={() => setControlZoom({ zoom: 1 })}
       >
