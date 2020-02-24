@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Grid, Card, Typography } from '@material-ui/core';
+import { Grid, Card, Typography, Fab } from '@material-ui/core';
 import ZoomBar from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
@@ -10,7 +10,8 @@ import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 import { useSpring, animated } from 'react-spring';
 import JuliaRenderer from './components/JuliaRenderer';
 import { useWindowSize } from './components/utils';
-
+import SettingsSpeedDial from "./components/SettingsSpeedDial";
+import SettingsMenu from "./components/SettingsMenu";
 
 function App() {
 
@@ -160,6 +161,16 @@ function App() {
           }}
         />
       </Grid>
+      <SettingsMenu />
+      {/* <Fab size="small" color="primary" aria-label="settings" style={{
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        zIndex: 2,
+        margin: "1em",
+      }}>
+        <SettingsIcon />
+      </Fab> */}
     </Grid>
   );
 }
