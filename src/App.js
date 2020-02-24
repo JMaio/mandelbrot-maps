@@ -89,7 +89,7 @@ function App() {
       <Grid
         item
         container
-        direction={size.width < size.height ? "column" : "row"}
+        direction={size.width < size.height ? "column-reverse" : "row"}
         justify="center"
         className="fullSize"
         style={{
