@@ -91,6 +91,7 @@ export default function SettingsMenu(props) {
                             </Grid> */}
                             <Grid item>
                                 <IconButton aria-label="info" size="medium" onClick={() => {
+                                    props.toggleInfo();
                                     setAnchorEl(null);
                                 }}>
                                     <InfoIcon fontSize="inherit" />

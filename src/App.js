@@ -12,6 +12,8 @@ import JuliaRenderer from './components/JuliaRenderer';
 import { useWindowSize } from './components/utils';
 import SettingsMenu from "./components/SettingsMenu";
 
+import InfoDialog from './components/InfoDialog';
+
 function App() {
 
   const size = useWindowSize();
@@ -103,6 +105,10 @@ function App() {
       config: resetZoomSpringConfig,
     });
   }
+
+  const [showInfo, setShowInfo] = useState(false)
+
+  let toggleInfo = () => setShowInfo(!showInfo);
 
   let controls = {
     coords: useState(false),
@@ -236,7 +242,11 @@ function App() {
       <SettingsMenu 
         settings={settings}
         reset={() => reset()}
+        toggleInfo={() => toggleInfo()}
       />
+
+      <InfoDialog ctrl={[showInfo, setShowInfo]} />
+
     </Grid>
   );
 }
