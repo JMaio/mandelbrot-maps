@@ -2,9 +2,10 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles, Fab, Switch, Popover, FormGroup, FormControlLabel, Slider, Typography, Grid, Divider, Backdrop, Box } from '@material-ui/core';
+import { makeStyles, Fab, Switch, Popover, FormGroup, FormControlLabel, Slider, Typography, Grid, Divider, Backdrop, Box, IconButton } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MyLocationIcon from '@material-ui/icons/MyLocation';
+import InfoIcon from '@material-ui/icons/Info';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -79,7 +80,24 @@ export default function SettingsMenu(props) {
                         paddingTop: "1em",
                         paddingBottom: "1em",
                     }}>
-                        <Box variant="h1" fontSize={20} align="center">Configuration</Box>
+                        <Grid item container alignItems="center" justify="space-around">
+                            <Grid item>
+                                <Typography variant="h1" style={{ fontSize: 20, paddingLeft: 20, paddingRight: 20 }}>
+                                    Configuration
+                                </Typography>
+                            </Grid>
+                            <Divider orientation="vertical" flexItem />
+                            {/* <Grid item style={{ height: "100%" }}>
+                            </Grid> */}
+                            <Grid item>
+                                <IconButton aria-label="info" size="medium" onClick={() => {
+                                    setAnchorEl(null);
+                                }}>
+                                    <InfoIcon fontSize="inherit" />
+                                </IconButton>
+                            </Grid>
+
+                        </Grid>
 
                         {props.settings.map((group, i) =>
                             <Grid item key={group.title}>
@@ -87,7 +105,8 @@ export default function SettingsMenu(props) {
                                     marginTop: 10,
                                     marginBottom: 10,
                                 }} />
-                                <Box variant="h2" fontSize={16} align="left">{group.title}</Box>
+                                <Typography variant="h2" style={{ fontSize: 17, marginBottom: 4 }}>{group.title}</Typography>
+                                {/* <Box variant="h2" fontSize={16} align="left"></Box> */}
                                 <FormGroup>
                                 {Object.values(group.items).map((ctrl, j) => 
                                     <FormControlLabel 

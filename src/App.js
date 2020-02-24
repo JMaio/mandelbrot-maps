@@ -25,6 +25,7 @@ function App() {
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = 1e-7;
+  const [dpr, setDpr] = useState(window.devicePixelRatio || 1);
 
   const startPos = [-0.743030, 0.126433];
   // const startPos = [-.7426482, .1271875 ];
@@ -153,14 +154,19 @@ function App() {
         />,
         placement: "top"},
       dpr: {
-        name: `Use device pixel ratio (${window.devicePixelRatio || 1})`, 
+        name: `Use pixel ratio (${window.devicePixelRatio || 1})`, 
         ctrl: <Switch
           checked={controls.dpr[0]} 
-          onChange={() => controls.dpr[1](!controls.dpr[0])}
+          onChange={() => {
+            let useDpr = !controls.dpr[0];
+            // console.log(useDpr ? window.devicePixelRatio : 1);
+            setDpr(useDpr ? window.devicePixelRatio : 1)
+            controls.dpr[1](useDpr);
+          }}
         />
       },
       aa: {
-        name: 'Anti-aliasing (slow!)', 
+        name: 'Anti-aliasing (slow)', 
         ctrl: <Switch
           checked={controls.aa[0]} 
           onChange={() => controls.aa[1](!controls.aa[0])}
@@ -208,7 +214,7 @@ function App() {
             miniSize={miniSize}
             enableMini={controls.miniViewer[0]}
             aa={controls.aa[0]}
-            dpr={controls.dpr[0] ? window.devicePixelRatio : 1}
+            dpr={dpr}
           />
         </Grid>
         <Grid item xs className="renderer" 
@@ -222,52 +228,15 @@ function App() {
             miniSize={miniSize}
             enableMini={controls.miniViewer[0]}
             aa={controls.aa[0]}
-            dpr={controls.dpr[0] ? window.devicePixelRatio : 1}
+            dpr={dpr}
           />
         </Grid>
       </Grid>
-      {/* <Grid
-        item
-        container
-        direction="column"
-        justify="space-evenly"
-        alignItems="flex-end"
-      >
-        {/* <ZoomBar
-          controller={mandelbrotControls.zoom}
-          style={{
-            display: "none",
-          }}
-        />
 
-        <RotationControl
-          className="Control"
-          controller={mandelbrotControls.rot}
-          style={{
-            display: "none",
-          }}
-        /> */}
-
-        {/* <IterationSlider
-          maxiter={controls.maxIter}
-          style={{
-            display: "none",
-          }}
-        />
-      </Grid> */}
       <SettingsMenu 
         settings={settings}
         reset={() => reset()}
       />
-      {/* <Fab size="small" color="primary" aria-label="settings" style={{
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        zIndex: 2,
-        margin: "1em",
-      }}>
-        <SettingsIcon />
-      </Fab> */}
     </Grid>
   );
 }
