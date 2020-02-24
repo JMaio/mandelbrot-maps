@@ -1,8 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles, Fab, Switch, Popover, FormGroup, FormControlLabel, Slider, Typography, Grid, Divider, Backdrop, Box, IconButton } from '@material-ui/core';
+import { makeStyles, Fab, Popover, FormGroup, FormControlLabel, Typography, Grid, Divider, Backdrop, IconButton } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MyLocationIcon from '@material-ui/icons/MyLocation';
 import InfoIcon from '@material-ui/icons/Info';
@@ -14,45 +12,27 @@ const useStyles = makeStyles(theme => ({
         right: theme.spacing(2),
         display: "flex",
         flexDirection: "column",
-        // position: 'absolute',
-        // bottom: 0,
-        // right: 0,
         zIndex: 2,
     },
     button: {
         marginTop: 10,
-    },
-    speedDial: {
-        // position: 'absolute',
-        // bottom: theme.spacing(1),
-        // right: theme.spacing(1),
     },
     sliderControl: {
         width: 30,
     }
 }));
 
-// let marks = 
-
 export default function SettingsMenu(props) {
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = event => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     return (
         <div className={classes.root}>
             <Fab aria-controls="menu" 
                 size="small" 
                 aria-haspopup="true"
-                onClick={handleClick}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
                 className={classes.button}
                 >
                 <SettingsIcon />
@@ -63,8 +43,7 @@ export default function SettingsMenu(props) {
                     anchorEl={anchorEl}
                     keepMounted
                     open={Boolean(anchorEl)}
-                    // open={true}
-                    onClose={handleClose}
+                    onClose={() => setAnchorEl(null)}
                     anchorOrigin={{
                         horizontal: "right",
                         vertical: "bottom"
@@ -89,7 +68,9 @@ export default function SettingsMenu(props) {
                             <Divider orientation="vertical" flexItem />
                             <Grid item>
                                 <IconButton aria-label="info" size="medium" onClick={() => {
+                                    // open info panel
                                     props.toggleInfo();
+                                    // close popover
                                     setAnchorEl(null);
                                 }}>
                                     <InfoIcon fontSize="inherit" />
@@ -98,16 +79,15 @@ export default function SettingsMenu(props) {
 
                         </Grid>
 
-                        {props.settings.map((group, i) =>
+                        {props.settings.map((group) =>
                             <Grid item key={group.title}>
                                 <Divider style={{
                                     marginTop: 10,
                                     marginBottom: 4,
                                 }} />
                                 <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>{group.title}</Typography>
-                                {/* <Box variant="h2" fontSize={16} align="left"></Box> */}
                                 <FormGroup>
-                                {Object.values(group.items).map((ctrl, j) => 
+                                {Object.values(group.items).map((ctrl) => 
                                     <FormControlLabel 
                                         label={ctrl.name}
                                         key={ctrl.name}
@@ -129,8 +109,6 @@ export default function SettingsMenu(props) {
                         }} />
 
                         <Button aria-controls="reset" 
-                            // size="small" 
-                            // aria-haspopup="true"
                             onClick={() => props.reset()}
                             className={classes.button}
                             startIcon={<MyLocationIcon />}
@@ -138,10 +116,6 @@ export default function SettingsMenu(props) {
                             Reset position
                         </Button>
                     </Grid>
-                    
-                    {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem> */}
                 </Popover>
             </Backdrop>
         </div>

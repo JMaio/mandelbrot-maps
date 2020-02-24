@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Grid, Card, Typography, Fab, Slider, Switch } from '@material-ui/core';
-import ZoomBar from './components/ZoomBar';
-import IterationSlider from './components/IterationSlider';
-import RotationControl from './components/RotationControl';
+import { Grid, Card, Typography, Slider, Switch } from '@material-ui/core';
 
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
@@ -19,9 +16,6 @@ function App() {
   const size = useWindowSize();
 
   let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
-
-  // eslint-disable-next-line
-  // let [maxI, setMaxI] = maxIter;
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
@@ -121,18 +115,20 @@ function App() {
   let settings = [{
     title: "Interface",
     items: {
-      coords: {
-        name: 'Show coordinates', 
-        ctrl: <Switch 
-          checked={controls.coords[0]} 
-          onChange={() => controls.coords[1](!controls.coords[0])} 
-        />
-      },
       miniViewer: {
         name: 'Mini viewers', 
         ctrl: <Switch 
+          color="primary"
           checked={controls.miniViewer[0]} 
           onChange={() => controls.miniViewer[1](!controls.miniViewer[0])} 
+        />
+      },
+      coords: {
+        name: 'Show coordinates', 
+        ctrl: <Switch 
+          color="primary"
+          checked={controls.coords[0]} 
+          onChange={() => controls.coords[1](!controls.coords[0])} 
         />
       },
     }
@@ -163,6 +159,7 @@ function App() {
         name: `Use pixel ratio (${window.devicePixelRatio || 1})`, 
         ctrl: <Switch
           checked={controls.dpr[0]} 
+          color="primary"
           onChange={() => {
             let useDpr = !controls.dpr[0];
             // console.log(useDpr ? window.devicePixelRatio : 1);
@@ -174,6 +171,7 @@ function App() {
       aa: {
         name: 'Anti-aliasing (slow)', 
         ctrl: <Switch
+          color="primary"
           checked={controls.aa[0]} 
           onChange={() => controls.aa[1](!controls.aa[0])}
         />
@@ -208,7 +206,7 @@ function App() {
         }}
         >
           <Typography align="right">
-            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
+            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
             <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
           </Typography>
         </Card>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useGesture, subV, addV } from "react-use-gesture";
+import { addV } from "react-use-gesture";
 import { scale } from "vec-la";
 import _ from "lodash";
 
@@ -74,7 +74,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
       return memo;
     },
 
-    onWheel: ({ movement: [, my], vxvy: [, vy], active, z = zoom.getValue() }) => {
+    onWheel: ({ movement: [, my], active, z = zoom.getValue() }) => {
       // x, y obtained from event
       let newZ = z * (1 - my * (my < 0 ? 3e-4 : 2e-4));
 

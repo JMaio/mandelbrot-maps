@@ -8,6 +8,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import { Link } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -52,37 +53,32 @@ const DialogActions = withStyles(theme => ({
 export default function InfoDialog(props) {
   const [open, setOpen] = props.ctrl;
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            <img width={60}
-            src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png"></img> 
-            Mandelbrot Maps
+      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        <img
+          alt="Mandelbrot Maps logo"
+          width={60}
+          src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png"></img>
+        Mandelbrot Maps
         </DialogTitle>
-        <DialogContent dividers>
-            <Typography gutterBottom>
-            Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
+      <DialogContent dividers>
+        <Typography gutterBottom>
+          Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
             </Typography>
-            {/* <Typography gutterBottom>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-            lacus vel augue laoreet rutrum faucibus dolor auctor.
-            </Typography>
-            <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-            scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-            auctor fringilla.
-            </Typography> */}
-        </DialogContent>
-        <DialogActions>
-            <Button autoFocus onClick={handleClose} color="primary">Close</Button>
-        </DialogActions>
+        <Typography gutterBottom>
+          Mandelbrot set shader code adapted from <Link href="https://www.shadertoy.com/view/4df3Rn">
+            Mandelbrot - smooth
+                </Link> by <Link href="http://iquilezles.org/" target="_blank">
+            Inigo Quilez
+                </Link>.
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus onClick={handleClose} color="primary">Close</Button>
+      </DialogActions>
     </Dialog>
   );
 }
