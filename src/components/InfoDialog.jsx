@@ -62,15 +62,15 @@ export default function InfoDialog(props) {
   return (
     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            <img width={80}
+            <img width={60}
             src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png"></img> 
             Mandelbrot Maps
         </DialogTitle>
         <DialogContent dividers>
             <Typography gutterBottom>
-            Mandelbrot Maps is a fractal explorer.
+            Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
             </Typography>
-            <Typography gutterBottom>
+            {/* <Typography gutterBottom>
             Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
             lacus vel augue laoreet rutrum faucibus dolor auctor.
             </Typography>
@@ -78,7 +78,7 @@ export default function InfoDialog(props) {
             Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
             scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
             auctor fringilla.
-            </Typography>
+            </Typography> */}
         </DialogContent>
         <DialogActions>
             <Button autoFocus onClick={handleClose} color="primary">Close</Button>

@@ -87,8 +87,6 @@ export default function SettingsMenu(props) {
                                 </Typography>
                             </Grid>
                             <Divider orientation="vertical" flexItem />
-                            {/* <Grid item style={{ height: "100%" }}>
-                            </Grid> */}
                             <Grid item>
                                 <IconButton aria-label="info" size="medium" onClick={() => {
                                     props.toggleInfo();
@@ -104,9 +102,9 @@ export default function SettingsMenu(props) {
                             <Grid item key={group.title}>
                                 <Divider style={{
                                     marginTop: 10,
-                                    marginBottom: 10,
+                                    marginBottom: 4,
                                 }} />
-                                <Typography variant="h2" style={{ fontSize: 17, marginBottom: 4 }}>{group.title}</Typography>
+                                <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>{group.title}</Typography>
                                 {/* <Box variant="h2" fontSize={16} align="left"></Box> */}
                                 <FormGroup>
                                 {Object.values(group.items).map((ctrl, j) => 
@@ -127,7 +125,7 @@ export default function SettingsMenu(props) {
 
                         <Divider style={{
                             marginTop: 10,
-                            marginBottom: 10,
+                            marginBottom: 4,
                         }} />
 
                         <Button aria-controls="reset" 
