@@ -21,7 +21,8 @@ function App() {
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = 1e-7;
-  const [dpr, setDpr] = useState(window.devicePixelRatio || 1);
+  // make default device pixel ratio 1
+  const [dpr, setDpr] = useState(1);
 
   const startPos = [-0.743030, 0.126433];
   // const startPos = [-.7426482, .1271875 ];
@@ -98,9 +99,9 @@ function App() {
       zoom: 1,
       config: resetZoomSpringConfig,
     });
-  }
+  };
 
-  const [showInfo, setShowInfo] = useState(false)
+  const [showInfo, setShowInfo] = useState(false);
 
   let toggleInfo = () => setShowInfo(!showInfo);
 
@@ -109,7 +110,7 @@ function App() {
     miniViewer: useState(true),
     maxI: useState(250),
     aa: useState(false),
-    dpr: useState(true),
+    dpr: useState(false),
   };
 
   let settings = [{

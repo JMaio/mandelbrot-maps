@@ -34,10 +34,6 @@ export default function MandelbrotRenderer(props) {
   const [{ zoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
   const AA = props.aa ? 2 : 1;
-  
-  useEffect(() => {
-    console.log(props.dpr);
-  }, [props.dpr]);
 
   const fragShader = newSmoothMandelbrotShader({
     maxI: maxI,
