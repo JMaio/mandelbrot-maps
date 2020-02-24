@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Grid, Card, Typography, Fab } from '@material-ui/core';
+import { Grid, Card, Typography, Fab, Slider, Switch } from '@material-ui/core';
 import ZoomBar from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
@@ -82,6 +82,41 @@ function App() {
     })),
   };
 
+  let settings = [{
+    title: "Interface",
+    items: {
+      coords: {
+        name: 'Show coordinates', 
+        ctrl: <Switch />
+      },
+      miniViewer: {
+        name: 'Mini viewers', 
+        ctrl: <Switch />
+      },
+    }
+  }, {
+    title: "Graphics",
+    items: {
+      iterations: {
+        name: 'Iterations', 
+        ctrl: <Slider 
+          min={4}
+          max={1000}
+          step={4}
+          defaultValue={150}
+          valueLabelDisplay="auto"
+          marks={[
+            { value: 200, label: 200 },
+            { value: 800, label: 800 },
+          ]}
+        />,
+        placement: "top"},
+      aa: {
+        name: 'Anti-aliasing', 
+        ctrl: <Switch />
+      },
+    }
+  }]
   // const [{ pos }, setPos] = mandelbrotControls.pos;
   
   return (
@@ -161,7 +196,7 @@ function App() {
           }}
         />
       </Grid>
-      <SettingsMenu />
+      <SettingsMenu settings={settings} />
       {/* <Fab size="small" color="primary" aria-label="settings" style={{
         position: "absolute",
         bottom: 0,

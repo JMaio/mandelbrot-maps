@@ -25,10 +25,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-let marks = [
-    { value: 200, label: 200 },
-    { value: 800, label: 800 },
-]
+// let marks = 
 
 export default function SettingsMenu(props) {
     const classes = useStyles();
@@ -43,14 +40,10 @@ export default function SettingsMenu(props) {
         setAnchorEl(null);
     };
 
-    let items = [
-        // [
-            {name: 'Anti-aliasing', option: <Switch />},
-            // {name: 'Iterations', option: <Slider className={classes.sliderControl} />},
-            {name: 'Split view', option: <Switch />},
-            {name: 'Show coordinates', option: <Switch />},
-        // ]
-    ]
+    
+    // {name: 'Iterations', option: <Slider className={classes.sliderControl} />},
+    // [
+    // ]
 
     return (
         <div className={classes.root}>
@@ -74,10 +67,7 @@ export default function SettingsMenu(props) {
                     }}
                     transformOrigin={{
                         vertical: "bottom",
-                        horizontal: "center"
-                    }}
-                    style={{
-                        // marginBottom: 20,
+                        horizontal: "right"
                     }}
                 >
                     <Grid container direction="column" style={{
@@ -86,31 +76,33 @@ export default function SettingsMenu(props) {
                         paddingTop: "1em",
                         paddingBottom: "1em",
                     }}>
-                        <Typography variant="h5" align="center">Configuration</Typography>
+                        <Typography variant="button" align="center">Configuration</Typography>
                         
-                        <Divider 
-                            style={{
-                                marginTop: 10,
-                                marginBottom: 10,
-                            }} 
-                        />
-
-                        <FormGroup style={{
-                        }}>
-                        {items.map((ctrl, i) =>
-                            <FormControlLabel 
-                                label={ctrl.name}
-                                control={ctrl.option}
-                                labelPlacement="start"
-                                // style={{
-                                //     marginLeft: 0,
-                                //     marginRight: 4,
-                                // }}
-                            />
+                        {props.settings.map((group, i) =>
+                            <Grid item key={group.title}>
+                                <Divider style={{
+                                    marginTop: 10,
+                                    marginBottom: 10,
+                                }} />
+                                <Typography variant="button" align="center">{group.title}</Typography>
+                                <FormGroup>
+                                {Object.values(group.items).map((ctrl, j) => 
+                                    <FormControlLabel 
+                                        label={ctrl.name}
+                                        key={ctrl.name}
+                                        control={ctrl.ctrl}
+                                        labelPlacement={ctrl.placement ? ctrl.placement : "end"}
+                                        style={ctrl.placement ? {
+                                            marginLeft: 0,
+                                            marginRight: 0,
+                                        } : {}}
+                                    />
+                                )}
+                                </FormGroup>
+                            </Grid>
                         )}
-                        </FormGroup>
 
-                        <Divider style={{
+                        {/* <Divider style={{
                             marginTop: 10,
                             marginBottom: 10,
                         }} />
@@ -120,7 +112,7 @@ export default function SettingsMenu(props) {
                                 Iterations
                             </Typography>
                             <Slider 
-                                min={0}
+                                min={4}
                                 max={1000}
                                 step={4}
                                 defaultValue={150}
@@ -135,7 +127,7 @@ export default function SettingsMenu(props) {
 
                                 marks={marks}
                             />
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     
                     {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
