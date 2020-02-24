@@ -25,6 +25,8 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
   const zoom = mini ? () => 1.0 : () => props.u.zoom.getValue();
   const currZoom = useRef(zoom);
 
+  const dpr = props.dpr || 1;
+
   useEffect(() => {
     currZoom.current = props.u.zoom.getValue();
   }, [props.u]);
@@ -38,7 +40,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
 
   // the main render function for WebGL
   const render = useCallback(time => {
-    twgl.resizeCanvasToDisplaySize(gl.current.canvas);
+    twgl.resizeCanvasToDisplaySize(gl.current.canvas, dpr);
     gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
 
     const uniforms = {
@@ -55,7 +57,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
     twgl.drawBufferInfo(gl.current, bufferInfo.current);
     // The 'state' will always be the initial value here
     renderRequestRef.current = requestAnimationFrame(render);
-  }, [gl, props.u, zoom]);
+  }, [gl, props.u, zoom, dpr]);
 
   // re-compile program if shader changes
   useEffect(() => {

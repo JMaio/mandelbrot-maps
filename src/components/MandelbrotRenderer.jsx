@@ -33,11 +33,15 @@ export default function MandelbrotRenderer(props) {
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
-  const AA = 1;
+  const AA = props.aa ? 2 : 1;
+  
+  useEffect(() => {
+    console.log(props.dpr);
+  }, [props.dpr]);
 
   const fragShader = newSmoothMandelbrotShader({
     maxI: maxI,
-    AA: AA
+    AA: AA,
   });
   const miniFragShader = newSmoothMandelbrotShader({
     maxI: maxI,
@@ -52,7 +56,7 @@ export default function MandelbrotRenderer(props) {
     domTarget: canvasRef,
     posControl: props.controls.pos,
     zoomControl: props.controls.zoom,
-    screenScaleMultiplier: screenScaleMultiplier,
+    screenScaleMultiplier: screenScaleMultiplier / props.dpr,
     gl: gl,
   });
 
@@ -71,6 +75,7 @@ export default function MandelbrotRenderer(props) {
       <WebGLCanvas 
         id="mandelbrot"
         fragShader={fragShader}
+        dpr={props.dpr}
         touchBind={touchBind}
         u={{
           zoom: zoom,
@@ -81,6 +86,7 @@ export default function MandelbrotRenderer(props) {
         ref={canvasRef}
         glRef={gl}
       />
+      {props.enableMini ? 
       <animated.div style={{
         position: "absolute",
         zIndex: 2,
@@ -93,15 +99,15 @@ export default function MandelbrotRenderer(props) {
         // border: "1px solid #000",
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z - 1.5, 0, 1)),
-        display: zoom.interpolate(z => _.clamp(z - 1.5, 0, 1) === 0 ? "none" : "block"),
+        opacity: zoom.interpolate(z => _.clamp(z - 1, 0, 1)),
+        display: zoom.interpolate(z => _.clamp(z - 1, 0, 1) === 0 ? "none" : "block"),
       }}
       onClick={() => setControlZoom({ zoom: 1 })}
       >
         <WebGLCanvas 
           id="mini-mandelbrot"
           fragShader={miniFragShader}
-          // touchBind={touchBind}
+          dpr={props.dpr}
           u={{
             zoom: zoom,
             pos: pos,
@@ -114,6 +120,8 @@ export default function MandelbrotRenderer(props) {
           mini={true}
         />
       </animated.div>
+      : <div />
+      }
     </div>
   )
 

@@ -5,12 +5,11 @@ import ZoomBar from './components/ZoomBar';
 import IterationSlider from './components/IterationSlider';
 import RotationControl from './components/RotationControl';
 
-import 'typeface-roboto';
+// import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 import { useSpring, animated } from 'react-spring';
 import JuliaRenderer from './components/JuliaRenderer';
 import { useWindowSize } from './components/utils';
-import SettingsSpeedDial from "./components/SettingsSpeedDial";
 import SettingsMenu from "./components/SettingsMenu";
 
 function App() {
@@ -19,9 +18,8 @@ function App() {
 
   let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
-  let maxIter = useState(250);
   // eslint-disable-next-line
-  let [maxI, setMaxI] = maxIter;
+  // let [maxI, setMaxI] = maxIter;
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
@@ -82,16 +80,53 @@ function App() {
     })),
   };
 
+  let resetPosSpringConfig  = { tension: 200, friction: 75 };
+  let resetZoomSpringConfig = { tension: 300, friction: 60 };
+
+  let reset = () => {
+    mandelbrotControls.pos[1]({
+      pos: [0, 0],
+      config: resetPosSpringConfig,
+    });
+    mandelbrotControls.zoom[1]({
+      zoom: 1,
+      config: resetZoomSpringConfig,
+    });
+    
+    juliaControls.pos[1]({
+      pos: [0, 0],
+      config: resetPosSpringConfig,
+    });
+    juliaControls.zoom[1]({
+      zoom: 1,
+      config: resetZoomSpringConfig,
+    });
+  }
+
+  let controls = {
+    coords: useState(false),
+    miniViewer: useState(true),
+    maxI: useState(250),
+    aa: useState(false),
+    dpr: useState(true),
+  };
+
   let settings = [{
     title: "Interface",
     items: {
       coords: {
         name: 'Show coordinates', 
-        ctrl: <Switch />
+        ctrl: <Switch 
+          checked={controls.coords[0]} 
+          onChange={() => controls.coords[1](!controls.coords[0])} 
+        />
       },
       miniViewer: {
         name: 'Mini viewers', 
-        ctrl: <Switch />
+        ctrl: <Switch 
+          checked={controls.miniViewer[0]} 
+          onChange={() => controls.miniViewer[1](!controls.miniViewer[0])} 
+        />
       },
     }
   }, {
@@ -100,20 +135,36 @@ function App() {
       iterations: {
         name: 'Iterations', 
         ctrl: <Slider 
-          min={4}
+          min={5}
           max={1000}
-          step={4}
-          defaultValue={150}
+          step={5}
+          defaultValue={250}
           valueLabelDisplay="auto"
+          value={controls.maxI[0]}
           marks={[
-            { value: 200, label: 200 },
-            { value: 800, label: 800 },
+            { value: 5, label: 5 },
+            { value: 250, label: 250 },
+            { value: 500, label: 500 },
+            { value: 750, label: 750 },
+            { value: 1000, label: 1000 },
           ]}
+          onChange={(e, val) => controls.maxI[1](val)}
+          // onChange={(e, val) => console.log(val)}
         />,
         placement: "top"},
+      dpr: {
+        name: `Use device pixel ratio (${window.devicePixelRatio || 1})`, 
+        ctrl: <Switch
+          checked={controls.dpr[0]} 
+          onChange={() => controls.dpr[1](!controls.dpr[0])}
+        />
+      },
       aa: {
-        name: 'Anti-aliasing', 
-        ctrl: <Switch />
+        name: 'Anti-aliasing (slow!)', 
+        ctrl: <Switch
+          checked={controls.aa[0]} 
+          onChange={() => controls.aa[1](!controls.aa[0])}
+        />
       },
     }
   }]
@@ -139,7 +190,9 @@ function App() {
           right: 0,
           top: 0,
           margin: 20,
-          padding: 5,
+          padding: 8,
+          display: controls.coords[0] ? "block" : "none",
+          // borderRadius: 100,
         }}
         >
           <Typography align="right">
@@ -150,9 +203,12 @@ function App() {
         <Grid item xs className="renderer">
           <MandelbrotRenderer
             controls={mandelbrotControls}
-            maxiter={maxI}
+            maxiter={controls.maxI[0]}
             screenmult={screenScaleMultiplier}
             miniSize={miniSize}
+            enableMini={controls.miniViewer[0]}
+            aa={controls.aa[0]}
+            dpr={controls.dpr[0] ? window.devicePixelRatio : 1}
           />
         </Grid>
         <Grid item xs className="renderer" 
@@ -161,20 +217,23 @@ function App() {
           <JuliaRenderer
             c={mandelbrotControls.pos[0].pos}
             controls={juliaControls}
-            maxiter={maxI}
+            maxiter={controls.maxI[0]}
             screenmult={screenScaleMultiplier}
             miniSize={miniSize}
+            enableMini={controls.miniViewer[0]}
+            aa={controls.aa[0]}
+            dpr={controls.dpr[0] ? window.devicePixelRatio : 1}
           />
         </Grid>
       </Grid>
-      <Grid
+      {/* <Grid
         item
         container
         direction="column"
         justify="space-evenly"
         alignItems="flex-end"
       >
-        <ZoomBar
+        {/* <ZoomBar
           controller={mandelbrotControls.zoom}
           style={{
             display: "none",
@@ -187,16 +246,19 @@ function App() {
           style={{
             display: "none",
           }}
-        />
+        /> */}
 
-        <IterationSlider
-          maxiter={maxIter}
+        {/* <IterationSlider
+          maxiter={controls.maxIter}
           style={{
             display: "none",
           }}
         />
-      </Grid>
-      <SettingsMenu settings={settings} />
+      </Grid> */}
+      <SettingsMenu 
+        settings={settings}
+        reset={() => reset()}
+      />
       {/* <Fab size="small" color="primary" aria-label="settings" style={{
         position: "absolute",
         bottom: 0,
