@@ -49,13 +49,13 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
         return [p, origin];
       }
       // initial origin access
-      let [p, initialOrigin] = memo;
+      // let [p, initialOrigin] = memo;
       let newZ = z * (1 + dx * 5e-3);
       let newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
-      let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
-      let plotMovement = scale(subV(origin, initialOrigin), -2/realZoom);
-      let relMove = [plotMovement[0], -plotMovement[1]];
+      // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
+      // let plotMovement = scale(subV(origin, initialOrigin), -2/realZoom);
+      // let relMove = [plotMovement[0], -plotMovement[1]];
 
       setControlZoom({
         zoom: newZclamp,
@@ -66,10 +66,10 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
         }
       });
 
-      setControlPos({
-        pos: addV(p, relMove),                    // add the displacement to the starting position
-        immediate: down,                                  // immediately apply if the gesture is active
-      });
+      // setControlPos({
+      //   pos: addV(p, relMove),                    // add the displacement to the starting position
+      //   immediate: down,                                  // immediately apply if the gesture is active
+      // });
 
       return memo;
     },
