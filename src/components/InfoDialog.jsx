@@ -12,6 +12,8 @@ import { Link, TableContainer, Table, Paper, TableRow, TableCell, TableHead, Tab
 import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import MuiAlert from '@material-ui/lab/Alert';
+import { surveyLink } from './surveyLink.json';
+
 
 const styles = theme => ({
   root: {
@@ -117,13 +119,13 @@ export default function InfoDialog(props) {
       </DialogContent>
 
       <DialogActions>
-        <Button autoFocus href="#" color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
         <Button onClick={() => {writeToClipboard(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
         <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
           <Alert onClose={() => setSnackBarOpen(true)} severity="info">
             Device properties copied!
           </Alert>
         </Snackbar>
+        <Button autoFocus href={surveyLink} color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
       </DialogActions>
     </Dialog>
   );
