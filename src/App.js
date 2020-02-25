@@ -111,7 +111,10 @@ function App() {
     maxI: useState(250),
     aa: useState(false),
     dpr: useState(false),
+    fps: useState(false),
   };
+
+  let toggleVal = ([v, setV]) => setV(!v);
 
   let settings = [{
     title: "Interface",
@@ -121,7 +124,7 @@ function App() {
         ctrl: <Switch 
           color="primary"
           checked={controls.miniViewer[0]} 
-          onChange={() => controls.miniViewer[1](!controls.miniViewer[0])} 
+          onChange={() => toggleVal(controls.miniViewer)} 
         />
       },
       coords: {
@@ -129,7 +132,7 @@ function App() {
         ctrl: <Switch 
           color="primary"
           checked={controls.coords[0]} 
-          onChange={() => controls.coords[1](!controls.coords[0])} 
+          onChange={() => toggleVal(controls.coords)} 
         />
       },
     }
@@ -155,7 +158,8 @@ function App() {
           onChange={(e, val) => controls.maxI[1](val)}
           // onChange={(e, val) => console.log(val)}
         />,
-        placement: "top"},
+        placement: "top"
+      },
       dpr: {
         name: `Use pixel ratio (${window.devicePixelRatio || 1})`, 
         ctrl: <Switch
@@ -174,7 +178,15 @@ function App() {
         ctrl: <Switch
           color="primary"
           checked={controls.aa[0]} 
-          onChange={() => controls.aa[1](!controls.aa[0])}
+          onChange={() => toggleVal(controls.aa)}
+        />
+      },
+      fps: {
+        name: 'Show fps', 
+        ctrl: <Switch
+          color="primary"
+          checked={controls.fps[0]} 
+          onChange={() => toggleVal(controls.fps)}
         />
       },
     }
@@ -220,7 +232,7 @@ function App() {
             enableMini={controls.miniViewer[0]}
             aa={controls.aa[0]}
             dpr={dpr}
-            showFps={true}
+            showFps={controls.fps[0]}
           />
         </Grid>
         <Grid item xs className="renderer" 
