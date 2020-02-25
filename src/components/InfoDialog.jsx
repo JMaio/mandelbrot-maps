@@ -8,7 +8,9 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { Link } from '@material-ui/core';
+import { Link, TableContainer, Table, Paper, TableRow, TableCell, TableHead, TableBody, Box, Divider } from '@material-ui/core';
+import LaunchIcon from '@material-ui/icons/Launch';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 const styles = theme => ({
   root: {
@@ -55,6 +57,8 @@ export default function InfoDialog(props) {
 
   const handleClose = () => setOpen(false);
 
+  const clientData = window.jscd;
+
   return (
     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
@@ -75,9 +79,31 @@ export default function InfoDialog(props) {
             Inigo Quilez
                 </Link>.
         </Typography>
+        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+        <Box style={{ display: "flex"}}>
+          <TableContainer component={Paper} style={{ width: "auto", margin: "auto", }}>
+            <Table size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" colSpan={2} variant="head">Browser properties</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(clientData).map(([k, v]) => 
+                  <TableRow key={k}>
+                    <TableCell>{k}</TableCell>
+                    <TableCell align="right" style={{ fontFamily: "monospace"}} >{String(v)}</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={handleClose} color="primary">Close</Button>
+        <Button onClick={() => {navigator.clipboard.writeText(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
+        <Button autoFocus href="#" color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
+        {/* <Button onClick={handleClose} color="primary" variant="outlined">Close</Button> */}
       </DialogActions>
     </Dialog>
   );
