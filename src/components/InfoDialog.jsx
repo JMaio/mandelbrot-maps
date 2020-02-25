@@ -85,7 +85,7 @@ export default function InfoDialog(props) {
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center" colSpan={2} variant="head">Browser properties</TableCell>
+                  <TableCell align="center" colSpan={2} variant="head">Device properties</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
