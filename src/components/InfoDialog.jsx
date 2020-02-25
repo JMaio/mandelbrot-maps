@@ -122,7 +122,7 @@ export default function InfoDialog(props) {
       <DialogActions>
         <Button onClick={() => {writeToClipboard(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
         <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
-          <Alert onClose={() => setSnackBarOpen(true)} severity="info">
+          <Alert onClose={() => setSnackBarOpen(false)} severity="info">
             Device properties copied!
           </Alert>
         </Snackbar>
