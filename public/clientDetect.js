@@ -161,10 +161,12 @@
             break;
     }
 
+    // user agent string manipulation to obtain device model
     var system = nAgt.substring(nAgt.indexOf('(') + 1, nAgt.indexOf(')'));
     var device = system.substring(system.lastIndexOf(';') + 1);
 
-    // gpu profiler
+    // use JavaScript to detect GPU used from within your browser - by cvan
+    // https://gist.github.com/cvan/042b2448fcecefafbb6a91469484cdf8
     var canvas = document.createElement('canvas');
     var gl;
     var debugInfo;
@@ -180,6 +182,7 @@
       gpuVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
       renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
     }
+    // ----------------------------------------------------------------
 
     window.jscd = {
         browser: browser,
