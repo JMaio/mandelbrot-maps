@@ -182,7 +182,7 @@ function App() {
         />
       },
       fps: {
-        name: 'Show fps', 
+        name: 'Show FPS', 
         ctrl: <Switch
           color="primary"
           checked={controls.fps[0]} 
