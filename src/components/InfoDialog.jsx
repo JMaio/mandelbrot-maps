@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,9 +8,10 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { Link, TableContainer, Table, Paper, TableRow, TableCell, TableHead, TableBody, Box, Divider } from '@material-ui/core';
+import { Link, TableContainer, Table, Paper, TableRow, TableCell, TableHead, TableBody, Box, Divider, Snackbar } from '@material-ui/core';
 import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -52,12 +53,26 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function InfoDialog(props) {
   const [open, setOpen] = props.ctrl;
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
 
   const clientData = window.jscd;
+
+  let writeToClipboard = data => {
+    try {
+      navigator.clipboard.writeText(data);
+      setSnackBarOpen(true);
+    } catch (e) {
+      window.prompt("Auto copy to clipboard failed, copy manually from below:", data)
+    }
+  }
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
@@ -92,7 +107,7 @@ export default function InfoDialog(props) {
                 {Object.entries(clientData).map(([k, v]) => 
                   <TableRow key={k}>
                     <TableCell>{k}</TableCell>
-                    <TableCell align="right" style={{ fontFamily: "monospace"}} >{String(v)}</TableCell>
+                    <TableCell align="right" style={{ fontFamily: "monospace"}}>{String(v)}</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -100,10 +115,15 @@ export default function InfoDialog(props) {
           </TableContainer>
         </Box>
       </DialogContent>
+
       <DialogActions>
-        <Button onClick={() => {navigator.clipboard.writeText(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
         <Button autoFocus href="#" color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
-        {/* <Button onClick={handleClose} color="primary" variant="outlined">Close</Button> */}
+        <Button onClick={() => {writeToClipboard(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
+        <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
+          <Alert onClose={() => setSnackBarOpen(true)} severity="info">
+            Device properties copied!
+          </Alert>
+        </Snackbar>
       </DialogActions>
     </Dialog>
   );
