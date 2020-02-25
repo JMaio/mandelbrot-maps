@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import _ from 'lodash';
 
 import { useGesture } from "react-use-gesture";
@@ -7,6 +7,7 @@ import { animated } from "react-spring";
 import newSmoothMandelbrotShader from "../shaders/newSmoothMandelbrotShader";
 import WebGLCanvas from "./WebGLCanvas";
 import { genericTouchBind } from "./utils";
+import { Card } from "@material-ui/core";
 
 export default function MandelbrotRenderer(props) {
 
@@ -63,11 +64,20 @@ export default function MandelbrotRenderer(props) {
 
   useEffect(touchBind, [touchBind]);  
 
+  const [fps, setFps] = useState(0);
 
   return (
     <div className="renderer" style={{
       position: "relative"
     }}>
+      {props.showFps ?
+        <Card style={{ position: "absolute", top: 0, left: 0, padding: 4, margin: 4 }}>
+          <animated.div style={{ fontFamily: "monospace"}}>
+            {fps}
+          </animated.div>
+        </Card> :
+        null
+      }
       <WebGLCanvas 
         id="mandelbrot"
         fragShader={fragShader}
@@ -81,6 +91,7 @@ export default function MandelbrotRenderer(props) {
         }}
         ref={canvasRef}
         glRef={gl}
+        fps={setFps}
       />
       {props.enableMini ? 
       <animated.div style={{

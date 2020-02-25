@@ -220,6 +220,7 @@ function App() {
             enableMini={controls.miniViewer[0]}
             aa={controls.aa[0]}
             dpr={dpr}
+            showFps={true}
           />
         </Grid>
         <Grid item xs className="renderer" 
