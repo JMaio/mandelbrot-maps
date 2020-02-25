@@ -91,7 +91,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
     // The 'state' will always be the initial value here
     renderRequestRef.current = requestAnimationFrame(render);
     
-  }, [gl, u, zoom, dpr, setFps]);
+  }, [gl, u, zoom, dpr, setFps, interval]);
 
   // re-compile program if shader changes
   useEffect(() => {
