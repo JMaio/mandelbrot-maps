@@ -65,7 +65,8 @@ export default function InfoDialog(props) {
 
   const handleClose = () => setOpen(false);
 
-  const clientData = window.jscd;
+  // guard against null / undefined window
+  const clientData = window.jscd || {};
 
   let writeToClipboard = data => {
     try {
