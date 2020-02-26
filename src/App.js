@@ -161,7 +161,14 @@ function App() {
         placement: "top"
       },
       dpr: {
-        name: `Use pixel ratio (${window.devicePixelRatio || 1})`, 
+        // https://stackoverflow.com/a/12830454/9184658
+          // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
+          // var numb = 1.5;
+          // numb = +numb.toFixed(2);
+          // // Note the plus sign that drops any "extra" zeroes at the end.
+          // // It changes the result (which is a string) into a number again (think "0 + foo"),
+          // // which means that it uses only as many digits as necessary.
+        name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`, 
         ctrl: <Switch
           checked={controls.dpr[0]} 
           color="primary"

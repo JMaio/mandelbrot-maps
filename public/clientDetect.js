@@ -195,7 +195,7 @@
         mobile: mobile,
         platform: navigator.platform,
         screen: screenSize,
-        dpr: window.devicePixelRatio,
+        dpr: +window.devicePixelRatio.toFixed(3),
         gpu: renderer,
         gpuVendor: gpuVendor,
         userAgent: navigator.userAgent,
