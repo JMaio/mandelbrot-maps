@@ -19,11 +19,21 @@ const styles = theme => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
+    display: "flex",
+    flexDirection: "row",
+    // align: "middle",
+  },
+  image: {
+    marginTop: "auto",
+    marginBottom: "auto",
+    marginRight: 8,
+    height: 50,
   },
   closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
+    // position: 'absolute',
+    // right: theme.spacing(1),
+    // top: theme.spacing(1),
+    marginLeft: "auto",
     color: theme.palette.grey[500],
   },
 });
@@ -32,7 +42,8 @@ const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h1" style={{ fontSize: 30 }}>{children}</Typography>
+      <img src="favicon-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
+      <Typography variant="h1" style={{ fontSize: 24, marginTop: "auto", marginBottom: "auto" }}>{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon />
@@ -80,11 +91,7 @@ export default function InfoDialog(props) {
   return (
     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-        <img
-          alt="Mandelbrot Maps logo"
-          width={60}
-          src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png"></img>
-        Mandelbrot Maps
+          Mandelbrot Maps
         </DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>
