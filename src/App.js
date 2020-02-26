@@ -106,8 +106,9 @@ function App() {
   let toggleInfo = () => setShowInfo(!showInfo);
 
   let controls = {
-    coords: useState(false),
     miniViewer: useState(true),
+    crosshair: useState(true),
+    coords: useState(false),
     maxI: useState(250),
     aa: useState(false),
     dpr: useState(false),
@@ -125,6 +126,14 @@ function App() {
           color="primary"
           checked={controls.miniViewer[0]} 
           onChange={() => toggleVal(controls.miniViewer)} 
+        />
+      },
+      crosshair: {
+        name: 'Crosshair', 
+        ctrl: <Switch 
+          color="primary"
+          checked={controls.crosshair[0]} 
+          onChange={() => toggleVal(controls.crosshair)} 
         />
       },
       coords: {
@@ -237,6 +246,7 @@ function App() {
             screenmult={screenScaleMultiplier}
             miniSize={miniSize}
             enableMini={controls.miniViewer[0]}
+            crosshair={controls.crosshair[0]}
             aa={controls.aa[0]}
             dpr={dpr}
             showFps={controls.fps[0]}

@@ -39,13 +39,16 @@ export default function MandelbrotRenderer(props) {
   const fragShader = newSmoothMandelbrotShader({
     maxI: maxI,
     AA: AA,
+  }, {
+    stroke: props.crosshair ? 2 : 0,
+    radius: props.crosshair ? 100 : 0,
   });
   const miniFragShader = newSmoothMandelbrotShader({
     maxI: maxI,
     AA: 2, 
-    }, {
-    stroke: 1, 
-    radius: 30,
+  }, {
+    stroke: props.crosshair ? 1 : 0,
+    radius: props.crosshair ? 30 : 0,
   });
 
   
