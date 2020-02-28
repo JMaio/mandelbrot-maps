@@ -102,10 +102,10 @@ export default function InfoDialog(props) {
             Developed by <Link href="https://jmaio.github.io/" target="_blank">Joao Maio</Link> in 2019/2020 as part of an Honours Project at The University of Edinburgh, under the supervision of Philip Wadler.
           </Typography>
           <Typography gutterBottom>
-            The <Link href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html" target="_blank">original Mandelbrot Maps project</Link> was developed by Iain Parris in 2008 as a Java Applet, also under the supervision of Philip Wadler. 
+            The <Link href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html" target="_blank">original Mandelbrot Maps project</Link> was developed by Iain Parris in 2008 as a Java Applet. 
           </Typography>
           <Typography gutterBottom>
-            The project was also undertaken by Freddie Bawden under the supervision of Philip Wadler. 
+            The project was simultaneously undertaken by Freddie Bawden, also under the supervision of Philip Wadler. 
             Freddie's version of the project is available at: <Link href="https://mandelbrot-maps.herokuapp.com/" target="_blank">mandelbrot-maps.herokuapp.com</Link>
           </Typography>
           <Typography gutterBottom>
