@@ -55,7 +55,7 @@ const DialogTitle = withStyles(styles)(props => {
 
 const DialogContent = withStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }))(MuiDialogContent);
 
@@ -89,52 +89,63 @@ export default function InfoDialog(props) {
   }
 
   return (
-    <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Mandelbrot Maps
-        </DialogTitle>
-      <DialogContent dividers>
-        <Typography gutterBottom>
-          Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
-            </Typography>
-        <Typography gutterBottom>
-          Mandelbrot set shader code adapted from <Link href="https://www.shadertoy.com/view/4df3Rn">
-            Mandelbrot - smooth
-                </Link> by <Link href="http://iquilezles.org/" target="_blank">
-            Inigo Quilez
-                </Link>.
-        </Typography>
-        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
-        <Box style={{ display: "flex"}}>
-          <TableContainer component={Paper} style={{ width: "auto", margin: "auto", }}>
-            <Table size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center" colSpan={2} variant="head">Device properties</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.entries(clientData).map(([k, v]) => 
-                  <TableRow key={k}>
-                    <TableCell>{k}</TableCell>
-                    <TableCell align="right" style={{ fontFamily: "monospace"}}>{String(v)}</TableCell>
+    <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md">
+      {/* <div style={{ maxWidth: 700 }}> */}
+        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            Mandelbrot Maps
+          </DialogTitle>
+        <DialogContent dividers >
+          <Typography gutterBottom>
+            Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
+          </Typography>
+          <Typography gutterBottom>
+            Developed by <Link href="https://jmaio.github.io/" target="_blank">Joao Maio</Link> in 2019/2020 as part of an Honours Project at The University of Edinburgh, under the supervision of Philip Wadler.
+          </Typography>
+          <Typography gutterBottom>
+            The <Link href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html" target="_blank">original Mandelbrot Maps project</Link> was developed by Iain Parris in 2008 as a Java Applet, also under the supervision of Philip Wadler. 
+          </Typography>
+          <Typography gutterBottom>
+            The project was also undertaken by Freddie Bawden under the supervision of Philip Wadler. 
+            Freddie's version of the project is available at: <Link href="https://mandelbrot-maps.herokuapp.com/" target="_blank">mandelbrot-maps.herokuapp.com</Link>
+          </Typography>
+          <Typography gutterBottom>
+            Mandelbrot set shader code adapted from <Link href="https://www.shadertoy.com/view/4df3Rn">Mandelbrot - smooth</Link> by <Link href="http://iquilezles.org/" target="_blank">Inigo Quilez</Link>.
+          </Typography>
+          {/* <Typography>
+            &copy; Joao Maio 2020
+          </Typography> */}
+          <Divider style={{ marginTop: 30, marginBottom: 30 }} />
+          <Box style={{ display: "flex"}}>
+            <TableContainer component={Paper} style={{ width: "auto", margin: "auto", maxWidth: 460,}}>
+              <Table size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center" colSpan={2} variant="head">Device properties</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </DialogContent>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(clientData).map(([k, v]) => 
+                    <TableRow key={k}>
+                      <TableCell>{k}</TableCell>
+                      <TableCell align="right" style={{ fontFamily: "monospace"}}>{String(v)}</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </DialogContent>
 
-      <DialogActions>
-        <Button onClick={() => {writeToClipboard(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
-        <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
-          <Alert onClose={() => setSnackBarOpen(false)} severity="info">
-            Device properties copied!
-          </Alert>
-        </Snackbar>
-        <Button autoFocus href={surveyLink} color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
-      </DialogActions>
+        <DialogActions>
+          <Button onClick={() => {writeToClipboard(JSON.stringify(clientData))}} color="primary" variant="outlined" startIcon={<FileCopyIcon />}>Copy</Button>
+          <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
+            <Alert onClose={() => setSnackBarOpen(false)} severity="info">
+              Device properties copied!
+            </Alert>
+          </Snackbar>
+          <Button autoFocus href={surveyLink} color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
+        </DialogActions>
+      {/* </div> */}
     </Dialog>
   );
 }
