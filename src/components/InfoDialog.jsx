@@ -143,7 +143,7 @@ export default function InfoDialog(props) {
               Device properties copied!
             </Alert>
           </Snackbar>
-          <Button autoFocus href={surveyLink} color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
+          <Button autoFocus href={surveyLink} target="_blank" color="primary" variant="outlined" startIcon={<LaunchIcon />}>Feedback</Button>
         </DialogActions>
       {/* </div> */}
     </Dialog>
