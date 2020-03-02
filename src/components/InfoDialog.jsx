@@ -42,7 +42,7 @@ const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <img src="favicon-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
+      <img src="logo-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
       <Typography variant="h1" style={{ fontSize: 24, marginTop: "auto", marginBottom: "auto" }}>{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
