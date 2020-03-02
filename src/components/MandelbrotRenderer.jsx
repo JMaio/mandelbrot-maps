@@ -1,15 +1,13 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import _ from 'lodash';
 
-import { addV, useGesture } from "react-use-gesture";
-import { scale } from 'vec-la';
-
+import { useGesture } from "react-use-gesture";
 import { animated } from "react-spring";
-
 
 import newSmoothMandelbrotShader from "../shaders/newSmoothMandelbrotShader";
 import WebGLCanvas from "./WebGLCanvas";
-// import mShader from "../shaders/smooth_mandelbrot_shader.glsl";
+import { genericTouchBind } from "./utils";
+import { Card } from "@material-ui/core";
 
 export default function MandelbrotRenderer(props) {
 
@@ -32,130 +30,61 @@ export default function MandelbrotRenderer(props) {
 
 
   // read incoming props
-  const [{ pos }, setControlPos] = props.controls.pos;
-  const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ zoom, last_pointer_dist, minZoom, maxZoom }, setControlZoom] = props.controls.zoom;
+  const [{ pos }] = props.controls.pos;
+  // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
+  const [{ zoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
-  const AA = 1;
+  const AA = props.aa ? 2 : 1;
 
   const fragShader = newSmoothMandelbrotShader({
     maxI: maxI,
-    AA: AA
+    AA: AA,
+  }, {
+    stroke: props.crosshair ? 2 : 0,
+    radius: props.crosshair ? 100 : 0,
   });
   const miniFragShader = newSmoothMandelbrotShader({
     maxI: maxI,
     AA: 2, 
-    }, {
-    stroke: 1, 
-    radius: 30,
+  }, {
+    stroke: props.crosshair ? 1 : 0,
+    radius: props.crosshair ? 30 : 0,
   });
 
-  // the hook responsible for handling gestures
-  const touchBind = useGesture({
-
-    // prevent some browser events such as swipe-based navigation or
-    // pinch-based zoom and instead redirect them to this handler
-    onDragStart:  ({ event }) => event.preventDefault(),
-    onPinchStart: ({ event }) => event.preventDefault(),
-
-    onPinch: ({ offset: [d], down, vdva, memo = [theta.getValue(), last_pointer_angle.getValue(), zoom.getValue(), last_pointer_dist.getValue()] }) => {
-      // alert(mx, my)
-      // let [theta, lpa] = memo
-      let [,, z, lpd] = memo;
-      // console.log(d);
-      let d_rel = d / 250;
-      let curr_zoom = zoom.getValue();
-
-      setControlZoom({
-        zoom: _.clamp(z + (d_rel - lpd) * Math.sign(curr_zoom) * Math.abs(curr_zoom ** 0.9), minZoom.getValue(), maxZoom.getValue()),
-        last_pointer_dist: d_rel,
-
-        immediate: down,
-        // config: { velocity: vd, decay: true }
-      });
-
-      // setControlRot({
-      //   theta: t + (a - lpa),
-      //   last_pointer_angle: a,
-
-      //   immediate: down,
-      //   // config: { velocity: va, decay: true }
-      // });
-
-      return memo;
-    },
-
-    onPinchEnd: ({ vdva: [, va] }) => {
-      setControlRot({
-        // set theta so it's remembered next time
-        theta: va,
-
-        // config: { velocity: va, decay: true }
-      });
-    },
-
-    onWheel: ({ movement: [, my], vxvy: [, vy] }) => {
-      // x, y obtained from event
-      let z = zoom.getValue();
-      let newZ = z * (1 - my * (my < 0 ? 2e-3 : 9e-4));
-
-      setControlZoom({
-        zoom: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
-        config: {
-          // bias velocity towards zooming in (vy negative )
-          // if zooming
-          velocity: _.clamp(vy * (vy < 0 ? 2.5 : 1.5), -10, 10), // * z**0.9 - my/15,
-        }
-      });
-    },
-
-    onDrag: ({ down, movement, velocity, direction, memo = pos.getValue() }) => {
-
-      // change according to this formula:
-      // move (x, y) in the opposite direction of drag (pan with cursor)
-      // divide by canvas size to scale appropriately
-      // multiply by 2 to correct scaling on viewport
-      // use screen multiplier for more granularity
-      let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
-      
-      let plotMovement = scale(movement, -2/realZoom);
-
-      let relMove = [plotMovement[0], -plotMovement[1]];
-      let relDir  = [direction[0], -direction[1]];
-
-      setControlPos({
-        pos: addV(memo, relMove),                    // add the displacement to the starting position
-        immediate: down,                                  // immediately apply if the gesture is active
-        config: { 
-          velocity: scale(relDir, -velocity/realZoom),  // set the velocity (gesture momentum)
-          decay: true,
-        },
-      });
-
-      return memo;
-    },
-
-  }, { 
-    event: { passive: false, capture: false }, 
+  
+  let gtb = genericTouchBind({
     domTarget: canvasRef,
-    // The config object passed to useGesture has drag, wheel, scroll, pinch and move keys
-    // for specific gesture options. See here for more details.
-    // drag: {
-    //   bounds,
-    //   rubberband: true,
-    // }
+    posControl: props.controls.pos,
+    zoomControl: props.controls.zoom,
+    screenScaleMultiplier: screenScaleMultiplier / props.dpr,
+    gl: gl,
   });
+
+  let touchBind = useGesture(
+    gtb.binds,
+    gtb.config
+  );
 
   useEffect(touchBind, [touchBind]);  
 
+  const [fps, setFps] = useState(0);
 
   return (
     <div className="renderer" style={{
       position: "relative"
     }}>
+      {props.showFps ?
+        <Card style={{ position: "absolute", top: 0, left: 0, padding: 4, margin: 4 }}>
+          <animated.div style={{ fontFamily: "monospace"}}>
+            {fps}
+          </animated.div>
+        </Card> :
+        null
+      }
       <WebGLCanvas 
         id="mandelbrot"
         fragShader={fragShader}
+        dpr={props.dpr}
         touchBind={touchBind}
         u={{
           zoom: zoom,
@@ -165,7 +94,9 @@ export default function MandelbrotRenderer(props) {
         }}
         ref={canvasRef}
         glRef={gl}
+        fps={setFps}
       />
+      {props.enableMini ? 
       <animated.div style={{
         position: "absolute",
         zIndex: 2,
@@ -178,15 +109,15 @@ export default function MandelbrotRenderer(props) {
         // border: "1px solid #000",
         boxShadow: "0px 2px 10px 1px rgba(0, 0, 0, 0.4)",
         overflow: "hidden",
-        opacity: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1)),
-        display: zoom.interpolate(z => _.clamp(z / 10 - 0.5, 0, 1) === 0 ? "none" : "block"),
+        opacity: zoom.interpolate(z => _.clamp(z - 1, 0, 1)),
+        display: zoom.interpolate(z => _.clamp(z - 1, 0, 1) === 0 ? "none" : "block"),
       }}
       onClick={() => setControlZoom({ zoom: 1 })}
       >
         <WebGLCanvas 
           id="mini-mandelbrot"
           fragShader={miniFragShader}
-          // touchBind={touchBind}
+          dpr={props.dpr}
           u={{
             zoom: zoom,
             pos: pos,
@@ -199,6 +130,8 @@ export default function MandelbrotRenderer(props) {
           mini={true}
         />
       </animated.div>
+      : <div />
+      }
     </div>
   )
 
