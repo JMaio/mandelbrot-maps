@@ -94,7 +94,7 @@ export default function InfoDialog(props) {
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
             Mandelbrot Maps
           </DialogTitle>
-        <DialogContent dividers >
+        <DialogContent dividers style={{ maxWidth: 700 }}>
           <Typography gutterBottom>
             Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
           </Typography>
