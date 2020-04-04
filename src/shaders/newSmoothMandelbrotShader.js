@@ -10,7 +10,7 @@ const newSmoothMandelbrotShader = ({
         radius: 100, 
     }
 ) => `
-// Created by inigo quilez - iq/2013
+// Adapted by Joao Maio/2019, based on work by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 // See here for more information on smooth iteration count:
