@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/mandelbrot-maps/precache-manifest.dc3bf14f9d3f206ef4e1f4c28a4b7b2d.js"
+  "/mandelbrot-maps/precache-manifest.d422cf017e7102eca14c1d617138b904.js"
 );
 
 self.addEventListener('message', (event) => {
