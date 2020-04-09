@@ -30,8 +30,9 @@ export default function SettingsMenu(props) {
     return (
         <div className={classes.root}>
             <Fab aria-controls="menu" 
-                size="small" 
                 aria-haspopup="true"
+                aria-label="settings"
+                size="small" 
                 onClick={(e) => setAnchorEl(e.currentTarget)}
                 className={classes.button}
                 >
@@ -39,7 +40,7 @@ export default function SettingsMenu(props) {
             </Fab>
             <Backdrop open={Boolean(anchorEl)}>
                 <Popover
-                    id="simple-menu"
+                    id="menu"
                     anchorEl={anchorEl}
                     keepMounted
                     open={Boolean(anchorEl)}
