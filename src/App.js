@@ -24,7 +24,7 @@ function App() {
   // make default device pixel ratio 1
   const [dpr, setDpr] = useState(1);
 
-  const startPos = [-0.743030, 0.126433];
+  const startPos = [-0.7740798, 0.1230918];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
   const startZoom = 165.0;
