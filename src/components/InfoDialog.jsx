@@ -14,6 +14,10 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import MuiAlert from '@material-ui/lab/Alert';
 import { surveyLink } from './surveyLink.json';
 
+// for evaluating build time
+import preval from 'preval.macro';
+
+const dateTimeStamp = preval`module.exports = new Date();`;
 
 const styles = theme => ({
   root: {
@@ -114,7 +118,9 @@ export default function InfoDialog(props) {
           {/* <Typography>
             &copy; Joao Maio 2020
           </Typography> */}
+
           <Divider style={{ marginTop: 30, marginBottom: 30 }} />
+
           <Box style={{ display: "flex"}}>
             <TableContainer component={Paper} style={{ width: "auto", margin: "auto", maxWidth: 460,}}>
               <Table size="small" aria-label="a dense table">
@@ -134,6 +140,19 @@ export default function InfoDialog(props) {
               </Table>
             </TableContainer>
           </Box>
+          
+          <Divider style={{ marginTop: 30, marginBottom: 30 }} />
+
+          <Box style={{ display: "flex"}}>
+            <Typography variant="overline" align="center" style={{ margin: "auto" }}>
+              Build: 
+              <Typography style={{ fontFamily: "monospace" }}>
+                {dateTimeStamp}
+              </Typography>
+              {/* {console.log(new Date(dateTimeStamp).toLocaleString('en-GB', { timeZone: 'UTC' }))} */}
+            </Typography>
+          </Box>
+
         </DialogContent>
 
         <DialogActions>
