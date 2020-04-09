@@ -107,7 +107,7 @@ export default function InfoDialog(props) {
           </Typography>
           <Typography gutterBottom>
             The project was simultaneously undertaken by Freddie Bawden, also under the supervision of Philip Wadler. 
-            Freddie's version of the project is available at: <Link href="https://mandelbrot-maps.herokuapp.com/" target="_blank">mandelbrot-maps.herokuapp.com</Link>
+            Freddie's version of the project is available at: <Link href="http://mmaps.freddiejbawden.com/" target="_blank">mmaps.freddiejbawden.com</Link>
           </Typography>
           <Typography gutterBottom>
             The <Link href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html" target="_blank">original Mandelbrot Maps project</Link> was developed by Iain Parris in 2008 as a Java Applet. 
