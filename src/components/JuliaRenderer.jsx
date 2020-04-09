@@ -91,7 +91,7 @@ export default function JuliaRenderer(props) {
         onClick={() => setControlZoom({ zoom: 1 })}
         >
           <WebGLCanvas 
-            id="mini-mandelbrot"
+            id="mini-julia"
             fragShader={miniFragShader}
             dpr={props.dpr}
             u={{
