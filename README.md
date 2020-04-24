@@ -1,3 +1,23 @@
+<p align="center">
+    <a href="https://jmaio.github.io/mandelbrot-maps">
+        <img src="./public/logo-512.png" width="128" />
+    </a>
+<p>
+
+# Mandelbrot Maps [![CircleCI](https://circleci.com/gh/JMaio/mandelbrot-maps.svg?style=shield)](https://circleci.com/gh/JMaio/mandelbrot-maps)
+
+[Mandelbrot Maps](https://jmaio.github.io/mandelbrot-maps/) is an interactive fractal explorer built using React and WebGL.
+
+Developed by [Joao Maio](https://jmaio.github.io/) in 2019/2020 as part of an Honours Project at The University of Edinburgh, under the supervision of Philip Wadler.
+
+The project was simultaneously undertaken by Freddie Bawden, also under the supervision of Philip Wadler. Freddie's version of the project is available at: [mmaps.freddiejbawden.com](https://mmaps.freddiejbawden.com)
+
+The [original Mandelbrot Maps project](https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html) was developed by Iain Parris in 2008 as a Java Applet.
+
+Mandelbrot set shader code adapted from [Mandelbrot - smooth](https://www.shadertoy.com/view/4df3Rn) by [Inigo Quilez](http://iquilezles.org/).
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
