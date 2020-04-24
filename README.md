@@ -4,6 +4,8 @@
     </a>
 <p>
 
+![Mandelbrot Maps on a phone and tablet](devices.png "Mandelbrot Maps on a phone and tablet")
+
 # Mandelbrot Maps [![CircleCI](https://circleci.com/gh/JMaio/mandelbrot-maps.svg?style=shield)](https://circleci.com/gh/JMaio/mandelbrot-maps)
 
 [Mandelbrot Maps](https://jmaio.github.io/mandelbrot-maps/) is an interactive fractal explorer built using React and WebGL.
