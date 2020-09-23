@@ -119,7 +119,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
 
   },
   config: { 
-    event: { passive: false, capture: false }, 
+    eventOptions: { passive: false, capture: false }, 
     domTarget: domTarget,
     // The config object passed to useGesture has drag, wheel, scroll, pinch and move keys
     // for specific gesture options. See here for more details.
