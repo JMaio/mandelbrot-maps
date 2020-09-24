@@ -33,7 +33,7 @@ export function useWindowSize() {
 
 // a touchbind for re-using across renderers
 export function genericTouchBind({ domTarget, posControl, zoomControl, screenScaleMultiplier, gl }) {
-  let [{ pos }, setControlPos] = posControl;
+  let [{ xy }, setControlPos] = posControl;
   let [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
   return {
     binds: {
@@ -43,7 +43,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
     onDragStart:  ({ event }) => event.preventDefault(),
     onPinchStart: ({ event }) => event.preventDefault(),
 
-    onPinch: ({ vdva: [vd,], down, delta: [dx,], origin, first, memo = [pos.getValue()], z = zoom.getValue() }) => {
+    onPinch: ({ vdva: [vd,], down, delta: [dx,], origin, first, memo = [xy.getValue()], z = zoom.getValue() }) => {
       if (first) {
         let [p] = memo;
         return [p, origin];
@@ -89,7 +89,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
       return z;
     },
 
-    onDrag: ({ down, movement, velocity, direction, pinching, memo = pos.getValue() }) => {
+    onDrag: ({ down, movement, velocity, direction, pinching, memo = xy.getValue() }) => {
 
       // let pinch handle movement
       if (pinching) return;
@@ -106,7 +106,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
       let relDir  = [direction[0], -direction[1]];
 
       setControlPos({
-        pos: addV(memo, relMove),                    // add the displacement to the starting position
+        xy: addV(memo, relMove),                    // add the displacement to the starting position
         immediate: down,                                  // immediately apply if the gesture is active
         config: { 
           velocity: scale(relDir, -velocity/realZoom),  // set the velocity (gesture momentum)

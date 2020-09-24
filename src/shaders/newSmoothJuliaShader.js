@@ -22,7 +22,7 @@ uniform vec2 resolution;
 
 // properties should be passed as uniforms
 uniform int   u_maxI;
-uniform vec2  u_pos;
+uniform vec2  u_xy;
 uniform vec2  u_c;
 uniform float u_zoom;
 uniform float u_theta;
@@ -64,7 +64,7 @@ void main() {
   
   // constant "c" to add, based on mandelbrot position
   vec2 c = u_c;
-  vec2 z = u_pos + p/u_zoom;
+  vec2 z = u_xy + p/u_zoom;
 
   float l = julia(z, c);
   col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));

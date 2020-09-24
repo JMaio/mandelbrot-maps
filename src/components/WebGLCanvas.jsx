@@ -56,7 +56,7 @@ export default React.forwardRef(({mini = false, ...props}, ref) => {
       resolution: [gl.current.canvas.width, gl.current.canvas.height],
       u_zoom: zoom(),
       u_c:    u.c === undefined ? 0 : u.c.getValue().map(x => x * u.screenScaleMultiplier),
-      u_pos:  scale(u.pos.getValue(), u.screenScaleMultiplier),
+      u_xy:  scale(u.xy.getValue(), u.screenScaleMultiplier),
       u_maxI: u.maxI,
     };
 

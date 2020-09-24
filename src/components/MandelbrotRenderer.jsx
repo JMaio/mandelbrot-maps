@@ -30,7 +30,7 @@ export default function MandelbrotRenderer(props) {
 
 
   // read incoming props
-  const [{ pos }] = props.controls.pos;
+  const [{ xy }] = props.controls.pos;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom }, setControlZoom] = props.controls.zoom;
   const maxI = props.maxiter;
@@ -88,7 +88,7 @@ export default function MandelbrotRenderer(props) {
         touchBind={touchBind}
         u={{
           zoom: zoom,
-          pos: pos,
+          xy: xy,
           maxI: maxI,
           screenScaleMultiplier: screenScaleMultiplier,
         }}
@@ -120,7 +120,7 @@ export default function MandelbrotRenderer(props) {
           dpr={props.dpr}
           u={{
             zoom: zoom,
-            pos: pos,
+            xy: xy,
             maxI: maxI,
             screenScaleMultiplier: screenScaleMultiplier,
           }}

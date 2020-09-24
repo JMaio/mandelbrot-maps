@@ -1,21 +1,21 @@
+import { Card, Grid, Slider, Switch, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { animated, useSpring } from 'react-spring';
 import './App.css';
-import { Grid, Card, Typography, Slider, Switch } from '@material-ui/core';
-
+import InfoDialog from './components/InfoDialog';
+import JuliaRenderer from './components/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
-import { useSpring, animated } from 'react-spring';
-import JuliaRenderer from './components/JuliaRenderer';
-import { useWindowSize } from './components/utils';
 import SettingsMenu from "./components/SettingsMenu";
+import { useWindowSize } from './components/utils';
 
-import InfoDialog from './components/InfoDialog';
+
 
 function App() {
 
   const size = useWindowSize();
 
-  let defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
+  const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
@@ -30,9 +30,14 @@ function App() {
   const startZoom = 165.0;
   const miniSize = useState(100);
 
+  // interface posInterface extends UseSpringBaseProps {
+  //   pos: [number, number],
+  //   config: SpringConfig,
+  // }
+
   const mandelbrotControls = {
     pos: useSpring(() => ({
-      pos: startPos.map(x => x / screenScaleMultiplier),
+      xy: startPos.map(x => x / screenScaleMultiplier),
       config: defaultSpringConfig,
     })),
 
@@ -46,17 +51,17 @@ function App() {
     zoom: useSpring(() => ({
       zoom: startZoom,
       last_pointer_dist: 0,
-  
+
       minZoom: 0.5,
       maxZoom: 100000,
-  
+
       config: { mass: 1, tension: 600, friction: 50 },
     })),
   };
 
   const juliaControls = {
     pos: useSpring(() => ({
-      pos: [0, 0],
+      xy: [0, 0],
       config: defaultSpringConfig,
     })),
 
@@ -70,29 +75,29 @@ function App() {
     zoom: useSpring(() => ({
       zoom: 0.5,
       last_pointer_dist: 0,
-  
+
       minZoom: 0.5,
       maxZoom: 100000,
-  
+
       config: { mass: 1, tension: 600, friction: 50 },
     })),
   };
 
-  let resetPosSpringConfig  = { tension: 200, friction: 75 };
-  let resetZoomSpringConfig = { tension: 300, friction: 60 };
+  const resetPosSpringConfig = { mass: 1, tension: 200, friction: 75 };
+  const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
 
-  let reset = () => {
+  const reset = () => {
     mandelbrotControls.pos[1]({
-      pos: [0, 0],
+      xy: [0, 0],
       config: resetPosSpringConfig,
     });
     mandelbrotControls.zoom[1]({
       zoom: 1,
       config: resetZoomSpringConfig,
     });
-    
+
     juliaControls.pos[1]({
-      pos: [0, 0],
+      xy: [0, 0],
       config: resetPosSpringConfig,
     });
     juliaControls.zoom[1]({
@@ -103,9 +108,9 @@ function App() {
 
   const [showInfo, setShowInfo] = useState(false);
 
-  let toggleInfo = () => setShowInfo(!showInfo);
+  const toggleInfo = () => setShowInfo(!showInfo);
 
-  let controls = {
+  const controls = {
     miniViewer: useState(true),
     crosshair: useState(true),
     coords: useState(false),
@@ -115,33 +120,37 @@ function App() {
     fps: useState(false),
   };
 
-  let toggleVal = ([v, setV]) => setV(!v);
+  // alternate between boolean values
+  // const toggleVal = (
+  //   [v, setV]) => {
+  //     setV(!v)
+  //   };
 
-  let settings = [{
+  const settings = [{
     title: "Interface",
     items: {
       miniViewer: {
-        name: 'Mini viewers', 
-        ctrl: <Switch 
+        name: 'Mini viewers',
+        ctrl: <Switch
           color="primary"
-          checked={controls.miniViewer[0]} 
-          onChange={() => toggleVal(controls.miniViewer)} 
+          checked={controls.miniViewer[0]}
+          onChange={e => controls.miniViewer[1](e.target.checked)}
         />
       },
       crosshair: {
-        name: 'Crosshair', 
-        ctrl: <Switch 
+        name: 'Crosshair',
+        ctrl: <Switch
           color="primary"
-          checked={controls.crosshair[0]} 
-          onChange={() => toggleVal(controls.crosshair)} 
+          checked={controls.crosshair[0]}
+          onChange={e => controls.crosshair[1](e.target.checked)}
         />
       },
       coords: {
-        name: 'Show coordinates', 
-        ctrl: <Switch 
+        name: 'Show coordinates',
+        ctrl: <Switch
           color="primary"
-          checked={controls.coords[0]} 
-          onChange={() => toggleVal(controls.coords)} 
+          checked={controls.coords[0]}
+          onChange={e => controls.coords[1](e.target.checked)}
         />
       },
     }
@@ -149,8 +158,8 @@ function App() {
     title: "Graphics",
     items: {
       iterations: {
-        name: 'Iterations', 
-        ctrl: <Slider 
+        name: 'Iterations',
+        ctrl: <Slider
           min={5}
           max={1000}
           step={5}
@@ -164,25 +173,33 @@ function App() {
             { value: 750, label: 750 },
             { value: 1000, label: 1000 },
           ]}
-          onChange={(e, val) => controls.maxI[1](val)}
-          // onChange={(e, val) => console.log(val)}
+          onChange={(e, val) => {
+            switch (typeof val) {
+              case "number":
+                controls.maxI[1](val)
+                break;
+              default:
+                break;
+            }
+          }}
+        // onChange={(e, val) => console.log(val)}
         />,
         placement: "top"
       },
       dpr: {
         // https://stackoverflow.com/a/12830454/9184658
-          // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
-          // var numb = 1.5;
-          // numb = +numb.toFixed(2);
-          // // Note the plus sign that drops any "extra" zeroes at the end.
-          // // It changes the result (which is a string) into a number again (think "0 + foo"),
-          // // which means that it uses only as many digits as necessary.
-        name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`, 
+        // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
+        // var numb = 1.5;
+        // numb = +numb.toFixed(2);
+        // // Note the plus sign that drops any "extra" zeroes at the end.
+        // // It changes the result (which is a string) into a number again (think "0 + foo"),
+        // // which means that it uses only as many digits as necessary.
+        name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`,
         ctrl: <Switch
-          checked={controls.dpr[0]} 
+          checked={controls.dpr[0]}
           color="primary"
           onChange={() => {
-            let useDpr = !controls.dpr[0];
+            const useDpr = !controls.dpr[0];
             // console.log(useDpr ? window.devicePixelRatio : 1);
             setDpr(useDpr ? window.devicePixelRatio : 1)
             controls.dpr[1](useDpr);
@@ -190,31 +207,32 @@ function App() {
         />
       },
       aa: {
-        name: 'Anti-aliasing (slow)', 
+        name: 'Anti-aliasing (slow)',
         ctrl: <Switch
           color="primary"
-          checked={controls.aa[0]} 
-          onChange={() => toggleVal(controls.aa)}
+          checked={controls.aa[0]}
+          onChange={e => controls.aa[1](e.target.checked)}
+        // onChange={() => toggleVal(controls.aa)}
         />
       },
       fps: {
-        name: 'Show FPS', 
+        name: 'Show FPS',
         ctrl: <Switch
           color="primary"
-          checked={controls.fps[0]} 
-          onChange={() => toggleVal(controls.fps)}
+          checked={controls.fps[0]}
+          onChange={e => controls.fps[1](e.target.checked)}
+        // onChange={() => toggleVal(controls.fps)}
         />
       },
     }
   }]
-  // const [{ pos }, setPos] = mandelbrotControls.pos;
-  
+
   return (
     <Grid container>
       <Grid
         item
         container
-        direction={size.width < size.height ? "column-reverse" : "row"}
+        direction={(size.width || 1) < (size.height || 0) ? "column-reverse" : "row"}
         justify="center"
         className="fullSize"
         style={{
@@ -222,21 +240,34 @@ function App() {
         }}
       >
         <Card
-        style={{
-          width: "auto",
-          position: "absolute",
-          zIndex: 2,
-          right: 0,
-          top: 0,
-          margin: 20,
-          padding: 8,
-          display: controls.coords[0] ? "block" : "none",
-          // borderRadius: 100,
-        }}
+          style={{
+            width: "auto",
+            position: "absolute",
+            zIndex: 2,
+            right: 0,
+            top: 0,
+            margin: 20,
+            padding: 8,
+            display: controls.coords[0] ? "block" : "none",
+            // borderRadius: 100,
+          }}
         >
           <Typography align="right">
-            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x) => (x * screenScaleMultiplier).toFixed(7))}</animated.span> : x<br />
-            <animated.span>{mandelbrotControls.pos[0].pos.interpolate((x, y) => (y * screenScaleMultiplier).toFixed(7))}</animated.span> : y
+            {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
+            {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
+            <animated.span>{
+              // @ts-ignore
+              mandelbrotControls.pos[0].xy.interpolate((x, y) => (
+                `${(x * screenScaleMultiplier).toFixed(7)} : x`
+                ))
+              }</animated.span>
+            <br />
+            <animated.span>{
+              // @ts-ignore
+              mandelbrotControls.pos[0].xy.interpolate((x, y) => (
+                `${(y * screenScaleMultiplier).toFixed(7)} : y`
+              ))
+            }</animated.span>
           </Typography>
         </Card>
         <Grid item xs className="renderer">
@@ -252,11 +283,11 @@ function App() {
             showFps={controls.fps[0]}
           />
         </Grid>
-        <Grid item xs className="renderer" 
-          // style={{ display: "none" }}
-          >
+        <Grid item xs className="renderer"
+        // style={{ display: "none" }}
+        >
           <JuliaRenderer
-            c={mandelbrotControls.pos[0].pos}
+            c={mandelbrotControls.pos[0].xy}
             controls={juliaControls}
             maxiter={controls.maxI[0]}
             screenmult={screenScaleMultiplier}
@@ -268,7 +299,7 @@ function App() {
         </Grid>
       </Grid>
 
-      <SettingsMenu 
+      <SettingsMenu
         settings={settings}
         reset={() => reset()}
         toggleInfo={() => toggleInfo()}

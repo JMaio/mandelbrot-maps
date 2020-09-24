@@ -33,7 +33,7 @@ uniform vec2 resolution;
 
 // properties should be passed as uniforms
 uniform int   u_maxI;  
-uniform vec2  u_pos;
+uniform vec2  u_xy;
 uniform float u_zoom;
 uniform float u_theta;
 
@@ -93,7 +93,7 @@ void main() {
     #endif
 
     // c is based on offset and grid position, z_0 = 0
-    vec2 c = u_pos + p/u_zoom;
+    vec2 c = u_xy + p/u_zoom;
     
     float l = mandelbrot(c);
     col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
