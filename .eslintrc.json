@@ -1,5 +1,7 @@
 // https://eslintconfig.dev/cra/typescript-prettier
 // https://dev.to/benweiser/how-to-set-up-eslint-typescript-prettier-with-create-react-app-3675
+// -----------
+// https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
 {
     "env": {
         "browser": true,
