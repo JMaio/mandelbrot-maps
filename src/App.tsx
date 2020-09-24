@@ -246,9 +246,7 @@ function App() {
       <Grid
         item
         container
-        direction={
-          (size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'
-        }
+        direction={(size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'}
         justify="center"
         className="fullSize"
         style={{
@@ -273,15 +271,15 @@ function App() {
             {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
             <animated.span>
               {mandelbrotControls.pos[0].xy.interpolate(
-                // @ts-ignore
-                (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`
+                // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
+                (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
               )}
             </animated.span>
             <br />
             <animated.span>
               {mandelbrotControls.pos[0].xy.interpolate(
-                // @ts-ignore
-                (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`
+                // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
+                (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
               )}
             </animated.span>
           </Typography>
@@ -318,11 +316,7 @@ function App() {
         </Grid>
       </Grid>
 
-      <SettingsMenu
-        settings={settings}
-        reset={() => reset()}
-        toggleInfo={() => toggleInfo()}
-      />
+      <SettingsMenu settings={settings} reset={() => reset()} toggleInfo={() => toggleInfo()} />
 
       <InfoDialog ctrl={[showInfo, setShowInfo]} />
     </Grid>

@@ -18,39 +18,34 @@ export default function RotationControl(props) {
   const outerSize = 160;
   const innerSize = 70;
 
-  const bind = useDrag(
-    ({ xy: [x, y], initial: [ix, iy], first, memo = theta.getValue() }) => {
-      const [cx, cy] = [
-        elemProps.x + elemProps.width / 2,
-        elemProps.y + elemProps.height / 2,
-      ];
-      if (first) {
-        // console.log(cx, cy)
-        // setElemCenter([cx, cy]);
-        // setElemOffset([ix - cx, iy - cy]);
-        set({
-          theta: memo,
-          // remember initial angle (of the cursor)
-          itheta: radToDeg(Math.atan2(-(ix - cx), iy - cy)),
-        });
-        return memo;
-      }
-
-      const newTheta = radToDeg(Math.atan2(-(x - cx), y - cy));
-
-      // const d = (360 * newTheta / (Math.PI * 2)) // - itheta.getValue() - memo;
-
-      // set current angle, delta since last
+  const bind = useDrag(({ xy: [x, y], initial: [ix, iy], first, memo = theta.getValue() }) => {
+    const [cx, cy] = [elemProps.x + elemProps.width / 2, elemProps.y + elemProps.height / 2];
+    if (first) {
+      // console.log(cx, cy)
+      // setElemCenter([cx, cy]);
+      // setElemOffset([ix - cx, iy - cy]);
       set({
-        theta: memo + clampAngle(newTheta - itheta.getValue()),
-        // prevTheta: theta.value,
-        // xy: [x, y]
-        immediate: true,
+        theta: memo,
+        // remember initial angle (of the cursor)
+        itheta: radToDeg(Math.atan2(-(ix - cx), iy - cy)),
       });
-
       return memo;
     }
-  );
+
+    const newTheta = radToDeg(Math.atan2(-(x - cx), y - cy));
+
+    // const d = (360 * newTheta / (Math.PI * 2)) // - itheta.getValue() - memo;
+
+    // set current angle, delta since last
+    set({
+      theta: memo + clampAngle(newTheta - itheta.getValue()),
+      // prevTheta: theta.value,
+      // xy: [x, y]
+      immediate: true,
+    });
+
+    return memo;
+  });
 
   return (
     <div
@@ -101,7 +96,7 @@ export default function RotationControl(props) {
         <animated.div
           style={{
             transform: theta.interpolate(
-              (t) => `rotate(${t}deg)`
+              (t) => `rotate(${t}deg)`,
               // ((360 + theta.value + dt) % 360)
               // .toFixed(1)
             ),

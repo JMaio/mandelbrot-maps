@@ -81,13 +81,7 @@ export default function ZoomBar(props) {
             position: 'relative',
           }}
         >
-          <ZoomBarFab
-            diameter={fabSize}
-            zoom={zoom}
-            zoomControl={setZoom}
-            minZoom={minZoom}
-            maxZoom={maxZoom}
-          />
+          <ZoomBarFab diameter={fabSize} zoom={zoom} zoomControl={setZoom} minZoom={minZoom} maxZoom={maxZoom} />
         </div>
         <TransparentFab
           onClick={(e) => {
@@ -130,13 +124,13 @@ export function ZoomBarFab(props) {
       const z = clamp(
         oldZoom + 2 * 3e-5 * oldZoom ** 0.8 * zoomMult,
         props.minZoom.getValue(),
-        props.maxZoom.getValue()
+        props.maxZoom.getValue(),
       );
       setZoom({ zoom: z });
       // increase zoom multiplier based on time elapsed
       setZoomMult(zoomMult * 1.02);
     },
-    gestureDown ? 100 : null
+    gestureDown ? 100 : null,
   );
 
   const bind = useDrag(
@@ -156,7 +150,7 @@ export function ZoomBarFab(props) {
       setZoomMult(down ? -Math.sign(clampY) * Math.abs(clampY / 8) ** 4 : 0);
       set({ y: down ? clampY : 0 });
     },
-    { event: { passive: false, capture: false }, domTarget: ref }
+    { event: { passive: false, capture: false }, domTarget: ref },
   );
 
   useEffect(bind, [bind]);
@@ -192,9 +186,7 @@ export function ZoomBarFab(props) {
         }}
       >
         <Typography style={{ color: '#fff' }}>
-          <animated.span>
-            {zoom.interpolate((z) => z.toPrecision(6))}
-          </animated.span>
+          <animated.span>{zoom.interpolate((z) => z.toPrecision(6))}</animated.span>
         </Typography>
       </Fab>
     </animated.div>

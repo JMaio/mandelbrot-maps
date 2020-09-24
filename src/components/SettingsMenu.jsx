@@ -78,10 +78,7 @@ export default function SettingsMenu(props) {
           >
             <Grid item container alignItems="center" justify="space-around">
               <Grid item>
-                <Typography
-                  variant="h1"
-                  style={{ fontSize: 20, paddingLeft: 20, paddingRight: 20 }}
-                >
+                <Typography variant="h1" style={{ fontSize: 20, paddingLeft: 20, paddingRight: 20 }}>
                   Configuration
                 </Typography>
               </Grid>
@@ -110,10 +107,7 @@ export default function SettingsMenu(props) {
                     marginBottom: 4,
                   }}
                 />
-                <Typography
-                  variant="overline"
-                  style={{ fontSize: 14, marginBottom: 4 }}
-                >
+                <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>
                   {group.title}
                 </Typography>
                 <FormGroup>

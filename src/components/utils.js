@@ -12,7 +12,7 @@ export function useWindowSize() {
       width: isClient ? window.innerWidth : undefined,
       height: isClient ? window.innerHeight : undefined,
     }),
-    [isClient]
+    [isClient],
   );
 
   const [windowSize, setWindowSize] = useState(getSize);
@@ -35,13 +35,7 @@ export function useWindowSize() {
 }
 
 // a touchbind for re-using across renderers
-export function genericTouchBind({
-  domTarget,
-  posControl,
-  zoomControl,
-  screenScaleMultiplier,
-  gl,
-}) {
+export function genericTouchBind({ domTarget, posControl, zoomControl, screenScaleMultiplier, gl }) {
   let [{ xy }, setControlPos] = posControl;
   let [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
   return {
@@ -51,15 +45,7 @@ export function genericTouchBind({
       onDragStart: ({ event }) => event.preventDefault(),
       onPinchStart: ({ event }) => event.preventDefault(),
 
-      onPinch: ({
-        vdva: [vd],
-        down,
-        delta: [dx],
-        origin,
-        first,
-        memo = [xy.getValue()],
-        z = zoom.getValue(),
-      }) => {
+      onPinch: ({ vdva: [vd], down, delta: [dx], origin, first, memo = [xy.getValue()], z = zoom.getValue() }) => {
         if (first) {
           let [p] = memo;
           return [p, origin];
@@ -105,14 +91,7 @@ export function genericTouchBind({
         return z;
       },
 
-      onDrag: ({
-        down,
-        movement,
-        velocity,
-        direction,
-        pinching,
-        memo = xy.getValue(),
-      }) => {
+      onDrag: ({ down, movement, velocity, direction, pinching, memo = xy.getValue() }) => {
         // let pinch handle movement
         if (pinching) return;
         // change according to this formula:
@@ -120,8 +99,7 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport
         // use screen multiplier for more granularity
-        let realZoom =
-          gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
+        let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
 
         let plotMovement = scale(movement, -2 / realZoom);
 

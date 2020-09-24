@@ -1,9 +1,6 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import * as twgl from 'twgl.js';
-import {
-  fullVertexShader,
-  fullscreenVertexArray,
-} from '../shaders/fullVertexShader';
+import { fullVertexShader, fullscreenVertexArray } from '../shaders/fullVertexShader';
 import { scale } from 'vec-la';
 import { animated } from 'react-spring';
 
@@ -41,10 +38,7 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
   useEffect(() => {
     gl.current = ref.current.getContext('webgl');
     // console.log(`got canvas context: ${gl.current}`);
-    bufferInfo.current = twgl.createBufferInfoFromArrays(
-      gl.current,
-      fullscreenVertexArray
-    );
+    bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
   }, [gl, ref]);
 
   let then = useRef(0);
@@ -56,30 +50,18 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
   const render = useCallback(
     (time) => {
       twgl.resizeCanvasToDisplaySize(gl.current.canvas, dpr);
-      gl.current.viewport(
-        0,
-        0,
-        gl.current.canvas.width,
-        gl.current.canvas.height
-      );
+      gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
 
       const uniforms = {
         resolution: [gl.current.canvas.width, gl.current.canvas.height],
         u_zoom: zoom(),
-        u_c:
-          u.c === undefined
-            ? 0
-            : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
+        u_c: u.c === undefined ? 0 : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
         u_xy: scale(u.xy.getValue(), u.screenScaleMultiplier),
         u_maxI: u.maxI,
       };
 
       gl.current.useProgram(programInfo.current.program);
-      twgl.setBuffersAndAttributes(
-        gl.current,
-        programInfo.current,
-        bufferInfo.current
-      );
+      twgl.setBuffersAndAttributes(gl.current, programInfo.current, bufferInfo.current);
       twgl.setUniforms(programInfo.current, uniforms);
       twgl.drawBufferInfo(gl.current, bufferInfo.current);
 
@@ -92,9 +74,7 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
         // console.log(elapsedTime.current);
         if (elapsedTime.current >= interval) {
           //multiply with (1000 / elapsed) for accuracy
-          setFps(
-            (frames.current * (interval / elapsedTime.current)).toFixed(1)
-          );
+          setFps((frames.current * (interval / elapsedTime.current)).toFixed(1));
           frames.current = 0;
           elapsedTime.current -= interval;
 
@@ -111,15 +91,12 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
       // The 'state' will always be the initial value here
       renderRequestRef.current = requestAnimationFrame(render);
     },
-    [gl, u, zoom, dpr, setFps, interval]
+    [gl, u, zoom, dpr, setFps, interval],
   );
 
   // re-compile program if shader changes
   useEffect(() => {
-    programInfo.current = twgl.createProgramInfo(gl.current, [
-      fullVertexShader,
-      props.fragShader,
-    ]);
+    programInfo.current = twgl.createProgramInfo(gl.current, [fullVertexShader, props.fragShader]);
   }, [gl, props.fragShader]);
 
   //

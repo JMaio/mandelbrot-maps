@@ -42,7 +42,7 @@ export default function MandelbrotRenderer(props) {
     {
       stroke: props.crosshair ? 2 : 0,
       radius: props.crosshair ? 100 : 0,
-    }
+    },
   );
   const miniFragShader = newSmoothMandelbrotShader(
     {
@@ -52,7 +52,7 @@ export default function MandelbrotRenderer(props) {
     {
       stroke: props.crosshair ? 1 : 0,
       radius: props.crosshair ? 30 : 0,
-    }
+    },
   );
 
   let gtb = genericTouchBind({
@@ -119,9 +119,7 @@ export default function MandelbrotRenderer(props) {
             boxShadow: '0px 2px 10px 1px rgba(0, 0, 0, 0.4)',
             overflow: 'hidden',
             opacity: zoom.interpolate((z) => _.clamp(z - 1, 0, 1)),
-            display: zoom.interpolate((z) =>
-              _.clamp(z - 1, 0, 1) === 0 ? 'none' : 'block'
-            ),
+            display: zoom.interpolate((z) => (_.clamp(z - 1, 0, 1) === 0 ? 'none' : 'block')),
           }}
           onClick={() => setControlZoom({ zoom: 1 })}
         >
