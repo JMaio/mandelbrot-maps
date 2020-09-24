@@ -8,7 +8,7 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import InfoIcon from '@material-ui/icons/Info';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     position: 'absolute',
     bottom: theme.spacing(2),
@@ -25,9 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export default function SettingsSpeedDial() {
-
   const actions = [
     { icon: <BlurLinearIcon />, name: 'Antialiasing', enabled: useState(true) },
     { icon: <TimelineIcon />, name: 'Iterations', enabled: useState(true) },
@@ -43,15 +41,15 @@ export default function SettingsSpeedDial() {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = (e, reason) => {
-    if (reason === "toggle") {
+    if (reason === 'toggle') {
       setOpen(true);
-    };
+    }
   };
 
   const handleClose = (e, reason) => {
-    if (["toggle", "escapeKeyDown"].includes(reason)) {
+    if (['toggle', 'escapeKeyDown'].includes(reason)) {
       setOpen(false);
-    };
+    }
   };
 
   return (
@@ -64,14 +62,14 @@ export default function SettingsSpeedDial() {
         onOpen={handleOpen}
         open={open}
         // TransitionComponent={<Slide />}
-        FabProps={{ 
-          size: "small",
+        FabProps={{
+          size: 'small',
           style: {
-            backgroundColor: "#2773bb",
-          }
+            backgroundColor: '#2773bb',
+          },
         }}
       >
-        {actions.map(action => (
+        {actions.map((action) => (
           <SpeedDialAction
             key={action.name}
             icon={action.icon}
@@ -83,8 +81,8 @@ export default function SettingsSpeedDial() {
             }}
             FabProps={{
               style: {
-                backgroundColor: action.enabled[0] ? "#4fc3f7" : "#f8f8f8",
-              }
+                backgroundColor: action.enabled[0] ? '#4fc3f7' : '#f8f8f8',
+              },
             }}
           />
         ))}

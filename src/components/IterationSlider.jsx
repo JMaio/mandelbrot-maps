@@ -1,11 +1,9 @@
-import React from "react";
-import { Slider } from "@material-ui/core";
+import React from 'react';
+import { Slider } from '@material-ui/core';
 
 export default function IterationSlider(props) {
-
-
   let [maxI, setMaxI] = props.maxiter;
-  
+
   return (
     <Slider
       value={maxI}
@@ -20,5 +18,5 @@ export default function IterationSlider(props) {
       onChange={(e, v) => setMaxI(v)}
       {...props}
     />
-  )
+  );
 }

@@ -6,13 +6,10 @@ import InfoDialog from './components/InfoDialog';
 import JuliaRenderer from './components/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
-import SettingsMenu from "./components/SettingsMenu";
+import SettingsMenu from './components/SettingsMenu';
 import { useWindowSize } from './components/utils';
 
-
-
 function App() {
-
   const size = useWindowSize();
 
   const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
@@ -37,7 +34,7 @@ function App() {
 
   const mandelbrotControls = {
     pos: useSpring(() => ({
-      xy: startPos.map(x => x / screenScaleMultiplier),
+      xy: startPos.map((x) => x / screenScaleMultiplier),
       config: defaultSpringConfig,
     })),
 
@@ -126,148 +123,167 @@ function App() {
   //     setV(!v)
   //   };
 
-  const settings = [{
-    title: "Interface",
-    items: {
-      miniViewer: {
-        name: 'Mini viewers',
-        ctrl: <Switch
-          color="primary"
-          checked={controls.miniViewer[0]}
-          onChange={e => controls.miniViewer[1](e.target.checked)}
-        />
+  const settings = [
+    {
+      title: 'Interface',
+      items: {
+        miniViewer: {
+          name: 'Mini viewers',
+          ctrl: (
+            <Switch
+              color="primary"
+              checked={controls.miniViewer[0]}
+              onChange={(e) => controls.miniViewer[1](e.target.checked)}
+            />
+          ),
+        },
+        crosshair: {
+          name: 'Crosshair',
+          ctrl: (
+            <Switch
+              color="primary"
+              checked={controls.crosshair[0]}
+              onChange={(e) => controls.crosshair[1](e.target.checked)}
+            />
+          ),
+        },
+        coords: {
+          name: 'Show coordinates',
+          ctrl: (
+            <Switch
+              color="primary"
+              checked={controls.coords[0]}
+              onChange={(e) => controls.coords[1](e.target.checked)}
+            />
+          ),
+        },
       },
-      crosshair: {
-        name: 'Crosshair',
-        ctrl: <Switch
-          color="primary"
-          checked={controls.crosshair[0]}
-          onChange={e => controls.crosshair[1](e.target.checked)}
-        />
+    },
+    {
+      title: 'Graphics',
+      items: {
+        iterations: {
+          name: 'Iterations',
+          ctrl: (
+            <Slider
+              min={5}
+              max={1000}
+              step={5}
+              defaultValue={250}
+              valueLabelDisplay="auto"
+              value={controls.maxI[0]}
+              marks={[
+                { value: 5, label: 5 },
+                { value: 250, label: 250 },
+                { value: 500, label: 500 },
+                { value: 750, label: 750 },
+                { value: 1000, label: 1000 },
+              ]}
+              onChange={(e, val) => {
+                switch (typeof val) {
+                  case 'number':
+                    controls.maxI[1](val);
+                    break;
+                  default:
+                    break;
+                }
+              }}
+              // onChange={(e, val) => console.log(val)}
+            />
+          ),
+          placement: 'top',
+        },
+        dpr: {
+          // https://stackoverflow.com/a/12830454/9184658
+          // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
+          // var numb = 1.5;
+          // numb = +numb.toFixed(2);
+          // // Note the plus sign that drops any "extra" zeroes at the end.
+          // // It changes the result (which is a string) into a number again (think "0 + foo"),
+          // // which means that it uses only as many digits as necessary.
+          name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`,
+          ctrl: (
+            <Switch
+              checked={controls.dpr[0]}
+              color="primary"
+              onChange={() => {
+                const useDpr = !controls.dpr[0];
+                // console.log(useDpr ? window.devicePixelRatio : 1);
+                setDpr(useDpr ? window.devicePixelRatio : 1);
+                controls.dpr[1](useDpr);
+              }}
+            />
+          ),
+        },
+        aa: {
+          name: 'Anti-aliasing (slow)',
+          ctrl: (
+            <Switch
+              color="primary"
+              checked={controls.aa[0]}
+              onChange={(e) => controls.aa[1](e.target.checked)}
+              // onChange={() => toggleVal(controls.aa)}
+            />
+          ),
+        },
+        fps: {
+          name: 'Show FPS',
+          ctrl: (
+            <Switch
+              color="primary"
+              checked={controls.fps[0]}
+              onChange={(e) => controls.fps[1](e.target.checked)}
+              // onChange={() => toggleVal(controls.fps)}
+            />
+          ),
+        },
       },
-      coords: {
-        name: 'Show coordinates',
-        ctrl: <Switch
-          color="primary"
-          checked={controls.coords[0]}
-          onChange={e => controls.coords[1](e.target.checked)}
-        />
-      },
-    }
-  }, {
-    title: "Graphics",
-    items: {
-      iterations: {
-        name: 'Iterations',
-        ctrl: <Slider
-          min={5}
-          max={1000}
-          step={5}
-          defaultValue={250}
-          valueLabelDisplay="auto"
-          value={controls.maxI[0]}
-          marks={[
-            { value: 5, label: 5 },
-            { value: 250, label: 250 },
-            { value: 500, label: 500 },
-            { value: 750, label: 750 },
-            { value: 1000, label: 1000 },
-          ]}
-          onChange={(e, val) => {
-            switch (typeof val) {
-              case "number":
-                controls.maxI[1](val)
-                break;
-              default:
-                break;
-            }
-          }}
-        // onChange={(e, val) => console.log(val)}
-        />,
-        placement: "top"
-      },
-      dpr: {
-        // https://stackoverflow.com/a/12830454/9184658
-        // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
-        // var numb = 1.5;
-        // numb = +numb.toFixed(2);
-        // // Note the plus sign that drops any "extra" zeroes at the end.
-        // // It changes the result (which is a string) into a number again (think "0 + foo"),
-        // // which means that it uses only as many digits as necessary.
-        name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`,
-        ctrl: <Switch
-          checked={controls.dpr[0]}
-          color="primary"
-          onChange={() => {
-            const useDpr = !controls.dpr[0];
-            // console.log(useDpr ? window.devicePixelRatio : 1);
-            setDpr(useDpr ? window.devicePixelRatio : 1)
-            controls.dpr[1](useDpr);
-          }}
-        />
-      },
-      aa: {
-        name: 'Anti-aliasing (slow)',
-        ctrl: <Switch
-          color="primary"
-          checked={controls.aa[0]}
-          onChange={e => controls.aa[1](e.target.checked)}
-        // onChange={() => toggleVal(controls.aa)}
-        />
-      },
-      fps: {
-        name: 'Show FPS',
-        ctrl: <Switch
-          color="primary"
-          checked={controls.fps[0]}
-          onChange={e => controls.fps[1](e.target.checked)}
-        // onChange={() => toggleVal(controls.fps)}
-        />
-      },
-    }
-  }]
+    },
+  ];
 
   return (
     <Grid container>
       <Grid
         item
         container
-        direction={(size.width || 1) < (size.height || 0) ? "column-reverse" : "row"}
+        direction={
+          (size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'
+        }
         justify="center"
         className="fullSize"
         style={{
-          position: "absolute",
+          position: 'absolute',
         }}
       >
         <Card
           style={{
-            width: "auto",
-            position: "absolute",
+            width: 'auto',
+            position: 'absolute',
             zIndex: 2,
             right: 0,
             top: 0,
             margin: 20,
             padding: 8,
-            display: controls.coords[0] ? "block" : "none",
+            display: controls.coords[0] ? 'block' : 'none',
             // borderRadius: 100,
           }}
         >
           <Typography align="right">
             {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
             {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
-            <animated.span>{
-              // @ts-ignore
-              mandelbrotControls.pos[0].xy.interpolate((x, y) => (
-                `${(x * screenScaleMultiplier).toFixed(7)} : x`
-                ))
-              }</animated.span>
+            <animated.span>
+              {mandelbrotControls.pos[0].xy.interpolate(
+                // @ts-ignore
+                (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`
+              )}
+            </animated.span>
             <br />
-            <animated.span>{
-              // @ts-ignore
-              mandelbrotControls.pos[0].xy.interpolate((x, y) => (
-                `${(y * screenScaleMultiplier).toFixed(7)} : y`
-              ))
-            }</animated.span>
+            <animated.span>
+              {mandelbrotControls.pos[0].xy.interpolate(
+                // @ts-ignore
+                (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`
+              )}
+            </animated.span>
           </Typography>
         </Card>
         <Grid item xs className="renderer">
@@ -283,8 +299,11 @@ function App() {
             showFps={controls.fps[0]}
           />
         </Grid>
-        <Grid item xs className="renderer"
-        // style={{ display: "none" }}
+        <Grid
+          item
+          xs
+          className="renderer"
+          // style={{ display: "none" }}
         >
           <JuliaRenderer
             c={mandelbrotControls.pos[0].xy}
@@ -306,7 +325,6 @@ function App() {
       />
 
       <InfoDialog ctrl={[showInfo, setShowInfo]} />
-
     </Grid>
   );
 }

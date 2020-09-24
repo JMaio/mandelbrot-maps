@@ -1,11 +1,11 @@
 // TODO set max iterations as parameter
 
 const newSmoothJuliaShader = ({
-  maxI = 300, 
-  AA = 1, 
-  B = 64, 
+  maxI = 300,
+  AA = 1,
+  B = 64,
   // crosshair = {
-  //     stroke: 0, 
+  //     stroke: 0,
   //     radius: 0
   // },
 }) => `

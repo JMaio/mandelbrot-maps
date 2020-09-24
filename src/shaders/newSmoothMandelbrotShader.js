@@ -1,14 +1,11 @@
 // TODO set max iterations as parameter, crosshair as parameter
 
-const newSmoothMandelbrotShader = ({
-        maxI = 300, 
-        AA = 1, 
-        B = 64
-    },
-    crosshair = {
-        stroke: 2, 
-        radius: 100, 
-    }
+const newSmoothMandelbrotShader = (
+  { maxI = 300, AA = 1, B = 64 },
+  crosshair = {
+    stroke: 2,
+    radius: 100,
+  }
 ) => `
 // Adapted by Joao Maio/2019, based on work by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
