@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from 'react';
-import { useGesture } from 'react-use-gesture';
-import { animated } from 'react-spring';
-import newSmoothJuliaShader from '../shaders/newSmoothJuliaShader';
 import _ from 'lodash';
-import WebGLCanvas from './WebGLCanvas';
+import React, { useEffect, useRef } from 'react';
+import { animated } from 'react-spring';
+import { useGesture } from 'react-use-gesture';
+import newSmoothJuliaShader from '../shaders/newSmoothJuliaShader';
 import { genericTouchBind } from './utils';
+import WebGLCanvas from './WebGLCanvas';
 
 export default function JuliaRenderer(props) {
   // variables to hold canvas and webgl information
@@ -20,9 +20,9 @@ export default function JuliaRenderer(props) {
   const screenScaleMultiplier = props.screenmult;
 
   // read incoming props
-  const [{ xy }] = props.controls.pos;
+  const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ zoom }, setControlZoom] = props.controls.zoom;
+  const [{ zoom }, setControlZoom] = props.controls.zoomCtrl;
   const maxI = props.maxiter;
   const AA = props.aa ? 2 : 1;
 
@@ -38,8 +38,8 @@ export default function JuliaRenderer(props) {
 
   let gtb = genericTouchBind({
     domTarget: canvasRef,
-    posControl: props.controls.pos,
-    zoomControl: props.controls.zoom,
+    posControl: props.controls.xyCtrl,
+    zoomControl: props.controls.zoomCtrl,
     screenScaleMultiplier: screenScaleMultiplier / props.dpr,
     gl: gl,
   });

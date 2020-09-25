@@ -1,15 +1,27 @@
-import { Card, Grid, Slider, Switch, Typography } from '@material-ui/core';
+import { Card, Grid, Slider, Switch, ThemeProvider, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { animated, useSpring } from 'react-spring';
+import { vScale } from 'vec-la-fp';
 import './App.css';
+import {
+  ViewerRotationControl,
+  ViewerXYControl,
+  ViewerZoomControl,
+} from './common/types';
 import InfoDialog from './components/InfoDialog';
 import JuliaRenderer from './components/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 import SettingsMenu from './components/SettingsMenu';
+import { SettingsProvider } from './components/SettingsWrapper';
 import { useWindowSize } from './components/utils';
+import theme from './theme/theme';
 
-function App() {
+// const AppContext = React.createContext();
+
+// export interface ContextSettings {}
+
+function App(): JSX.Element {
   const size = useWindowSize();
 
   const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
@@ -21,7 +33,7 @@ function App() {
   // make default device pixel ratio 1
   const [dpr, setDpr] = useState(1);
 
-  const startPos = [-0.7740798, 0.1230918];
+  const startPos: [number, number] = [-0.7740798, 0.1230918];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
   const startZoom = 165.0;
@@ -33,21 +45,21 @@ function App() {
   // }
 
   const mandelbrotControls = {
-    pos: useSpring(() => ({
-      xy: startPos.map((x) => x / screenScaleMultiplier),
+    xyCtrl: useSpring<ViewerXYControl>(() => ({
+      xy: vScale(1 / screenScaleMultiplier, startPos),
       config: defaultSpringConfig,
     })),
 
-    rot: useSpring(() => ({
+    rotCtrl: useSpring<ViewerRotationControl>(() => ({
       theta: 0,
-      last_pointer_angle: 0,
-      itheta: 0,
+      // last_pointer_angle: 0,
+      // itheta: 0,
       config: defaultSpringConfig,
     })),
 
-    zoom: useSpring(() => ({
+    zoomCtrl: useSpring<ViewerZoomControl>(() => ({
       zoom: startZoom,
-      last_pointer_dist: 0,
+      // last_pointer_dist: 0,
 
       minZoom: 0.5,
       maxZoom: 100000,
@@ -56,22 +68,25 @@ function App() {
     })),
   };
 
+  // const [a] = mandelbrotControls.xyCtrl;
+  // typeof a.xy;
+
   const juliaControls = {
-    pos: useSpring(() => ({
-      xy: [0, 0],
+    xyCtrl: useSpring<ViewerXYControl>(() => ({
+      xy: [0, 0] as [number, number],
       config: defaultSpringConfig,
     })),
 
-    rot: useSpring(() => ({
+    rotCtrl: useSpring<ViewerRotationControl>(() => ({
       theta: 0,
-      last_pointer_angle: 0,
-      itheta: 0,
+      // last_pointer_angle: 0,
+      // itheta: 0,
       config: defaultSpringConfig,
     })),
 
-    zoom: useSpring(() => ({
+    zoomCtrl: useSpring<ViewerZoomControl>(() => ({
       zoom: 0.5,
-      last_pointer_dist: 0,
+      // last_pointer_dist: 0,
 
       minZoom: 0.5,
       maxZoom: 100000,
@@ -84,20 +99,20 @@ function App() {
   const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
 
   const reset = () => {
-    mandelbrotControls.pos[1]({
+    mandelbrotControls.xyCtrl[1]({
       xy: [0, 0],
       config: resetPosSpringConfig,
     });
-    mandelbrotControls.zoom[1]({
+    mandelbrotControls.zoomCtrl[1]({
       zoom: 1,
       config: resetZoomSpringConfig,
     });
 
-    juliaControls.pos[1]({
+    juliaControls.xyCtrl[1]({
       xy: [0, 0],
       config: resetPosSpringConfig,
     });
-    juliaControls.zoom[1]({
+    juliaControls.zoomCtrl[1]({
       zoom: 1,
       config: resetZoomSpringConfig,
     });
@@ -242,84 +257,92 @@ function App() {
   ];
 
   return (
-    <Grid container>
-      <Grid
-        item
-        container
-        direction={(size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'}
-        justify="center"
-        className="fullSize"
-        style={{
-          position: 'absolute',
-        }}
-      >
-        <Card
-          style={{
-            width: 'auto',
-            position: 'absolute',
-            zIndex: 2,
-            right: 0,
-            top: 0,
-            margin: 20,
-            padding: 8,
-            display: controls.coords[0] ? 'block' : 'none',
-            // borderRadius: 100,
-          }}
-        >
-          <Typography align="right">
-            {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
-            {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
-            <animated.span>
-              {mandelbrotControls.pos[0].xy.interpolate(
-                // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
-                (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
-              )}
-            </animated.span>
-            <br />
-            <animated.span>
-              {mandelbrotControls.pos[0].xy.interpolate(
-                // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
-                (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
-              )}
-            </animated.span>
-          </Typography>
-        </Card>
-        <Grid item xs className="renderer">
-          <MandelbrotRenderer
-            controls={mandelbrotControls}
-            maxiter={controls.maxI[0]}
-            screenmult={screenScaleMultiplier}
-            miniSize={miniSize}
-            enableMini={controls.miniViewer[0]}
-            crosshair={controls.crosshair[0]}
-            aa={controls.aa[0]}
-            dpr={dpr}
-            showFps={controls.fps[0]}
-          />
-        </Grid>
-        <Grid
-          item
-          xs
-          className="renderer"
-          // style={{ display: "none" }}
-        >
-          <JuliaRenderer
-            c={mandelbrotControls.pos[0].xy}
-            controls={juliaControls}
-            maxiter={controls.maxI[0]}
-            screenmult={screenScaleMultiplier}
-            miniSize={miniSize}
-            enableMini={controls.miniViewer[0]}
-            aa={controls.aa[0]}
-            dpr={dpr}
-          />
-        </Grid>
-      </Grid>
+    <ThemeProvider theme={theme}>
+      <SettingsProvider>
+        <Grid container>
+          <Grid
+            item
+            container
+            direction={(size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'}
+            justify="center"
+            className="fullSize"
+            style={{
+              position: 'absolute',
+            }}
+          >
+            <Card
+              style={{
+                width: 'auto',
+                position: 'absolute',
+                zIndex: 2,
+                right: 0,
+                top: 0,
+                margin: 20,
+                padding: 8,
+                display: controls.coords[0] ? 'block' : 'none',
+                // borderRadius: 100,
+              }}
+            >
+              <Typography align="right">
+                {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
+                {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
+                <animated.span>
+                  {mandelbrotControls.xyCtrl[0].xy.interpolate(
+                    // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
+                    (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
+                  )}
+                </animated.span>
+                <br />
+                <animated.span>
+                  {mandelbrotControls.xyCtrl[0].xy.interpolate(
+                    // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
+                    (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
+                  )}
+                </animated.span>
+              </Typography>
+            </Card>
+            <Grid item xs className="renderer">
+              <MandelbrotRenderer
+                controls={mandelbrotControls}
+                maxiter={controls.maxI[0]}
+                screenmult={screenScaleMultiplier}
+                miniSize={miniSize}
+                enableMini={controls.miniViewer[0]}
+                crosshair={controls.crosshair[0]}
+                aa={controls.aa[0]}
+                dpr={dpr}
+                showFps={controls.fps[0]}
+              />
+            </Grid>
+            <Grid
+              item
+              xs
+              className="renderer"
+              // style={{ display: "none" }}
+            >
+              <JuliaRenderer
+                c={mandelbrotControls.xyCtrl[0].xy}
+                controls={juliaControls}
+                maxiter={controls.maxI[0]}
+                screenmult={screenScaleMultiplier}
+                miniSize={miniSize}
+                enableMini={controls.miniViewer[0]}
+                aa={controls.aa[0]}
+                dpr={dpr}
+              />
+            </Grid>
+          </Grid>
 
-      <SettingsMenu settings={settings} reset={() => reset()} toggleInfo={() => toggleInfo()} />
+          <SettingsMenu
+            settings={settings}
+            reset={() => reset()}
+            toggleInfo={() => toggleInfo()}
+          />
 
-      <InfoDialog ctrl={[showInfo, setShowInfo]} />
-    </Grid>
+          <InfoDialog ctrl={[showInfo, setShowInfo]} />
+        </Grid>
+      </SettingsProvider>
+    </ThemeProvider>
   );
 }
 

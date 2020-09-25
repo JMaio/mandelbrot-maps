@@ -1,10 +1,32 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import * as twgl from 'twgl.js';
-import { fullVertexShader, fullscreenVertexArray } from '../shaders/fullVertexShader';
-import { scale } from 'vec-la';
+// @ts-nocheck
+import React, { useCallback, useEffect, useRef } from 'react';
 import { animated } from 'react-spring';
+import * as twgl from 'twgl.js';
+import { vScale } from 'vec-la-fp';
+import { WebGLUniforms } from '../common/types';
+import { fullscreenVertexArray, fullVertexShader } from '../shaders/fullVertexShader';
 
-export default React.forwardRef(({ mini = false, ...props }, ref) => {
+/**
+ * Props for the WebGLCanvas component
+ *
+ * @param mini - Controls whether this component should display as a minimap
+ * @param glRef - The reference to the canvas to be used with a WebGL context
+ * @param u - Uniforms to be passed down to the WebGL context
+ *
+ */
+export interface WebGLCanvasProps {
+  mini: boolean;
+
+  glRef: React.MutableRefObject<HTMLCanvasElement>;
+  u: WebGLUniforms;
+  fps: any;
+  // children?: ReactNode;
+}
+
+// https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
+// https://stackoverflow.com/a/50294843/9184658
+const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>((props, ref) => {
+  // const { mini = false, ...rest } = props;
   // props:
   // id
   // fragShader
@@ -25,7 +47,7 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
   const setFps = props.fps;
 
   // have a zoom callback
-  const zoom = mini ? () => 1.0 : () => props.u.zoom.getValue();
+  const zoom = props.mini ? () => 1.0 : () => props.u.zoom.getValue();
   const currZoom = useRef(zoom);
 
   const dpr = props.dpr || 1;
@@ -41,10 +63,10 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
     bufferInfo.current = twgl.createBufferInfoFromArrays(gl.current, fullscreenVertexArray);
   }, [gl, ref]);
 
-  let then = useRef(0);
-  let frames = useRef(0);
-  let elapsedTime = useRef(0);
-  let interval = 1000;
+  const then = useRef(0);
+  const frames = useRef(0);
+  const elapsedTime = useRef(0);
+  const interval = 1000;
   // let mult = 1000 / interval;
   // the main render function for WebGL
   const render = useCallback(
@@ -56,7 +78,7 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
         resolution: [gl.current.canvas.width, gl.current.canvas.height],
         u_zoom: zoom(),
         u_c: u.c === undefined ? 0 : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
-        u_xy: scale(u.xy.getValue(), u.screenScaleMultiplier),
+        u_xy: vScale(u.screenScaleMultiplier, u.xy.getValue()),
         u_maxI: u.maxI,
       };
 
@@ -107,3 +129,7 @@ export default React.forwardRef(({ mini = false, ...props }, ref) => {
 
   return <animated.canvas id={props.id} className="renderer" ref={ref} />;
 });
+
+WebGLCanvas.displayName = 'WebGLCanvas';
+
+export default WebGLCanvas;

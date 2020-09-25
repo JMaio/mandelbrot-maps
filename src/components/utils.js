@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
-import { addV } from 'react-use-gesture';
-import { scale } from 'vec-la';
 import _ from 'lodash';
+import { useCallback, useEffect, useState } from 'react';
+import { addV } from 'react-use-gesture';
+import { vScale } from 'vec-la-fp';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize() {
@@ -101,7 +101,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
         // use screen multiplier for more granularity
         let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
 
-        let plotMovement = scale(movement, -2 / realZoom);
+        let plotMovement = vScale(-2 / realZoom, movement);
 
         let relMove = [plotMovement[0], -plotMovement[1]];
         let relDir = [direction[0], -direction[1]];
@@ -110,7 +110,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
           xy: addV(memo, relMove), // add the displacement to the starting position
           immediate: down, // immediately apply if the gesture is active
           config: {
-            velocity: scale(relDir, -velocity / realZoom), // set the velocity (gesture momentum)
+            velocity: vScale(-velocity / realZoom, relDir), // set the velocity (gesture momentum)
             decay: true,
           },
         });

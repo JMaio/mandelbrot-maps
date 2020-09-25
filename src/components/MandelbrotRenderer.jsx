@@ -1,13 +1,12 @@
-import React, { useRef, useEffect, useState } from 'react';
-import _ from 'lodash';
-
-import { useGesture } from 'react-use-gesture';
-import { animated } from 'react-spring';
-
-import newSmoothMandelbrotShader from '../shaders/newSmoothMandelbrotShader';
-import WebGLCanvas from './WebGLCanvas';
-import { genericTouchBind } from './utils';
 import { Card } from '@material-ui/core';
+import _ from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
+import { animated } from 'react-spring';
+import { useGesture } from 'react-use-gesture';
+import newSmoothMandelbrotShader from '../shaders/newSmoothMandelbrotShader';
+import { SettingsContext } from './SettingsWrapper';
+import { genericTouchBind } from './utils';
+import WebGLCanvas from './WebGLCanvas';
 
 export default function MandelbrotRenderer(props) {
   // variables to hold canvas and webgl information
@@ -20,7 +19,7 @@ export default function MandelbrotRenderer(props) {
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = props.screenmult;
+  const screenScaleMultiplier = props.screenmult; // -> global
 
   // temporary bounds to prevent excessive panning
   // eslint-disable-next-line
@@ -28,11 +27,11 @@ export default function MandelbrotRenderer(props) {
   // const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
 
   // read incoming props
-  const [{ xy }] = props.controls.pos;
+  const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ zoom }, setControlZoom] = props.controls.zoom;
-  const maxI = props.maxiter;
-  const AA = props.aa ? 2 : 1;
+  const [{ zoom }, setControlZoom] = props.controls.zoomCtrl;
+  const maxI = props.maxiter; // -> global
+  const AA = props.aa ? 2 : 1; // -> global
 
   const fragShader = newSmoothMandelbrotShader(
     {
@@ -57,9 +56,9 @@ export default function MandelbrotRenderer(props) {
 
   let gtb = genericTouchBind({
     domTarget: canvasRef,
-    posControl: props.controls.pos,
-    zoomControl: props.controls.zoom,
-    screenScaleMultiplier: screenScaleMultiplier / props.dpr,
+    posControl: props.controls.xyCtrl,
+    zoomControl: props.controls.zoomCtrl,
+    screenScaleMultiplier: screenScaleMultiplier / props.dpr, // -> global
     gl: gl,
   });
 
@@ -69,78 +68,87 @@ export default function MandelbrotRenderer(props) {
 
   const [fps, setFps] = useState(0);
 
+  // const [settings, setSettings] = useSettings();
+
   return (
-    <div
-      className="renderer"
-      style={{
-        position: 'relative',
-      }}
-    >
-      {props.showFps ? (
-        <Card
+    <SettingsContext.Consumer>
+      {([settings]) => (
+        <div
+          className="renderer"
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            padding: 4,
-            margin: 4,
+            position: 'relative',
           }}
         >
-          <animated.div style={{ fontFamily: 'monospace' }}>{fps}</animated.div>
-        </Card>
-      ) : null}
-      <WebGLCanvas
-        id="mandelbrot"
-        fragShader={fragShader}
-        dpr={props.dpr}
-        touchBind={touchBind}
-        u={{
-          zoom: zoom,
-          xy: xy,
-          maxI: maxI,
-          screenScaleMultiplier: screenScaleMultiplier,
-        }}
-        ref={canvasRef}
-        glRef={gl}
-        fps={setFps}
-      />
-      {props.enableMini ? (
-        <animated.div
-          style={{
-            position: 'absolute',
-            zIndex: 2,
-            margin: '0.5rem',
-            left: 0,
-            bottom: 0,
-            height: props.miniSize[0],
-            width: props.miniSize[0],
-            borderRadius: props.miniSize[0],
-            // border: "1px solid #000",
-            boxShadow: '0px 2px 10px 1px rgba(0, 0, 0, 0.4)',
-            overflow: 'hidden',
-            opacity: zoom.interpolate((z) => _.clamp(z - 1, 0, 1)),
-            display: zoom.interpolate((z) => (_.clamp(z - 1, 0, 1) === 0 ? 'none' : 'block')),
-          }}
-          onClick={() => setControlZoom({ zoom: 1 })}
-        >
+          {props.showFps ? (
+            <Card
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                padding: 4,
+                margin: 4,
+              }}
+            >
+              <animated.div style={{ fontFamily: 'monospace' }}>{fps}</animated.div>
+            </Card>
+          ) : null}
           <WebGLCanvas
-            id="mini-mandelbrot"
-            fragShader={miniFragShader}
+            id="mandelbrot"
+            fragShader={fragShader}
             dpr={props.dpr}
+            touchBind={touchBind}
             u={{
               zoom: zoom,
               xy: xy,
               maxI: maxI,
               screenScaleMultiplier: screenScaleMultiplier,
             }}
-            ref={miniCanvasRef}
-            glRef={miniGl}
-            mini={true}
+            ref={canvasRef}
+            glRef={gl}
+            fps={setFps}
           />
-        </animated.div>
-      ) : (
-        <div />
+
+          {settings.minimap ? (
+            <animated.div
+              style={{
+                position: 'absolute',
+                zIndex: 2,
+                margin: '0.5rem',
+                left: 0,
+                bottom: 0,
+                height: props.miniSize[0],
+                width: props.miniSize[0],
+                borderRadius: props.miniSize[0],
+                // border: "1px solid #000",
+                boxShadow: '0px 2px 10px 1px rgba(0, 0, 0, 0.4)',
+                overflow: 'hidden',
+                opacity: zoom.interpolate((z) => _.clamp(z - 1, 0, 1)),
+                display: zoom.interpolate((z) =>
+                  _.clamp(z - 1, 0, 1) === 0 ? 'none' : 'block',
+                ),
+              }}
+              onClick={() => setControlZoom({ zoom: 1 })}
+            >
+              <WebGLCanvas
+                id="mini-mandelbrot"
+                fragShader={miniFragShader}
+                dpr={props.dpr}
+                u={{
+                  zoom: zoom,
+                  xy: xy,
+                  maxI: maxI,
+                  screenScaleMultiplier: screenScaleMultiplier,
+                }}
+                ref={miniCanvasRef}
+                glRef={miniGl}
+                mini={true}
+              />
+            </animated.div>
+          ) : (
+            <div />
+          )}
+        </div>
       )}
-    </div>
+    </SettingsContext.Consumer>
   );
 }

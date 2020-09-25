@@ -1,20 +1,21 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
 import {
-  makeStyles,
-  Fab,
-  Popover,
-  FormGroup,
-  FormControlLabel,
-  Typography,
-  Grid,
-  Divider,
   Backdrop,
+  Divider,
+  Fab,
+  FormControlLabel,
+  FormGroup,
+  Grid,
   IconButton,
+  makeStyles,
+  Popover,
+  Typography,
 } from '@material-ui/core';
-import SettingsIcon from '@material-ui/icons/Settings';
-import MyLocationIcon from '@material-ui/icons/MyLocation';
+import Button from '@material-ui/core/Button';
 import InfoIcon from '@material-ui/icons/Info';
+import MyLocationIcon from '@material-ui/icons/MyLocation';
+import SettingsIcon from '@material-ui/icons/Settings';
+import React from 'react';
+import { getSettingsGrouping, SettingsContext } from './SettingsWrapper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,10 +34,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const GroupDivider = () => <Divider style={{ marginTop: 10, marginBottom: 4 }} />;
+const GroupTitle = (props) => (
+  <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>
+    {props.title}
+  </Typography>
+);
+
 export default function SettingsMenu(props) {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  // const settings = useSettings();
+  // const settingsGroups = getSettingsGrouping(settings);
 
   return (
     <div className={classes.root}>
@@ -78,7 +89,10 @@ export default function SettingsMenu(props) {
           >
             <Grid item container alignItems="center" justify="space-around">
               <Grid item>
-                <Typography variant="h1" style={{ fontSize: 20, paddingLeft: 20, paddingRight: 20 }}>
+                <Typography
+                  variant="h1"
+                  style={{ fontSize: 20, paddingLeft: 20, paddingRight: 20 }}
+                >
                   Configuration
                 </Typography>
               </Grid>
@@ -98,6 +112,66 @@ export default function SettingsMenu(props) {
                 </IconButton>
               </Grid>
             </Grid>
+            <SettingsContext.Consumer>
+              {([settings, setSettings, settingsWidgets]) =>
+                getSettingsGrouping(settingsWidgets).map((g) => (
+                  <Grid item key={g.name}>
+                    <GroupDivider />
+                    <GroupTitle title={g.name} />
+                    <FormGroup>
+                      {Object.entries(g.widgets).map(([k, widget]) => {
+                        // https://stackoverflow.com/a/54286277/9184658
+
+                        // const [value, setValue] = ctrl.value;
+                        // const [checked, setChecked] = ctrl.checked;
+
+                        // const control = {
+                        //   checked: ctrl.checked ? ctrl.checked[0] : undefined,
+                        //   value: ctrl.value ? ctrl.value[0] : undefined,
+                        // };
+
+                        // const [state, setState] = ctrl.value || ctrl.checked;
+                        // const [k, widget] = w;
+                        // console.log(k);
+                        // const widget = g.widgets[k];
+                        // console.log(widget.control);
+                        return (
+                          <FormControlLabel
+                            label={widget.label}
+                            // {...ctrl}
+                            key={`${widget.label}-control`}
+                            {...widget.display}
+                            // checked={typeof v === 'boolean' ? v : undefined}
+                            // value={v}
+                            // {...state}
+                            // {...checked}
+                            onChange={(e, val) => {
+                              console.log(widget);
+                              console.log(val);
+                              console.log(settings);
+                              // const newState = { [k]: val };
+                              setSettings((prevState) => ({ ...prevState, [k]: val }));
+                              // setChecked(val);
+                              // console.log(e.target.checked);
+                              // settings[ctrl.k].v = e.target.checked;
+                            }}
+                            control={widget.control}
+                            // style={
+                            //   ctrl.placement
+                            //     ? {
+                            //         marginLeft: 0,
+                            //         marginRight: 0,
+                            //       }
+                            //     : {}
+                            // }
+                          />
+                        );
+                      })}
+                    </FormGroup>
+                  </Grid>
+                ))
+              }
+            </SettingsContext.Consumer>
 
             {props.settings.map((group) => (
               <Grid item key={group.title}>
