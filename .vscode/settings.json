@@ -9,4 +9,5 @@
         "source.fixAll.eslint": true,
         // "source.organizeImports": true,
     },
+    "editor.tabSize": 2,
 }
