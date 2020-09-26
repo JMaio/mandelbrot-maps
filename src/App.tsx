@@ -1,6 +1,6 @@
-import { Card, Grid, Slider, Switch, ThemeProvider, Typography } from '@material-ui/core';
+import { Grid, ThemeProvider } from '@material-ui/core';
 import React, { useState } from 'react';
-import { animated, useSpring } from 'react-spring';
+import { useSpring } from 'react-spring';
 import { vScale } from 'vec-la-fp';
 import './App.css';
 import {
@@ -8,12 +8,13 @@ import {
   ViewerXYControl,
   ViewerZoomControl,
 } from './common/types';
+import CoordinatesCard from './components/info/CoordinatesCard';
 import InfoDialog from './components/InfoDialog';
 import JuliaRenderer from './components/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
 import SettingsMenu from './components/SettingsMenu';
-import { SettingsProvider } from './components/SettingsWrapper';
+import { SettingsContext, SettingsProvider } from './components/SettingsWrapper';
 import { useWindowSize } from './components/utils';
 import theme from './theme/theme';
 
@@ -30,8 +31,6 @@ function App(): JSX.Element {
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = 1e-7;
-  // make default device pixel ratio 1
-  const [dpr, setDpr] = useState(1);
 
   const startPos: [number, number] = [-0.7740798, 0.1230918];
   // const startPos = [-.7426482, .1271875 ];
@@ -132,130 +131,6 @@ function App(): JSX.Element {
     fps: useState(false),
   };
 
-  // alternate between boolean values
-  // const toggleVal = (
-  //   [v, setV]) => {
-  //     setV(!v)
-  //   };
-
-  const settings = [
-    {
-      title: 'Interface',
-      items: {
-        miniViewer: {
-          name: 'Mini viewers',
-          ctrl: (
-            <Switch
-              color="primary"
-              checked={controls.miniViewer[0]}
-              onChange={(e) => controls.miniViewer[1](e.target.checked)}
-            />
-          ),
-        },
-        crosshair: {
-          name: 'Crosshair',
-          ctrl: (
-            <Switch
-              color="primary"
-              checked={controls.crosshair[0]}
-              onChange={(e) => controls.crosshair[1](e.target.checked)}
-            />
-          ),
-        },
-        coords: {
-          name: 'Show coordinates',
-          ctrl: (
-            <Switch
-              color="primary"
-              checked={controls.coords[0]}
-              onChange={(e) => controls.coords[1](e.target.checked)}
-            />
-          ),
-        },
-      },
-    },
-    {
-      title: 'Graphics',
-      items: {
-        iterations: {
-          name: 'Iterations',
-          ctrl: (
-            <Slider
-              min={5}
-              max={1000}
-              step={5}
-              defaultValue={250}
-              valueLabelDisplay="auto"
-              value={controls.maxI[0]}
-              marks={[
-                { value: 5, label: 5 },
-                { value: 250, label: 250 },
-                { value: 500, label: 500 },
-                { value: 750, label: 750 },
-                { value: 1000, label: 1000 },
-              ]}
-              onChange={(e, val) => {
-                switch (typeof val) {
-                  case 'number':
-                    controls.maxI[1](val);
-                    break;
-                  default:
-                    break;
-                }
-              }}
-              // onChange={(e, val) => console.log(val)}
-            />
-          ),
-          placement: 'top',
-        },
-        dpr: {
-          // https://stackoverflow.com/a/12830454/9184658
-          // // There is a downside that values like 1.5 will give "1.50" as the output. A fix suggested by @minitech:
-          // var numb = 1.5;
-          // numb = +numb.toFixed(2);
-          // // Note the plus sign that drops any "extra" zeroes at the end.
-          // // It changes the result (which is a string) into a number again (think "0 + foo"),
-          // // which means that it uses only as many digits as necessary.
-          name: `Use pixel ratio (${+window.devicePixelRatio.toFixed(3) || 1})`,
-          ctrl: (
-            <Switch
-              checked={controls.dpr[0]}
-              color="primary"
-              onChange={() => {
-                const useDpr = !controls.dpr[0];
-                // console.log(useDpr ? window.devicePixelRatio : 1);
-                setDpr(useDpr ? window.devicePixelRatio : 1);
-                controls.dpr[1](useDpr);
-              }}
-            />
-          ),
-        },
-        aa: {
-          name: 'Anti-aliasing (slow)',
-          ctrl: (
-            <Switch
-              color="primary"
-              checked={controls.aa[0]}
-              onChange={(e) => controls.aa[1](e.target.checked)}
-              // onChange={() => toggleVal(controls.aa)}
-            />
-          ),
-        },
-        fps: {
-          name: 'Show FPS',
-          ctrl: (
-            <Switch
-              color="primary"
-              checked={controls.fps[0]}
-              onChange={(e) => controls.fps[1](e.target.checked)}
-              // onChange={() => toggleVal(controls.fps)}
-            />
-          ),
-        },
-      },
-    },
-  ];
-
   return (
     <ThemeProvider theme={theme}>
       <SettingsProvider>
@@ -270,37 +145,16 @@ function App(): JSX.Element {
               position: 'absolute',
             }}
           >
-            <Card
-              style={{
-                width: 'auto',
-                position: 'absolute',
-                zIndex: 2,
-                right: 0,
-                top: 0,
-                margin: 20,
-                padding: 8,
-                display: controls.coords[0] ? 'block' : 'none',
-                // borderRadius: 100,
-              }}
-            >
-              <Typography align="right">
-                {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
-                {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
-                <animated.span>
-                  {mandelbrotControls.xyCtrl[0].xy.interpolate(
-                    // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
-                    (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
-                  )}
-                </animated.span>
-                <br />
-                <animated.span>
-                  {mandelbrotControls.xyCtrl[0].xy.interpolate(
-                    // @ts-expect-error: Function call broken in TS, waiting till v9 to fix
-                    (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
-                  )}
-                </animated.span>
-              </Typography>
-            </Card>
+            <SettingsContext.Consumer>
+              {({ settings }) => (
+                <CoordinatesCard
+                  show={settings.coordinates}
+                  mandelbrot={mandelbrotControls.xyCtrl[0].xy}
+                  screenScaleMultiplier={screenScaleMultiplier}
+                />
+              )}
+            </SettingsContext.Consumer>
+
             <Grid item xs className="renderer">
               <MandelbrotRenderer
                 controls={mandelbrotControls}
@@ -310,16 +164,11 @@ function App(): JSX.Element {
                 enableMini={controls.miniViewer[0]}
                 crosshair={controls.crosshair[0]}
                 aa={controls.aa[0]}
-                dpr={dpr}
                 showFps={controls.fps[0]}
+                dpr={1}
               />
             </Grid>
-            <Grid
-              item
-              xs
-              className="renderer"
-              // style={{ display: "none" }}
-            >
+            <Grid item xs className="renderer">
               <JuliaRenderer
                 c={mandelbrotControls.xyCtrl[0].xy}
                 controls={juliaControls}
@@ -328,16 +177,12 @@ function App(): JSX.Element {
                 miniSize={miniSize}
                 enableMini={controls.miniViewer[0]}
                 aa={controls.aa[0]}
-                dpr={dpr}
+                dpr={1}
               />
             </Grid>
           </Grid>
 
-          <SettingsMenu
-            settings={settings}
-            reset={() => reset()}
-            toggleInfo={() => toggleInfo()}
-          />
+          <SettingsMenu reset={() => reset()} toggleInfo={() => toggleInfo()} />
 
           <InfoDialog ctrl={[showInfo, setShowInfo]} />
         </Grid>

@@ -15,7 +15,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import MyLocationIcon from '@material-ui/icons/MyLocation';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
-import { getSettingsGrouping, SettingsContext } from './SettingsWrapper';
+import { getSettingsWidgetsGrouping } from './SettingsDefinitions';
+import { SettingsContext } from './SettingsWrapper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -113,104 +114,31 @@ export default function SettingsMenu(props) {
               </Grid>
             </Grid>
             <SettingsContext.Consumer>
-              {([settings, setSettings, settingsWidgets]) =>
-                getSettingsGrouping(settingsWidgets).map((g) => (
+              {({ settings, setSettings, settingsWidgets }) =>
+                getSettingsWidgetsGrouping(settingsWidgets).map((g) => (
                   <Grid item key={g.name}>
                     <GroupDivider />
                     <GroupTitle title={g.name} />
                     <FormGroup>
-                      {Object.entries(g.widgets).map(([k, widget]) => {
-                        // https://stackoverflow.com/a/54286277/9184658
-
-                        // const [value, setValue] = ctrl.value;
-                        // const [checked, setChecked] = ctrl.checked;
-
-                        // const control = {
-                        //   checked: ctrl.checked ? ctrl.checked[0] : undefined,
-                        //   value: ctrl.value ? ctrl.value[0] : undefined,
-                        // };
-
-                        // const [state, setState] = ctrl.value || ctrl.checked;
-                        // const [k, widget] = w;
-                        // console.log(k);
-                        // const widget = g.widgets[k];
-                        // console.log(widget.control);
-                        return (
-                          <FormControlLabel
-                            label={widget.label}
-                            // {...ctrl}
-                            key={`${widget.label}-control`}
-                            {...widget.display}
-                            // checked={typeof v === 'boolean' ? v : undefined}
-                            // value={v}
-                            // {...state}
-                            // {...checked}
-                            onChange={(e, val) => {
-                              console.log(widget);
-                              console.log(val);
-                              console.log(settings);
-                              // const newState = { [k]: val };
-                              setSettings((prevState) => ({ ...prevState, [k]: val }));
-                              // setChecked(val);
-                              // console.log(e.target.checked);
-                              // settings[ctrl.k].v = e.target.checked;
-                            }}
-                            control={widget.control}
-                            // style={
-                            //   ctrl.placement
-                            //     ? {
-                            //         marginLeft: 0,
-                            //         marginRight: 0,
-                            //       }
-                            //     : {}
-                            // }
-                          />
-                        );
-                      })}
+                      {Object.entries(g.widgets).map(([k, widget]) => (
+                        <FormControlLabel
+                          key={`${widget.label}-control`}
+                          style={{ userSelect: 'none' }}
+                          {...widget}
+                          onChange={(e, val) => {
+                            console.log(`${k} -> ${val}`);
+                            setSettings((prevState) => ({ ...prevState, [k]: val }));
+                            // console.log(settings);
+                          }}
+                        />
+                      ))}
                     </FormGroup>
                   </Grid>
                 ))
               }
             </SettingsContext.Consumer>
 
-            {props.settings.map((group) => (
-              <Grid item key={group.title}>
-                <Divider
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 4,
-                  }}
-                />
-                <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>
-                  {group.title}
-                </Typography>
-                <FormGroup>
-                  {Object.values(group.items).map((ctrl) => (
-                    <FormControlLabel
-                      label={ctrl.name}
-                      key={ctrl.name}
-                      control={ctrl.ctrl}
-                      labelPlacement={ctrl.placement ? ctrl.placement : 'end'}
-                      style={
-                        ctrl.placement
-                          ? {
-                              marginLeft: 0,
-                              marginRight: 0,
-                            }
-                          : {}
-                      }
-                    />
-                  ))}
-                </FormGroup>
-              </Grid>
-            ))}
-
-            <Divider
-              style={{
-                marginTop: 10,
-                marginBottom: 4,
-              }}
-            />
+            <GroupDivider />
 
             <Button
               aria-controls="reset"

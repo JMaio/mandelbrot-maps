@@ -68,30 +68,27 @@ export default function MandelbrotRenderer(props) {
 
   const [fps, setFps] = useState(0);
 
-  // const [settings, setSettings] = useSettings();
-
   return (
     <SettingsContext.Consumer>
-      {([settings]) => (
+      {({ settings }) => (
         <div
           className="renderer"
           style={{
             position: 'relative',
           }}
         >
-          {props.showFps ? (
-            <Card
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                padding: 4,
-                margin: 4,
-              }}
-            >
-              <animated.div style={{ fontFamily: 'monospace' }}>{fps}</animated.div>
-            </Card>
-          ) : null}
+          <Card
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              padding: 4,
+              margin: 4,
+              display: settings.showFPS ? 'block' : 'none',
+            }}
+          >
+            <animated.div style={{ fontFamily: 'monospace' }}>{fps}</animated.div>
+          </Card>
           <WebGLCanvas
             id="mandelbrot"
             fragShader={fragShader}
