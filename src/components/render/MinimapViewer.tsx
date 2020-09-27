@@ -27,7 +27,18 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
       }}
       onClick={onClick}
     >
-      <WebGLCanvas mini={true} ref={canvasRef} {...rest} />
+      <WebGLCanvas
+        mini={true}
+        ref={canvasRef}
+        {...rest}
+        // setting border radius here stops the canvas clickable area from overflowing
+        // outside the div circle, which would make the clickable area a rectangle
+        style={{
+          borderRadius: miniSize,
+          // cursor should be "pointer" (looks clickable) if this is a minimap,
+          cursor: 'pointer',
+        }}
+      />
     </animated.div>
   );
 };

@@ -1,6 +1,5 @@
+import { CanvasHTMLAttributes } from 'react';
 import { MandelbrotMapsWebGLUniforms } from './types';
-import { Property } from 'csstype';
-import { OpaqueInterpolation } from 'react-spring';
 /**
  * Props for the WebGLCanvas component
  *
@@ -9,7 +8,7 @@ import { OpaqueInterpolation } from 'react-spring';
  * @param u - Uniforms to be passed down to the WebGL context
  *
  */
-export interface WebGLCanvasProps {
+export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   glRef: React.MutableRefObject<WebGLRenderingContext>;
   u: MandelbrotMapsWebGLUniforms;
 

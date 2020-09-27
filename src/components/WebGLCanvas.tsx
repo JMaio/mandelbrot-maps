@@ -141,7 +141,10 @@ const WebGLCanvas = React.forwardRef<
       className="renderer"
       ref={refAny}
       style={{
+        // cursor should show whether the viewer is being grabbed
         cursor: props.dragging ? 'grabbing' : 'grab',
+        // adding style allows direct style override
+        ...props.style,
       }}
     />
   );
