@@ -28,11 +28,11 @@ function App(): JSX.Element {
   // otherwise small scale that is being mapped to the screen.
   const screenScaleMultiplier = 1e-7;
 
-  const startPos: [number, number] = [-0.7740798, 0.1230918];
+  const startPos: [number, number] = [-0.7746931, 0.1242266];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
-  const startZoom = 165.0;
   const miniSize = useState(100);
+  const startZoom = 85.0;
 
   // interface posInterface extends UseSpringBaseProps {
   //   pos: [number, number],
