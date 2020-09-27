@@ -173,8 +173,9 @@ function App(): JSX.Element {
                     screenmult={screenScaleMultiplier}
                     // miniSize={miniSize}
                     minimap={controls.miniViewer[0]}
-                    useAA={controls.aa[0]}
-                    useDPR={settings.useDPR}
+                    // useAA={controls.aa[0]}
+                    // useDPR={settings.useDPR}
+                    {...settings}
                   />
                 </Grid>
               </Grid>

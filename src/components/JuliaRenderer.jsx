@@ -23,8 +23,8 @@ export default function JuliaRenderer(props) {
   const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom }, setControlZoom] = props.controls.zoomCtrl;
-  const maxI = props.maxiter;
-  const AA = props.aa ? 2 : 1;
+  const maxI = props.maxI; // -> global
+  const AA = props.useAA ? 2 : 1;
 
   const fragShader = newSmoothJuliaShader({
     maxI: maxI,
