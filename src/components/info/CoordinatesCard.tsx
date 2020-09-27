@@ -14,7 +14,7 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
           right: 0,
           top: 0,
           margin: 20,
-          padding: 8,
+          padding: '6px 12px',
           // display: props.show ? 'block' : 'none',
           // borderRadius: 100,
         }}
