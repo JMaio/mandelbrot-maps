@@ -37,7 +37,7 @@ const WebGLCanvas = React.forwardRef<
   const zoom = props.mini ? () => 1.0 : () => props.u.zoom.getValue();
   const currZoom = useRef(zoom());
 
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = props.useDPR ? window.devicePixelRatio : 1;
 
   // useEffect(() => {
   //   console.log(props.cursor?.getValue());
@@ -72,8 +72,9 @@ const WebGLCanvas = React.forwardRef<
   const then = useRef(0);
   const frames = useRef(0);
   const elapsedTime = useRef(0);
+  // fps update interval
   const interval = 1000;
-  // let mult = 1000 / interval;
+  // const mult = 1000 / interval;
   // the main render function for WebGL
   const render = useCallback(
     (time) => {

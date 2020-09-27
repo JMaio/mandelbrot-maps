@@ -31,7 +31,6 @@ function App(): JSX.Element {
   const startPos: [number, number] = [-0.7746931, 0.1242266];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
-  const miniSize = useState(100);
   const startZoom = 85.0;
 
   // interface posInterface extends UseSpringBaseProps {
@@ -127,56 +126,60 @@ function App(): JSX.Element {
     fps: useState(false),
   };
 
+  // const { settings } = useSettings();
+
   return (
     <ThemeProvider theme={theme}>
       <SettingsProvider>
         <Grid container>
-          <Grid
-            item
-            container
-            direction={(size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'}
-            justify="center"
-            className="fullSize"
-            style={{
-              position: 'absolute',
-            }}
-          >
-            <SettingsContext.Consumer>
-              {({ settings }) => (
+          <SettingsContext.Consumer>
+            {({ settings }) => (
+              <Grid
+                item
+                container
+                direction={
+                  (size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'
+                }
+                justify="center"
+                className="fullSize"
+                style={{
+                  position: 'absolute',
+                }}
+              >
                 <CoordinatesCard
-                  show={settings.coordinates}
+                  show={settings.showCoordinates}
                   mandelbrot={mandelbrotControls.xyCtrl[0].xy}
                   screenScaleMultiplier={screenScaleMultiplier}
                 />
-              )}
-            </SettingsContext.Consumer>
-
-            <Grid item xs className="renderer">
-              <MandelbrotRenderer
-                controls={mandelbrotControls}
-                maxiter={controls.maxI[0]}
-                screenmult={screenScaleMultiplier}
-                miniSize={miniSize}
-                enableMini={controls.miniViewer[0]}
-                crosshair={controls.crosshair[0]}
-                aa={controls.aa[0]}
-                showFps={controls.fps[0]}
-                dpr={1}
-              />
-            </Grid>
-            <Grid item xs className="renderer">
-              <JuliaRenderer
-                c={mandelbrotControls.xyCtrl[0].xy}
-                controls={juliaControls}
-                maxiter={controls.maxI[0]}
-                screenmult={screenScaleMultiplier}
-                miniSize={miniSize}
-                enableMini={controls.miniViewer[0]}
-                aa={controls.aa[0]}
-                dpr={1}
-              />
-            </Grid>
-          </Grid>
+                <Grid item xs className="renderer">
+                  <MandelbrotRenderer
+                    controls={mandelbrotControls}
+                    screenmult={screenScaleMultiplier}
+                    {...settings}
+                    // maxiter={controls.maxI[0]}
+                    // miniSize={miniSize}
+                    // enableMini={controls.miniViewer[0]}
+                    // crosshair={controls.crosshair[0]}
+                    // showFps={controls.fps[0]}
+                    // useAA={controls.aa[0]}
+                    // useDPR={settings.useDPR}
+                  />
+                </Grid>
+                <Grid item xs className="renderer">
+                  <JuliaRenderer
+                    c={mandelbrotControls.xyCtrl[0].xy}
+                    controls={juliaControls}
+                    maxiter={controls.maxI[0]}
+                    screenmult={screenScaleMultiplier}
+                    // miniSize={miniSize}
+                    minimap={controls.miniViewer[0]}
+                    useAA={controls.aa[0]}
+                    useDPR={settings.useDPR}
+                  />
+                </Grid>
+              </Grid>
+            )}
+          </SettingsContext.Consumer>
 
           <SettingsMenu reset={() => reset()} toggleInfo={() => toggleInfo()} />
 

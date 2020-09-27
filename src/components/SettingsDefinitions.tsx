@@ -7,31 +7,31 @@ import {
 } from '../common/settings';
 
 export const defaultSettings = {
-  minimap: true,
-  crosshair: true,
-  coordinates: false,
+  showMinimap: true,
+  showCrosshair: true,
+  showCoordinates: false,
   maxI: 250,
+  showFPS: false,
   useDPR: false,
   useAA: false,
-  showFPS: false,
 };
 
 export const settingsWidgets = (
   settings: settingsDefinitionsType,
 ): settingsWidgetType => ({
-  minimap: {
+  showMinimap: {
     label: 'Minimap',
-    checked: settings.minimap,
+    checked: settings.showMinimap,
     control: <Switch />,
   },
-  crosshair: {
+  showCrosshair: {
     label: 'Crosshair',
-    checked: settings.crosshair,
+    checked: settings.showCrosshair,
     control: <Switch />,
   },
-  coordinates: {
+  showCoordinates: {
     label: 'Show coordinates',
-    checked: settings.coordinates,
+    checked: settings.showCoordinates,
     control: <Switch />,
   },
   maxI: {
@@ -44,12 +44,12 @@ export const settingsWidgets = (
     },
     control: (
       <Slider
-        min={5}
+        min={10}
         max={1000}
-        step={5}
+        step={10}
         valueLabelDisplay="auto"
         marks={[
-          { value: 5, label: 5 },
+          { value: 10, label: 10 },
           { value: 250, label: 250 },
           { value: 500, label: 500 },
           { value: 750, label: 750 },
@@ -88,9 +88,9 @@ export const getSettingsWidgetsGrouping = (
   {
     name: 'Interface',
     widgets: {
-      minimap: settingsWidgets.minimap,
-      crosshair: settingsWidgets.crosshair,
-      coordinates: settingsWidgets.coordinates,
+      showMinimap: settingsWidgets.showMinimap,
+      showCrosshair: settingsWidgets.showCrosshair,
+      showCoordinates: settingsWidgets.showCoordinates,
     },
   },
   {

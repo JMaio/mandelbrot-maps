@@ -3,13 +3,13 @@ import React from 'react';
 // https://stackoverflow.com/a/39281228/9184658
 
 export type settingsDefinitionsType = {
-  minimap: boolean;
-  crosshair: boolean;
-  coordinates: boolean;
+  showMinimap: boolean;
+  showCrosshair: boolean;
+  showCoordinates: boolean;
+  showFPS: boolean;
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
-  showFPS: boolean;
 };
 
 export type settingsWidgetType = {
