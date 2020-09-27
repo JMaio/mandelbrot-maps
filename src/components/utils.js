@@ -35,9 +35,16 @@ export function useWindowSize() {
 }
 
 // a touchbind for re-using across renderers
-export function genericTouchBind({ domTarget, posControl, zoomControl, screenScaleMultiplier, gl }) {
-  let [{ xy }, setControlPos] = posControl;
-  let [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
+export function genericTouchBind({
+  domTarget,
+  posControl,
+  zoomControl,
+  screenScaleMultiplier,
+  gl,
+  setDragging,
+}) {
+  const [{ xy }, setControlXY] = posControl;
+  const [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
   return {
     binds: {
       // prevent some browser events such as swipe-based navigation or
@@ -45,7 +52,15 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
       onDragStart: ({ event }) => event.preventDefault(),
       onPinchStart: ({ event }) => event.preventDefault(),
 
-      onPinch: ({ vdva: [vd], down, delta: [dx], origin, first, memo = [xy.getValue()], z = zoom.getValue() }) => {
+      onPinch: ({
+        vdva: [vd],
+        down,
+        delta: [dx],
+        origin,
+        first,
+        memo = [xy.getValue()],
+        z = zoom.getValue(),
+      }) => {
         if (first) {
           let [p] = memo;
           return [p, origin];
@@ -91,7 +106,14 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
         return z;
       },
 
-      onDrag: ({ down, movement, velocity, direction, pinching, memo = xy.getValue() }) => {
+      onDrag: ({
+        down,
+        movement,
+        velocity,
+        direction,
+        pinching,
+        memo = xy.getValue(),
+      }) => {
         // let pinch handle movement
         if (pinching) return;
         // change according to this formula:
@@ -106,7 +128,7 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
         let relMove = [plotMovement[0], -plotMovement[1]];
         let relDir = [direction[0], -direction[1]];
 
-        setControlPos({
+        setControlXY({
           xy: addV(memo, relMove), // add the displacement to the starting position
           immediate: down, // immediately apply if the gesture is active
           config: {
@@ -114,6 +136,11 @@ export function genericTouchBind({ domTarget, posControl, zoomControl, screenSca
             decay: true,
           },
         });
+
+        // tell the renderer that it's being dragged on
+        setDragging(down);
+        // try {
+        // } catch (e) {}
 
         return memo;
       },

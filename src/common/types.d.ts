@@ -31,10 +31,13 @@ export interface ViewerControls {
 
 // export type SpringAnimatedValueWithSetter<T> = [AnimatedValue<T>, SetUpdateFn<T>];
 
-export interface WebGLUniforms {
+export interface MandelbrotMapsWebGLUniforms {
   zoom: OpaqueInterpolation<ZoomType>;
   xy: OpaqueInterpolation<XYType>;
   maxI: number;
+  c?: {
+    getValue: () => XYType;
+  };
   screenScaleMultiplier: number;
 }
 

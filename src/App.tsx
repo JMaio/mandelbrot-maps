@@ -18,10 +18,6 @@ import { SettingsContext, SettingsProvider } from './components/SettingsWrapper'
 import { useWindowSize } from './components/utils';
 import theme from './theme/theme';
 
-// const AppContext = React.createContext();
-
-// export interface ContextSettings {}
-
 function App(): JSX.Element {
   const size = useWindowSize();
 

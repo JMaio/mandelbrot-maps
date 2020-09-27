@@ -1,20 +1,21 @@
 import { Card } from '@material-ui/core';
-import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { animated } from 'react-spring';
 import { useGesture } from 'react-use-gesture';
 import newSmoothMandelbrotShader from '../shaders/newSmoothMandelbrotShader';
+import ToggleableFade from '../theme/ToggleableFade';
+import MinimapViewer from './render/MinimapViewer';
 import { SettingsContext } from './SettingsWrapper';
 import { genericTouchBind } from './utils';
 import WebGLCanvas from './WebGLCanvas';
 
 export default function MandelbrotRenderer(props) {
   // variables to hold canvas and webgl information
-  const canvasRef = useRef(null);
-  const miniCanvasRef = useRef(null);
+  const canvasRef = useRef();
+  const miniCanvasRef = useRef();
 
-  const gl = useRef(null);
-  const miniGl = useRef(null);
+  const gl = useRef();
+  const miniGl = useRef();
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
@@ -54,12 +55,15 @@ export default function MandelbrotRenderer(props) {
     },
   );
 
+  const [dragging, setDragging] = useState(false);
+
   let gtb = genericTouchBind({
     domTarget: canvasRef,
     posControl: props.controls.xyCtrl,
     zoomControl: props.controls.zoomCtrl,
     screenScaleMultiplier: screenScaleMultiplier / props.dpr, // -> global
     gl: gl,
+    setDragging: setDragging,
   });
 
   let touchBind = useGesture(gtb.binds, gtb.config);
@@ -103,16 +107,31 @@ export default function MandelbrotRenderer(props) {
             ref={canvasRef}
             glRef={gl}
             fps={setFps}
+            dragging={dragging}
           />
 
-          {settings.minimap ? (
-            <animated.div
+          <ToggleableFade show={settings.minimap}>
+            <MinimapViewer
+              fragShader={miniFragShader}
+              dpr={props.dpr}
+              u={{
+                zoom: zoom,
+                xy: xy,
+                maxI: maxI,
+                screenScaleMultiplier: screenScaleMultiplier,
+              }}
+              canvasRef={miniCanvasRef}
+              glRef={miniGl}
+              onClick={() => setControlZoom({ zoom: 1 })}
+            />
+            {/* <animated.div
               style={{
                 position: 'absolute',
                 zIndex: 2,
                 margin: '0.5rem',
                 left: 0,
                 bottom: 0,
+                cursor: 'pointer',
                 height: props.miniSize[0],
                 width: props.miniSize[0],
                 borderRadius: props.miniSize[0],
@@ -125,8 +144,8 @@ export default function MandelbrotRenderer(props) {
                 ),
               }}
               onClick={() => setControlZoom({ zoom: 1 })}
-            >
-              <WebGLCanvas
+            > */}
+            {/* <WebGLCanvas
                 id="mini-mandelbrot"
                 fragShader={miniFragShader}
                 dpr={props.dpr}
@@ -139,11 +158,9 @@ export default function MandelbrotRenderer(props) {
                 ref={miniCanvasRef}
                 glRef={miniGl}
                 mini={true}
-              />
-            </animated.div>
-          ) : (
-            <div />
-          )}
+              /> */}
+            {/* </animated.div> */}
+          </ToggleableFade>
         </div>
       )}
     </SettingsContext.Consumer>
