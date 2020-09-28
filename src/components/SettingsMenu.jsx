@@ -16,7 +16,7 @@ import MyLocationIcon from '@material-ui/icons/MyLocation';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { getSettingsWidgetsGrouping } from './SettingsDefinitions';
-import { SettingsContext } from './SettingsWrapper';
+import { SettingsContext } from './SettingsContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {

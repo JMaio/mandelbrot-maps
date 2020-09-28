@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { animated } from 'react-spring';
 import * as twgl from 'twgl.js';
 import { vScale } from 'vec-la-fp';
-import { WebGLCanvasProps } from '../common/render';
-import { fullscreenVertexArray, fullVertexShader } from '../shaders/fullVertexShader';
+import { WebGLCanvasProps } from '../../common/render';
+import { fullscreenVertexArray, fullVertexShader } from '../../shaders/fullVertexShader';
 
 // https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
 // https://stackoverflow.com/a/50294843/9184658

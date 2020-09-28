@@ -2,7 +2,7 @@ import { ButtonBase, Grow } from '@material-ui/core';
 import React from 'react';
 import { MinimapViewerProps } from '../../common/render';
 import { simpleBoxShadow } from '../../theme/theme';
-import WebGLCanvas from '../WebGLCanvas';
+import WebGLCanvas from './WebGLCanvas';
 
 const miniSize = 100;
 // TODO: make square with rounded corners?

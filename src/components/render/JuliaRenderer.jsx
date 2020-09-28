@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
-import newSmoothJuliaShader from '../shaders/newSmoothJuliaShader';
-import MinimapViewer from './render/MinimapViewer';
-import { SettingsContext } from './SettingsWrapper';
-import { genericTouchBind } from './utils';
+import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
+import MinimapViewer from './MinimapViewer';
+import { SettingsContext } from '../SettingsContext';
+import { genericTouchBind } from '../utils';
 import WebGLCanvas from './WebGLCanvas';
 
 export default function JuliaRenderer(props) {
@@ -67,7 +67,6 @@ export default function JuliaRenderer(props) {
             id="julia"
             fragShader={fragShader}
             useDPR={props.useDPR}
-            // touchBind={touchBind}
             u={{
               zoom: zoom,
               xy: xy,

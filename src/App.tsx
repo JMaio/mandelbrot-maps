@@ -10,11 +10,11 @@ import {
 } from './common/types';
 import CoordinatesCard from './components/info/CoordinatesCard';
 import InfoDialog from './components/InfoDialog';
-import JuliaRenderer from './components/JuliaRenderer';
+import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
-import MandelbrotRenderer from './components/MandelbrotRenderer.jsx';
+import MandelbrotRenderer from './components/render/MandelbrotRenderer';
 import SettingsMenu from './components/SettingsMenu';
-import { SettingsContext, SettingsProvider } from './components/SettingsWrapper';
+import { SettingsContext, SettingsProvider } from './components/SettingsContext';
 import { useWindowSize } from './components/utils';
 import theme from './theme/theme';
 
@@ -116,16 +116,6 @@ function App(): JSX.Element {
 
   const toggleInfo = () => setShowInfo(!showInfo);
 
-  const controls = {
-    miniViewer: useState(true),
-    crosshair: useState(true),
-    coords: useState(false),
-    maxI: useState(250),
-    aa: useState(false),
-    dpr: useState(false),
-    fps: useState(false),
-  };
-
   // const { settings } = useSettings();
 
   return (
@@ -156,25 +146,13 @@ function App(): JSX.Element {
                     controls={mandelbrotControls}
                     screenmult={screenScaleMultiplier}
                     {...settings}
-                    // maxiter={controls.maxI[0]}
-                    // miniSize={miniSize}
-                    // enableMini={controls.miniViewer[0]}
-                    // crosshair={controls.crosshair[0]}
-                    // showFps={controls.fps[0]}
-                    // useAA={controls.aa[0]}
-                    // useDPR={settings.useDPR}
                   />
                 </Grid>
                 <Grid item xs className="renderer">
                   <JuliaRenderer
                     c={mandelbrotControls.xyCtrl[0].xy}
                     controls={juliaControls}
-                    maxiter={controls.maxI[0]}
                     screenmult={screenScaleMultiplier}
-                    // miniSize={miniSize}
-                    minimap={controls.miniViewer[0]}
-                    // useAA={controls.aa[0]}
-                    // useDPR={settings.useDPR}
                     {...settings}
                   />
                 </Grid>

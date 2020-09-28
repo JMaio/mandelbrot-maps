@@ -3,12 +3,11 @@ import { useGesture } from 'react-use-gesture';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
-} from '../shaders/newSmoothMandelbrotShader';
-import ToggleableFade from '../theme/ToggleableFade';
-import FPSCard from './info/FPSCard';
-import MinimapViewer from './render/MinimapViewer';
-import { SettingsContext } from './SettingsWrapper';
-import { genericTouchBind } from './utils';
+} from '../../shaders/newSmoothMandelbrotShader';
+import FPSCard from '../info/FPSCard';
+import { SettingsContext } from '../SettingsContext';
+import { genericTouchBind } from '../utils';
+import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 
 export default function MandelbrotRenderer(props) {
@@ -55,7 +54,7 @@ export default function MandelbrotRenderer(props) {
 
   const [dragging, setDragging] = useState(false);
 
-  let gtb = genericTouchBind({
+  const gtb = genericTouchBind({
     domTarget: canvasRef,
     posControl: props.controls.xyCtrl,
     zoomControl: props.controls.zoomCtrl,
@@ -65,7 +64,7 @@ export default function MandelbrotRenderer(props) {
     setDragging: setDragging,
   });
 
-  let touchBind = useGesture(gtb.binds, gtb.config);
+  const touchBind = useGesture(gtb.binds, gtb.config);
 
   useEffect(touchBind, [touchBind]);
 
@@ -81,18 +80,7 @@ export default function MandelbrotRenderer(props) {
           }}
         >
           <FPSCard fps={fps} show={settings.showFPS} />
-          {/* <Card
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              padding: 4,
-              margin: 4,
-              display: settings.showFPS ? 'block' : 'none',
-            }}
-          >
-            <animated.div style={{ fontFamily: 'monospace' }}>{fps}</animated.div>
-          </Card> */}
+
           <WebGLCanvas
             id="mandelbrot"
             fragShader={fragShader}
@@ -110,22 +98,20 @@ export default function MandelbrotRenderer(props) {
             dragging={dragging}
           />
 
-          <ToggleableFade show={settings.showMinimap}>
-            <MinimapViewer
-              fragShader={miniFragShader}
-              useDPR={settings.useDPR}
-              u={{
-                zoom: zoom,
-                xy: xy,
-                maxI: maxI,
-                screenScaleMultiplier: screenScaleMultiplier,
-              }}
-              canvasRef={miniCanvasRef}
-              glRef={miniGl}
-              show={settings.showMinimap}
-              onClick={() => setControlZoom({ zoom: 1 })}
-            />
-          </ToggleableFade>
+          <MinimapViewer
+            fragShader={miniFragShader}
+            useDPR={settings.useDPR}
+            u={{
+              zoom: zoom,
+              xy: xy,
+              maxI: maxI,
+              screenScaleMultiplier: screenScaleMultiplier,
+            }}
+            canvasRef={miniCanvasRef}
+            glRef={miniGl}
+            show={settings.showMinimap}
+            onClick={() => setControlZoom({ zoom: 1 })}
+          />
         </div>
       )}
     </SettingsContext.Consumer>
