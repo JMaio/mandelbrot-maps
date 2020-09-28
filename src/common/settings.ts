@@ -12,18 +12,18 @@ export type settingsDefinitionsType = {
   useAA: boolean;
 };
 
+// using "key" results in an error since it is not used again
+// // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type settingsWidgetType = {
-  // using "key" results in an error since it is not used again
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [key in keyof settingsDefinitionsType]: FormControlLabelProps;
+  [key in keyof settingsDefinitionsType]: FormControlLabelProps & { k: key };
 };
 
 export type settingsGroupType = {
   name: string;
-  widgets: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    [key in keyof settingsDefinitionsType]?: FormControlLabelProps;
-  };
+  widgets: Array<FormControlLabelProps & { k: keyof settingsDefinitionsType }>;
+  // [key in keyof settingsDefinitionsType]: ;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // };
 };
 
 export type SettingsContextType = {
@@ -31,3 +31,8 @@ export type SettingsContextType = {
   setSettings: React.Dispatch<React.SetStateAction<settingsDefinitionsType>>;
   settingsWidgets: settingsWidgetType;
 };
+
+export interface SettingsMenuProps {
+  reset: () => void;
+  toggleInfo: () => void;
+}

@@ -7,6 +7,9 @@ const theme = createMuiTheme({
       // The default props to change
       color: 'primary', // x, on the whole application 💣!
     },
+    MuiButton: {
+      variant: 'outlined',
+    },
   },
   palette: {
     primary: {
