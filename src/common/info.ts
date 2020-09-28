@@ -1,6 +1,6 @@
 import { CardProps } from '@material-ui/core';
 import { OpaqueInterpolation } from 'react-spring';
-import { XYType } from '../../common/types';
+import { XYType } from './types';
 
 export interface FPSCardProps {
   fps: number;

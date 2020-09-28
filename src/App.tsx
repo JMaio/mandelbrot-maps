@@ -9,12 +9,12 @@ import {
   ViewerZoomControl,
 } from './common/types';
 import CoordinatesCard from './components/info/CoordinatesCard';
-import InfoDialog from './components/InfoDialog';
+import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/render/MandelbrotRenderer';
-import SettingsMenu from './components/SettingsMenu';
-import { SettingsContext, SettingsProvider } from './components/SettingsContext';
+import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
+import SettingsMenu from './components/settings/SettingsMenu';
 import { useWindowSize } from './components/utils';
 import theme from './theme/theme';
 

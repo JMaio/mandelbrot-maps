@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useState } from 'react';
-import { SettingsContextType, settingsDefinitionsType } from '../common/settings';
+import { SettingsContextType, settingsDefinitionsType } from '../../common/settings';
 import defaultSettings, { settingsWidgets } from './SettingsDefinitions';
 
 export const SettingsContext = createContext<SettingsContextType>({

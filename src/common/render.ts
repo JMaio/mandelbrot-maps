@@ -1,22 +1,16 @@
 import { CanvasHTMLAttributes } from 'react';
 import { MandelbrotMapsWebGLUniforms } from './types';
-/**
- * Props for the WebGLCanvas component
- *
- * @param mini - Controls whether this component should display as a minimap
- * @param glRef - The reference to the canvas to be used with a WebGL context
- * @param u - Uniforms to be passed down to the WebGL context
- *
- */
+
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
+  /** The reference to the WebGL context in the root canvas element  */
   glRef: React.MutableRefObject<WebGLRenderingContext>;
-  // the WebGL uniforms required for the shader - position, zoom, etc
+  /** WebGL Uniforms to be passed down to the shader - position, zoom, etc */
   u: MandelbrotMapsWebGLUniforms;
   /** The fragment shader to be used */
   fragShader?: any;
 
   fps?: any;
-  /** The device pixel ratio to be used can be overwritten with this value */
+  /** The device pixel ratio to be used can be overwritten with this value? */
   dpr?: number;
   /** Should the DPR value be used? */
   useDPR?: boolean;

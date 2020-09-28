@@ -1,7 +1,7 @@
 import { Card, Grow, Typography } from '@material-ui/core';
 import React from 'react';
 import { animated } from 'react-spring';
-import { CoordinatesCardProps } from './info';
+import { CoordinatesCardProps } from '../../common/info';
 
 const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
   return (

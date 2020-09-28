@@ -24,7 +24,7 @@ import {
 import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import MuiAlert from '@material-ui/lab/Alert';
-import { surveyLink } from './surveyLink.json';
+import { surveyLink } from '../surveyLink.json';
 
 // for evaluating build time
 import preval from 'preval.macro';
@@ -59,7 +59,10 @@ const DialogTitle = withStyles(styles)((props) => {
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <img src="logo-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
-      <Typography variant="h1" style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}>
+      <Typography
+        variant="h1"
+        style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}
+      >
         {children}
       </Typography>
       {onClose ? (
@@ -107,7 +110,12 @@ export default function InfoDialog(props) {
   };
 
   return (
-    <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md">
+    <Dialog
+      onClose={handleClose}
+      aria-labelledby="customized-dialog-title"
+      open={open}
+      maxWidth="md"
+    >
       {/* <div style={{ maxWidth: 700 }}> */}
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         Mandelbrot Maps
@@ -121,19 +129,22 @@ export default function InfoDialog(props) {
           <Link href="https://jmaio.github.io/" target="_blank">
             Joao Maio
           </Link>{' '}
-          in 2019/2020 as part of an Honours Project at The University of Edinburgh, under the supervision of Philip
-          Wadler.
+          in 2019/2020 as part of an Honours Project at The University of Edinburgh, under
+          the supervision of Philip Wadler.
         </Typography>
         <Typography gutterBottom>
-          The project was simultaneously undertaken by Freddie Bawden, also under the supervision of Philip Wadler.
-          Freddie's version of the project is available at:{' '}
+          The project was simultaneously undertaken by Freddie Bawden, also under the
+          supervision of Philip Wadler. Freddie's version of the project is available at:{' '}
           <Link href="http://mmaps.freddiejbawden.com/" target="_blank">
             mmaps.freddiejbawden.com
           </Link>
         </Typography>
         <Typography gutterBottom>
           The{' '}
-          <Link href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html" target="_blank">
+          <Link
+            href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html"
+            target="_blank"
+          >
             original Mandelbrot Maps project
           </Link>{' '}
           was developed by Iain Parris in 2008 as a Java Applet.
@@ -153,7 +164,10 @@ export default function InfoDialog(props) {
         <Divider style={{ marginTop: 30, marginBottom: 30 }} />
 
         <Box style={{ display: 'flex' }}>
-          <TableContainer component={Paper} style={{ width: 'auto', margin: 'auto', maxWidth: 460 }}>
+          <TableContainer
+            component={Paper}
+            style={{ width: 'auto', margin: 'auto', maxWidth: 460 }}
+          >
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
@@ -198,7 +212,11 @@ export default function InfoDialog(props) {
         >
           Copy
         </Button>
-        <Snackbar open={snackBarOpen} autoHideDuration={5000} onClose={() => setSnackBarOpen(false)}>
+        <Snackbar
+          open={snackBarOpen}
+          autoHideDuration={5000}
+          onClose={() => setSnackBarOpen(false)}
+        >
           <Alert onClose={() => setSnackBarOpen(false)} severity="info">
             Device properties copied!
           </Alert>

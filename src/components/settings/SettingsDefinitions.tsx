@@ -4,7 +4,7 @@ import {
   settingsDefinitionsType,
   settingsGroupType,
   settingsWidgetType,
-} from '../common/settings';
+} from '../../common/settings';
 
 export const defaultSettings = {
   showMinimap: true,

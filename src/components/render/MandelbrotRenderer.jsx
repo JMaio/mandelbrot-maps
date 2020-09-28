@@ -5,7 +5,7 @@ import newSmoothMandelbrotShader, {
   standardCrosshair,
 } from '../../shaders/newSmoothMandelbrotShader';
 import FPSCard from '../info/FPSCard';
-import { SettingsContext } from '../SettingsContext';
+import { SettingsContext } from '../settings/SettingsContext';
 import { genericTouchBind } from '../utils';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';

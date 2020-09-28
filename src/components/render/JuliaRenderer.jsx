@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import MinimapViewer from './MinimapViewer';
-import { SettingsContext } from '../SettingsContext';
 import { genericTouchBind } from '../utils';
 import WebGLCanvas from './WebGLCanvas';
+import { SettingsContext } from '../settings/SettingsContext';
 
 export default function JuliaRenderer(props) {
   // variables to hold canvas and webgl information

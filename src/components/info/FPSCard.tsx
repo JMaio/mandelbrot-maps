@@ -1,7 +1,7 @@
 import { Card, Grow } from '@material-ui/core';
 import React from 'react';
 import { animated } from 'react-spring';
-import { FPSCardProps } from './info';
+import { FPSCardProps } from '../../common/info';
 
 const FPSCard = (props: FPSCardProps): JSX.Element => (
   <Grow in={props.show}>
