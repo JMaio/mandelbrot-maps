@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core';
+import { colors, createMuiTheme } from '@material-ui/core';
 
 const theme = createMuiTheme({
   props: {
@@ -6,6 +6,14 @@ const theme = createMuiTheme({
     MuiSwitch: {
       // The default props to change
       color: 'primary', // x, on the whole application 💣!
+    },
+  },
+  palette: {
+    primary: {
+      main: colors.blue[700],
+    },
+    secondary: {
+      main: colors.red[700],
     },
   },
 });
