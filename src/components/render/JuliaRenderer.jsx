@@ -90,7 +90,7 @@ export default function JuliaRenderer(props) {
             }}
             canvasRef={miniCanvasRef}
             glRef={miniGl}
-            onClick={() => setControlZoom({ zoom: 1 })}
+            onClick={() => setControlZoom({ z: 1 })}
             show={settings.showMinimap}
           />
         </div>
