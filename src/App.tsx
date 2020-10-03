@@ -24,18 +24,19 @@ export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 export const resetPosSpringConfig = { mass: 1, tension: 200, friction: 75 };
 export const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
 
+export const startPos: [number, number] = [-0.7746931, 0.1242266];
+export const startZoom = 85.0;
+export const screenScaleMultiplier = 1e-7;
+
 function App(): JSX.Element {
   const size = useWindowSize();
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = 1e-7;
 
-  const startPos: [number, number] = [-0.7746931, 0.1242266];
   // const startPos = [-.7426482, .1271875 ];
   // const startPos = [-0.1251491, -0.8599647];
-  const startZoom = 85.0;
 
   // interface posInterface extends UseSpringBaseProps {
   //   pos: [number, number],

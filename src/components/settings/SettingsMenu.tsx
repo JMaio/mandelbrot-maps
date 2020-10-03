@@ -188,6 +188,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
               <Grid item>
                 <ResetButton />
               </Grid>
+              <Grid item style={{ width: '0.5rem' }} />
               <Grid item>
                 <AboutButton />
               </Grid>
