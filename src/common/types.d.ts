@@ -39,6 +39,7 @@ export interface MandelbrotMapsWebGLUniforms {
     getValue: () => XYType;
   };
   screenScaleMultiplier: number;
+  theta?: OpaqueInterpolation<ThetaType>;
 }
 
 export interface DefaultRendererProps {

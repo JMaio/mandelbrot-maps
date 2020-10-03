@@ -91,6 +91,7 @@ const WebGLCanvas = React.forwardRef<
           u.c === undefined ? 0 : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
         u_xy: vScale(u.screenScaleMultiplier, u.xy.getValue()),
         u_maxI: u.maxI,
+        u_theta: u.theta?.getValue(),
       };
 
       gl.current.useProgram((programInfo.current as twgl.ProgramInfo).program);

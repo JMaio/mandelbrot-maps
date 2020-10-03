@@ -32,6 +32,7 @@ export default function MandelbrotRenderer(props) {
   const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ zoom }, setControlZoom] = props.controls.zoomCtrl;
+  const [{ theta }] = props.controls.rotCtrl;
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1; // -> global
 
@@ -58,6 +59,7 @@ export default function MandelbrotRenderer(props) {
     domTarget: canvasRef,
     posControl: props.controls.xyCtrl,
     zoomControl: props.controls.zoomCtrl,
+    rotCtrl: props.controls.rotCtrl,
     screenScaleMultiplier:
       screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1), // -> global
     gl: gl,
@@ -89,6 +91,7 @@ export default function MandelbrotRenderer(props) {
             u={{
               zoom: zoom,
               xy: xy,
+              theta: theta,
               maxI: maxI,
               screenScaleMultiplier: screenScaleMultiplier,
             }}
@@ -104,6 +107,7 @@ export default function MandelbrotRenderer(props) {
             u={{
               zoom: zoom,
               xy: xy,
+              theta: theta,
               maxI: maxI,
               screenScaleMultiplier: screenScaleMultiplier,
             }}

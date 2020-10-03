@@ -1,12 +1,13 @@
 import { Grid, ThemeProvider } from '@material-ui/core';
 import React, { useState } from 'react';
-import { useSpring } from 'react-spring';
+import { OpaqueInterpolation, useSpring } from 'react-spring';
 import { vScale } from 'vec-la-fp';
 import './App.css';
 import {
   ViewerRotationControl,
   ViewerXYControl,
   ViewerZoomControl,
+  ZoomType,
 } from './common/types';
 import CoordinatesCard from './components/info/CoordinatesCard';
 import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
@@ -27,6 +28,7 @@ export const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
 
 export const startPos: [number, number] = [-0.7746931, 0.1242266];
 export const startZoom = 85.0;
+export const startTheta = 0.6;
 export const screenScaleMultiplier = 1e-7;
 
 function App(): JSX.Element {
@@ -51,7 +53,7 @@ function App(): JSX.Element {
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: 0,
+      theta: startTheta, // should this be rad or deg? rad
       // last_pointer_angle: 0,
       // itheta: 0,
       config: defaultSpringConfig,
@@ -78,14 +80,14 @@ function App(): JSX.Element {
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: 0,
+      theta: startTheta, // should this be rad or deg? rad
       // last_pointer_angle: 0,
       // itheta: 0,
       config: defaultSpringConfig,
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      zoom: 0.5,
+      zoom: 0.5 as number,
       // last_pointer_dist: 0,
 
       minZoom: 0.5,
@@ -151,7 +153,13 @@ function App(): JSX.Element {
                 >
                   <CoordinatesCard
                     show={settings.showCoordinates}
-                    mandelbrot={mandelbrotControls.xyCtrl[0].xy}
+                    mandelbrot={{
+                      xy: mandelbrotControls.xyCtrl[0].xy,
+                      zoom: mandelbrotControls.zoomCtrl[0].zoom as OpaqueInterpolation<
+                        ZoomType
+                      >,
+                      theta: mandelbrotControls.rotCtrl[0].theta,
+                    }}
                     screenScaleMultiplier={screenScaleMultiplier}
                   />
                   <ChangeCoordinatesCard

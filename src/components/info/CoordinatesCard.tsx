@@ -21,17 +21,25 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
           {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
           {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
           <animated.span>
-            {props.mandelbrot.interpolate(
+            {props.mandelbrot.xy.interpolate(
               // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
               (x, y) => `${(x * props.screenScaleMultiplier).toFixed(7)} : x`,
             )}
           </animated.span>
           <br />
           <animated.span>
-            {props.mandelbrot.interpolate(
+            {props.mandelbrot.xy.interpolate(
               // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
               (x, y) => `${(y * props.screenScaleMultiplier).toFixed(7)} : y`,
             )}
+          </animated.span>
+          <br />
+          <animated.span>
+            {props.mandelbrot.zoom.interpolate((z) => `${z.toFixed(2)} : z`)}
+          </animated.span>
+          <br />
+          <animated.span>
+            {props.mandelbrot.theta.interpolate((t) => `${t.toFixed(3)} : t`)}
           </animated.span>
         </Typography>
       </Card>

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { addV } from 'react-use-gesture';
-import { vScale } from 'vec-la-fp';
+import { vRotate, vScale } from 'vec-la-fp';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize() {
@@ -39,12 +39,14 @@ export function genericTouchBind({
   domTarget,
   posControl,
   zoomControl,
+  rotCtrl,
   screenScaleMultiplier,
   gl,
   setDragging,
 }) {
   const [{ xy }, setControlXY] = posControl;
   const [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
+  const [{ theta }, setRotCtrl] = rotCtrl || [{ theta: undefined }, () => {}];
   return {
     binds: {
       // prevent some browser events such as swipe-based navigation or
@@ -112,14 +114,14 @@ export function genericTouchBind({
         velocity,
         direction,
         pinching,
-        memo = xy.getValue(),
+        memo = { xy: xy.getValue(), theta: theta.getValue() },
       }) => {
         // let pinch handle movement
         if (pinching) return;
         // change according to this formula:
         // move (x, y) in the opposite direction of drag (pan with cursor)
         // divide by canvas size to scale appropriately
-        // multiply by 2 to correct scaling on viewport
+        // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
         let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
 
@@ -128,11 +130,18 @@ export function genericTouchBind({
         let relMove = [plotMovement[0], -plotMovement[1]];
         let relDir = [direction[0], -direction[1]];
 
+        // console.log(memo.xy);
+        // console.log(relMove);
+        const t = theta.getValue();
+
         setControlXY({
-          xy: addV(memo, relMove), // add the displacement to the starting position
+          // add to the current position the relative displacement (relMove), rotated by theta,
+          // to maintain the correct displacement direction (without this it would move as if theta=0)
+          xy: addV(memo.xy, vRotate(t, relMove)), // add the displacement to the starting position
           immediate: down, // immediately apply if the gesture is active
           config: {
-            velocity: vScale(-velocity / realZoom, relDir), // set the velocity (gesture momentum)
+            // velocity also needs to be rotated according to theta
+            velocity: vScale(-velocity / realZoom, vRotate(t, relDir)), // set the velocity (gesture momentum)
             decay: true,
           },
         });

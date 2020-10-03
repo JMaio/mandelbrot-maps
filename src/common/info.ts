@@ -1,16 +1,12 @@
 import { CardProps } from '@material-ui/core';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import { AnimatedValue, OpaqueInterpolation, SetUpdateFn } from 'react-spring';
 import {
-  AnimatedValue,
-  ForwardedProps,
-  OpaqueInterpolation,
-  SetUpdateFn,
-} from 'react-spring';
-import {
+  ThetaType,
   ViewerRotationControl,
   ViewerXYControl,
   ViewerZoomControl,
   XYType,
+  ZoomType,
 } from './types';
 
 // from react-spring
@@ -24,7 +20,11 @@ export interface FPSCardProps {
 export interface CoordinatesCardProps extends CardProps {
   show: boolean;
   screenScaleMultiplier: number;
-  mandelbrot: OpaqueInterpolation<XYType>;
+  mandelbrot: {
+    xy: OpaqueInterpolation<XYType>;
+    zoom: OpaqueInterpolation<ZoomType>;
+    theta: OpaqueInterpolation<ThetaType>;
+  };
   julia?: OpaqueInterpolation<XYType>;
 }
 
