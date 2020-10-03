@@ -14,6 +14,7 @@ import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/render/MandelbrotRenderer';
+import ServiceWorkerWrapper from './components/ServiceWorkerWrapper';
 import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
 import SettingsMenu from './components/settings/SettingsMenu';
 import { useWindowSize } from './components/utils';
@@ -122,6 +123,7 @@ function App(): JSX.Element {
 
   return (
     <ThemeProvider theme={theme}>
+      <ServiceWorkerWrapper />
       <SettingsProvider>
         <Grid container>
           <SettingsContext.Consumer>
