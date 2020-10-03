@@ -22,7 +22,7 @@ export default function JuliaRenderer(props) {
   // read incoming props
   const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ zoom }, setControlZoom] = props.controls.zoomCtrl;
+  const [{ z }, setControlZoom] = props.controls.zoomCtrl;
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1;
 
@@ -68,7 +68,7 @@ export default function JuliaRenderer(props) {
             fragShader={fragShader}
             useDPR={props.useDPR}
             u={{
-              zoom: zoom,
+              zoom: z,
               xy: xy,
               c: props.c,
               maxI: maxI,
@@ -82,7 +82,7 @@ export default function JuliaRenderer(props) {
             fragShader={miniFragShader}
             useDPR={settings.useDPR}
             u={{
-              zoom: zoom,
+              zoom: z,
               xy: xy,
               maxI: maxI,
               c: props.c,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { animated } from 'react-spring';
 import * as twgl from 'twgl.js';
 import { vScale } from 'vec-la-fp';
@@ -9,7 +9,7 @@ import { fullscreenVertexArray, fullVertexShader } from '../../shaders/fullVerte
 // https://stackoverflow.com/a/50294843/9184658
 const WebGLCanvas = React.forwardRef<
   HTMLCanvasElement,
-  WebGLCanvasProps & { mini: boolean }
+  WebGLCanvasProps & { mini?: boolean }
 >((props, refAny) => {
   // const { mini = false, ...rest } = props;
   // props:
@@ -22,10 +22,9 @@ const WebGLCanvas = React.forwardRef<
   // ref
   // glRef
 
-  const ref = refAny as React.MutableRefObject<HTMLCanvasElement>;
+  const canvasRef = refAny as React.MutableRefObject<HTMLCanvasElement>;
 
-  // variables to hold canvas and webgl information
-  const gl = props.glRef;
+  const gl = useRef<WebGLRenderingContext | null>();
   const renderRequestRef = useRef<number>();
   const bufferInfo = useRef<twgl.BufferInfo>();
   const programInfo = useRef<twgl.ProgramInfo>();
@@ -34,7 +33,10 @@ const WebGLCanvas = React.forwardRef<
   const setFps = props.fps;
 
   // have a zoom callback
-  const zoom = props.mini ? () => 1.0 : () => props.u.zoom.getValue();
+  const zoom = useCallback(() => (props.mini ? 1.0 : props.u.zoom.getValue()), [
+    props.mini,
+    props.u.zoom,
+  ]);
   const currZoom = useRef(zoom());
 
   const dpr = props.useDPR ? window.devicePixelRatio : 1;
@@ -47,15 +49,16 @@ const WebGLCanvas = React.forwardRef<
   useEffect(() => {
     // console.log(gl);
     // console.log(gl.current);
-    gl.current = (ref as React.MutableRefObject<HTMLCanvasElement>).current.getContext(
-      'webgl',
-    ) as WebGLRenderingContext;
+    gl.current = canvasRef.current.getContext('webgl');
+  }, [canvasRef]);
+
+  useEffect(() => {
     // console.log(`got canvas context: ${gl.current}`);
     bufferInfo.current = twgl.createBufferInfoFromArrays(
       gl.current as WebGLRenderingContext,
       fullscreenVertexArray,
     );
-  }, [gl, ref]);
+  }, [gl]);
 
   useEffect(() => {
     currZoom.current = props.u.zoom.getValue();
@@ -63,7 +66,7 @@ const WebGLCanvas = React.forwardRef<
 
   // re-compile program if shader changes
   useEffect(() => {
-    programInfo.current = twgl.createProgramInfo(gl.current, [
+    programInfo.current = twgl.createProgramInfo(gl.current as WebGLRenderingContext, [
       fullVertexShader,
       props.fragShader,
     ]);
@@ -78,14 +81,16 @@ const WebGLCanvas = React.forwardRef<
   // the main render function for WebGL
   const render = useCallback(
     (time) => {
-      twgl.resizeCanvasToDisplaySize(
-        (ref as React.MutableRefObject<HTMLCanvasElement>).current,
-        dpr,
+      twgl.resizeCanvasToDisplaySize(canvasRef.current, dpr);
+      (gl.current as WebGLRenderingContext).viewport(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height,
       );
-      gl.current.viewport(0, 0, gl.current.canvas.width, gl.current.canvas.height);
 
       const uniforms = {
-        resolution: [gl.current.canvas.width, gl.current.canvas.height],
+        resolution: [canvasRef.current.width, canvasRef.current.height],
         u_zoom: zoom(),
         u_c:
           u.c === undefined ? 0 : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
@@ -94,14 +99,19 @@ const WebGLCanvas = React.forwardRef<
         u_theta: u.theta?.getValue(),
       };
 
-      gl.current.useProgram((programInfo.current as twgl.ProgramInfo).program);
+      (gl.current as WebGLRenderingContext).useProgram(
+        (programInfo.current as twgl.ProgramInfo).program,
+      );
       twgl.setBuffersAndAttributes(
-        gl.current,
+        gl.current as WebGLRenderingContext,
         programInfo.current as twgl.ProgramInfo,
         bufferInfo.current as twgl.BufferInfo,
       );
       twgl.setUniforms(programInfo.current as twgl.ProgramInfo, uniforms);
-      twgl.drawBufferInfo(gl.current, bufferInfo.current as twgl.BufferInfo);
+      twgl.drawBufferInfo(
+        gl.current as WebGLRenderingContext,
+        bufferInfo.current as twgl.BufferInfo,
+      );
 
       // calculate fps
       if (setFps !== undefined) {
@@ -129,7 +139,7 @@ const WebGLCanvas = React.forwardRef<
       // The 'state' will always be the initial value here
       renderRequestRef.current = requestAnimationFrame(render);
     },
-    [gl, u, zoom, dpr, setFps, interval, ref],
+    [gl, u, zoom, dpr, setFps, interval, canvasRef],
   );
 
   //

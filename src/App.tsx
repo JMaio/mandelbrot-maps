@@ -60,7 +60,7 @@ function App(): JSX.Element {
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      zoom: startZoom,
+      z: startZoom,
       // last_pointer_dist: 0,
 
       minZoom: 0.5,
@@ -87,7 +87,7 @@ function App(): JSX.Element {
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      zoom: 0.5 as number,
+      z: 0.5 as number,
       // last_pointer_dist: 0,
 
       minZoom: 0.5,
@@ -103,7 +103,7 @@ function App(): JSX.Element {
       config: resetPosSpringConfig,
     });
     mandelbrotControls.zoomCtrl[1]({
-      zoom: 1,
+      z: 1,
       config: resetZoomSpringConfig,
     });
 
@@ -112,7 +112,7 @@ function App(): JSX.Element {
       config: resetPosSpringConfig,
     });
     juliaControls.zoomCtrl[1]({
-      zoom: 1,
+      z: 1,
       config: resetZoomSpringConfig,
     });
   };
@@ -155,7 +155,7 @@ function App(): JSX.Element {
                     show={settings.showCoordinates}
                     mandelbrot={{
                       xy: mandelbrotControls.xyCtrl[0].xy,
-                      zoom: mandelbrotControls.zoomCtrl[0].zoom as OpaqueInterpolation<
+                      zoom: mandelbrotControls.zoomCtrl[0].z as OpaqueInterpolation<
                         ZoomType
                       >,
                       theta: mandelbrotControls.rotCtrl[0].theta,
@@ -171,7 +171,7 @@ function App(): JSX.Element {
                 <Grid item xs className="renderer">
                   <MandelbrotRenderer
                     controls={mandelbrotControls}
-                    screenmult={screenScaleMultiplier}
+                    screenScaleMultiplier={screenScaleMultiplier}
                     {...settings}
                   />
                 </Grid>

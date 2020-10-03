@@ -43,7 +43,7 @@ export interface MandelbrotControls {
     AnimatedValue<
       Pick<
         OverwriteKeys<ViewerZoomControl, React.CSSProperties>,
-        'zoom' | 'minZoom' | 'maxZoom'
+        'z' | 'minZoom' | 'maxZoom'
       >
     >,
     SetUpdateFn<OverwriteKeys<ViewerZoomControl, React.CSSProperties>>,

@@ -13,7 +13,7 @@ export interface ViewerXYControl extends SpringControl {
 }
 
 export interface ViewerZoomControl extends SpringControl {
-  zoom: ZoomType;
+  z: ZoomType;
   // last_pointer_dist: 0,
   minZoom: ZoomType;
   maxZoom: ZoomType;
@@ -32,8 +32,8 @@ export interface ViewerControls {
 // export type SpringAnimatedValueWithSetter<T> = [AnimatedValue<T>, SetUpdateFn<T>];
 
 export interface MandelbrotMapsWebGLUniforms {
-  zoom: OpaqueInterpolation<ZoomType>;
   xy: OpaqueInterpolation<XYType>;
+  zoom: OpaqueInterpolation<ZoomType>;
   maxI: number;
   c?: {
     getValue: () => XYType;

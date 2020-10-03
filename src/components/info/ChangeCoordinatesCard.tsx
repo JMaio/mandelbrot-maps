@@ -22,7 +22,7 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
       config: resetPosSpringConfig,
     });
     props.mandelbrot.zoomCtrl[1]({
-      zoom: zoom,
+      z: zoom,
       config: resetZoomSpringConfig,
     });
     props.mandelbrot.rotCtrl[1]({

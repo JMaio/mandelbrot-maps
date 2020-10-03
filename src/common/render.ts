@@ -1,9 +1,10 @@
 import { CanvasHTMLAttributes } from 'react';
+import { MandelbrotControls } from './info';
 import { MandelbrotMapsWebGLUniforms } from './types';
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
-  glRef: React.MutableRefObject<WebGLRenderingContext>;
+  glRef?: React.MutableRefObject<WebGLRenderingContext>;
   /** WebGL Uniforms to be passed down to the shader - position, zoom, etc */
   u: MandelbrotMapsWebGLUniforms;
   /** The fragment shader to be used */
@@ -16,6 +17,15 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   useDPR?: boolean;
   /** Specify whether the viewer is being dragged on, to set the appropriate cursor. */
   dragging?: boolean;
+}
+
+export interface MandelbrotRendererProps {
+  screenScaleMultiplier: number;
+  controls: MandelbrotControls;
+  maxI: number;
+  useDPR: boolean;
+  useAA: boolean;
+  showCrosshair: boolean;
 }
 
 export interface MinimapViewerProps extends WebGLCanvasProps {

@@ -41,12 +41,12 @@ export function genericTouchBind({
   zoomControl,
   rotCtrl,
   screenScaleMultiplier,
-  gl,
+  // gl,
   setDragging,
 }) {
   const [{ xy }, setControlXY] = posControl;
-  const [{ zoom, minZoom, maxZoom }, setControlZoom] = zoomControl;
-  const [{ theta }, setRotCtrl] = rotCtrl || [{ theta: undefined }, () => {}];
+  const [{ z, minZoom, maxZoom }, setControlZoom] = zoomControl;
+  const [{ theta }, setRotCtrl] = rotCtrl || [{ theta: { getValue: () => 0 } }, () => {}];
   return {
     binds: {
       // prevent some browser events such as swipe-based navigation or
@@ -61,7 +61,7 @@ export function genericTouchBind({
         origin,
         first,
         memo = [xy.getValue()],
-        z = zoom.getValue(),
+        zoom = z.getValue(),
       }) => {
         if (first) {
           let [p] = memo;
@@ -69,7 +69,7 @@ export function genericTouchBind({
         }
         // initial origin access
         // let [p, initialOrigin] = memo;
-        let newZ = z * (1 + dx * 5e-3);
+        let newZ = zoom * (1 + dx * 5e-3);
         let newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
@@ -77,7 +77,7 @@ export function genericTouchBind({
         // let relMove = [plotMovement[0], -plotMovement[1]];
 
         setControlZoom({
-          zoom: newZclamp,
+          z: newZclamp,
           immediate: down,
           config: {
             // value needs revising, currently too slow
@@ -93,19 +93,19 @@ export function genericTouchBind({
         return memo;
       },
 
-      onWheel: ({ movement: [, my], active, z = zoom.getValue() }) => {
+      onWheel: ({ movement: [, my], active, zoom = z.getValue() }) => {
         // x, y obtained from event
-        let newZ = z * (1 - my * (my < 0 ? 3e-4 : 2e-4));
+        let newZ = zoom * (1 - my * (my < 0 ? 3e-4 : 2e-4));
 
         setControlZoom({
-          zoom: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+          z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
           immediate: active,
           config: {
             // velocity: active ? 0 : 10,
           },
         });
 
-        return z;
+        return zoom;
       },
 
       onDrag: ({
@@ -123,7 +123,7 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
-        let realZoom = gl.current.canvas.height * zoom.getValue() * screenScaleMultiplier;
+        let realZoom = domTarget.current.height * z.getValue() * screenScaleMultiplier;
 
         let plotMovement = vScale(-2 / realZoom, movement);
 
