@@ -72,6 +72,7 @@
     "jest-webgl-canvas-mock": "^0.2.3",
     "jshint": "^2.10.2",
     "prettier": "^2.1.2",
-    "pretty-quick": "^3.0.2"
+    "pretty-quick": "^3.0.2",
+    "serve": "^11.3.2"
   }
 }
