@@ -9,7 +9,7 @@ import {
 export const defaultSettings = {
   showMinimap: true,
   showCrosshair: true,
-  showCoordinates: false,
+  showCoordinates: true,
   maxI: 250,
   showFPS: false,
   useDPR: false,

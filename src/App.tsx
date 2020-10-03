@@ -9,6 +9,7 @@ import {
   ViewerZoomControl,
 } from './common/types';
 import CoordinatesCard from './components/info/CoordinatesCard';
+import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
 import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
@@ -18,10 +19,13 @@ import SettingsMenu from './components/settings/SettingsMenu';
 import { useWindowSize } from './components/utils';
 import theme from './theme/theme';
 
+export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
+
+export const resetPosSpringConfig = { mass: 1, tension: 200, friction: 75 };
+export const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
+
 function App(): JSX.Element {
   const size = useWindowSize();
-
-  const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
@@ -89,9 +93,6 @@ function App(): JSX.Element {
     })),
   };
 
-  const resetPosSpringConfig = { mass: 1, tension: 200, friction: 75 };
-  const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
-
   const reset = () => {
     mandelbrotControls.xyCtrl[1]({
       xy: [0, 0],
@@ -136,11 +137,26 @@ function App(): JSX.Element {
                   position: 'absolute',
                 }}
               >
-                <CoordinatesCard
-                  show={settings.showCoordinates}
-                  mandelbrot={mandelbrotControls.xyCtrl[0].xy}
-                  screenScaleMultiplier={screenScaleMultiplier}
-                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    margin: 20,
+                    width: 'auto',
+                  }}
+                >
+                  <CoordinatesCard
+                    show={settings.showCoordinates}
+                    mandelbrot={mandelbrotControls.xyCtrl[0].xy}
+                    screenScaleMultiplier={screenScaleMultiplier}
+                  />
+                  <ChangeCoordinatesCard
+                    show={settings.showCoordinates}
+                    mandelbrot={mandelbrotControls}
+                    screenScaleMultiplier={screenScaleMultiplier}
+                  />
+                </div>
                 <Grid item xs className="renderer">
                   <MandelbrotRenderer
                     controls={mandelbrotControls}

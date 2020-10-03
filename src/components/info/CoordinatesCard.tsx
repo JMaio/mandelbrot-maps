@@ -9,12 +9,10 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
       <Card
         style={{
           width: 'auto',
-          position: 'absolute',
           zIndex: 1300,
-          right: 0,
-          top: 0,
-          margin: 20,
+          position: 'relative',
           padding: '6px 12px',
+          marginBottom: 8,
           // display: props.show ? 'block' : 'none',
           // borderRadius: 100,
         }}

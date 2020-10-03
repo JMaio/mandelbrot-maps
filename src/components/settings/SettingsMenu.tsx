@@ -43,7 +43,7 @@ const GroupTitle = (props: { title: string }) => (
   </Typography>
 );
 
-export default function SettingsMenu(props: SettingsMenuProps) {
+export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement>();
