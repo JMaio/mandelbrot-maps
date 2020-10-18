@@ -66,7 +66,8 @@ function App(): JSX.Element {
       minZoom: 0.5,
       maxZoom: 100000,
 
-      config: { mass: 1, tension: 600, friction: 50 },
+      // config: { mass: 0.1, tension: 100, friction: 10 },
+      config: { mass: 1, tension: 600, friction: 60 },
     })),
   };
 
@@ -91,9 +92,9 @@ function App(): JSX.Element {
       // last_pointer_dist: 0,
 
       minZoom: 0.5,
-      maxZoom: 100000,
+      maxZoom: 2000,
 
-      config: { mass: 1, tension: 600, friction: 50 },
+      config: { mass: 1, tension: 600, friction: 60 },
     })),
   };
 

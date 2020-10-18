@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { animated } from 'react-spring';
 import * as twgl from 'twgl.js';
 import { vScale } from 'vec-la-fp';

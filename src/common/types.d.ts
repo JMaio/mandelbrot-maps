@@ -29,7 +29,18 @@ export interface ViewerControls {
   rot: ViewerRotationControl;
 }
 
-// export type SpringAnimatedValueWithSetter<T> = [AnimatedValue<T>, SetUpdateFn<T>];
+// AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, CSSProperties>, "xy">>, SetUpdateFn<OverwriteKeys<ViewerXYControl, CSSProperties>>]
+export type SpringAnimatedValueOverwrite<T> = OverwriteKeys<T, CSSProperties>;
+export type SpringAnimatedValueWithSetter<T> = [
+  AnimatedValue<Pick<SpringAnimatedValueOverwrite<T>>, keyof T>,
+  SetUpdateFn<SpringAnimatedValueOverwrite<T>>,
+];
+
+export type ViewerXYControlSpring = SpringAnimatedValueWithSetter<ViewerXYControl>;
+export type ViewerZoomControlSpring = SpringAnimatedValueWithSetter<ViewerZoomControl>;
+export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<
+  ViewerRotationControl
+>;
 
 export interface MandelbrotMapsWebGLUniforms {
   xy: OpaqueInterpolation<XYType>;

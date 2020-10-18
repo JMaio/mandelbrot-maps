@@ -42,15 +42,15 @@ export default function JuliaRenderer(props) {
 
   let gtb = genericTouchBind({
     domTarget: canvasRef,
-    posControl: props.controls.xyCtrl,
-    zoomControl: props.controls.zoomCtrl,
+    xyCtrl: props.controls.xyCtrl,
+    zoomCtrl: props.controls.zoomCtrl,
     screenScaleMultiplier:
       screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1),
     gl: gl,
     setDragging: setDragging,
   });
 
-  let touchBind = useGesture(gtb.binds, gtb.config);
+  let touchBind = useGesture(gtb.handlers, gtb.config);
 
   useEffect(touchBind, [touchBind]);
 

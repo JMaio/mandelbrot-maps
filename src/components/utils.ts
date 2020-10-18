@@ -1,7 +1,18 @@
 import _ from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 import { addV } from 'react-use-gesture';
-import { vRotate, vScale } from 'vec-la-fp';
+import {
+  FullGestureState,
+  StateKey,
+  UseGestureConfig,
+  UserHandlersPartial,
+} from 'react-use-gesture/dist/types';
+import { Vector, vRotate, vScale } from 'vec-la-fp';
+import {
+  ViewerRotationControlSpring,
+  ViewerXYControlSpring,
+  ViewerZoomControlSpring,
+} from '../common/types';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize() {
@@ -34,25 +45,42 @@ export function useWindowSize() {
   return windowSize;
 }
 
+export interface GenericTouchBindParams {
+  domTarget: RefObject<HTMLCanvasElement>;
+  xyCtrl: ViewerXYControlSpring;
+  zoomCtrl: ViewerZoomControlSpring;
+  rotCtrl: ViewerRotationControlSpring;
+  screenScaleMultiplier: number;
+  // gl: any,
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface GenericTouchBindReturn {
+  handlers: UserHandlersPartial;
+  config: UseGestureConfig;
+}
+
 // a touchbind for re-using across renderers
 export function genericTouchBind({
   domTarget,
-  posControl,
-  zoomControl,
+  xyCtrl,
+  zoomCtrl,
   rotCtrl,
   screenScaleMultiplier,
   // gl,
   setDragging,
-}) {
-  const [{ xy }, setControlXY] = posControl;
-  const [{ z, minZoom, maxZoom }, setControlZoom] = zoomControl;
-  const [{ theta }, setRotCtrl] = rotCtrl || [{ theta: { getValue: () => 0 } }, () => {}];
+}: GenericTouchBindParams): GenericTouchBindReturn {
+  const [{ xy }, setControlXY] = xyCtrl;
+  const [{ z, minZoom, maxZoom }, setControlZoom] = zoomCtrl;
+  const [{ theta }] = rotCtrl || [{ theta: { getValue: () => 0 } }, () => {}];
   return {
-    binds: {
+    handlers: {
       // prevent some browser events such as swipe-based navigation or
       // pinch-based zoom and instead redirect them to this handler
-      onDragStart: ({ event }) => event.preventDefault(),
-      onPinchStart: ({ event }) => event.preventDefault(),
+      onDragStart: ({ event }: FullGestureState<StateKey<'drag'>>) =>
+        event?.preventDefault(),
+      onPinchStart: ({ event }: FullGestureState<StateKey<'pinch'>>) =>
+        event?.preventDefault(),
 
       onPinch: ({
         vdva: [vd],
@@ -61,16 +89,16 @@ export function genericTouchBind({
         origin,
         first,
         memo = [xy.getValue()],
-        zoom = z.getValue(),
-      }) => {
+      }: FullGestureState<StateKey<'pinch'>>) => {
         if (first) {
-          let [p] = memo;
+          const [p] = memo;
           return [p, origin];
         }
+        const zoom = z.getValue();
         // initial origin access
         // let [p, initialOrigin] = memo;
-        let newZ = zoom * (1 + dx * 5e-3);
-        let newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
+        const newZ = zoom * (1 + dx * 5e-3);
+        const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
         // let plotMovement = scale(subV(origin, initialOrigin), -2/realZoom);
@@ -93,16 +121,18 @@ export function genericTouchBind({
         return memo;
       },
 
-      onWheel: ({ movement: [, my], active, zoom = z.getValue() }) => {
-        // x, y obtained from event
-        let newZ = zoom * (1 - my * (my < 0 ? 3e-4 : 2e-4));
+      onWheel: ({ movement: [, my], active }: FullGestureState<StateKey<'wheel'>>) => {
+        const zoom = z.getValue();
+        // set different multipliers based on zoom direction
+        //                              zoom     in    out
+        const newZ = zoom * (1 - my * (my < 0 ? 1e-3 : 6e-4));
 
         setControlZoom({
           z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
-          immediate: active,
-          config: {
-            // velocity: active ? 0 : 10,
-          },
+          // immediate: active,
+          // config: {
+          //   // velocity: active ? 0 : 50,
+          // },
         });
 
         return zoom;
@@ -115,7 +145,7 @@ export function genericTouchBind({
         direction,
         pinching,
         memo = { xy: xy.getValue(), theta: theta.getValue() },
-      }) => {
+      }: FullGestureState<StateKey<'drag'>>) => {
         // let pinch handle movement
         if (pinching) return;
         // change according to this formula:
@@ -123,12 +153,13 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
-        let realZoom = domTarget.current.height * z.getValue() * screenScaleMultiplier;
+        const realZoom =
+          (domTarget.current?.height || 1) * z.getValue() * screenScaleMultiplier;
 
-        let plotMovement = vScale(-2 / realZoom, movement);
+        const plotMovement: Vector = vScale(-2 / realZoom, movement);
 
-        let relMove = [plotMovement[0], -plotMovement[1]];
-        let relDir = [direction[0], -direction[1]];
+        const relMove: Vector = [plotMovement[0], -plotMovement[1]];
+        const relDir: Vector = [direction[0], -direction[1]];
 
         // console.log(memo.xy);
         // console.log(relMove);

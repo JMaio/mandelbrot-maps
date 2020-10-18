@@ -1,10 +1,14 @@
 import { CardProps } from '@material-ui/core';
 import { AnimatedValue, OpaqueInterpolation, SetUpdateFn } from 'react-spring';
 import {
+  SpringAnimatedValueWithSetter,
   ThetaType,
   ViewerRotationControl,
+  ViewerRotationControlSpring,
   ViewerXYControl,
+  ViewerXYControlSpring,
   ViewerZoomControl,
+  ViewerZoomControlSpring,
   XYType,
   ZoomType,
 } from './types';
@@ -29,25 +33,29 @@ export interface CoordinatesCardProps extends CardProps {
 }
 
 export interface MandelbrotControls {
-  xyCtrl: [
-    AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, React.CSSProperties>, 'xy'>>,
-    SetUpdateFn<OverwriteKeys<ViewerXYControl, React.CSSProperties>>,
-  ];
-  rotCtrl: [
-    AnimatedValue<
-      Pick<OverwriteKeys<ViewerRotationControl, React.CSSProperties>, 'theta'>
-    >,
-    SetUpdateFn<OverwriteKeys<ViewerRotationControl, React.CSSProperties>>,
-  ];
-  zoomCtrl: [
-    AnimatedValue<
-      Pick<
-        OverwriteKeys<ViewerZoomControl, React.CSSProperties>,
-        'z' | 'minZoom' | 'maxZoom'
-      >
-    >,
-    SetUpdateFn<OverwriteKeys<ViewerZoomControl, React.CSSProperties>>,
-  ];
+  // xyCtrl: SpringAnimatedValueWithSetter<ViewerXYControl>;
+  // // [
+  // //   AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, React.CSSProperties>, 'xy'>>,
+  // //   SetUpdateFn<OverwriteKeys<ViewerXYControl, React.CSSProperties>>,
+  // // ];
+  // rotCtrl: [
+  //   AnimatedValue<
+  //     Pick<OverwriteKeys<ViewerRotationControl, React.CSSProperties>, 'theta'>
+  //   >,
+  //   SetUpdateFn<OverwriteKeys<ViewerRotationControl, React.CSSProperties>>,
+  // ];
+  // zoomCtrl: [
+  //   AnimatedValue<
+  //     Pick<
+  //       OverwriteKeys<ViewerZoomControl, React.CSSProperties>,
+  //       'z' | 'minZoom' | 'maxZoom'
+  //     >
+  //   >,
+  //   SetUpdateFn<OverwriteKeys<ViewerZoomControl, React.CSSProperties>>,
+  // ];
+  xyCtrl: ViewerXYControlSpring;
+  rotCtrl: ViewerZoomControlSpring;
+  zoomCtrl: ViewerRotationControlSpring;
 }
 
 export interface ChangeCoordinatesCardProps extends CardProps {
