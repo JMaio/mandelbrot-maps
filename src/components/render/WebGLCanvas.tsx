@@ -92,8 +92,7 @@ const WebGLCanvas = React.forwardRef<
       const uniforms = {
         resolution: [canvasRef.current.width, canvasRef.current.height],
         u_zoom: zoom(),
-        u_c:
-          u.c === undefined ? 0 : u.c.getValue().map((x) => x * u.screenScaleMultiplier),
+        u_c: u.c === undefined ? 0 : vScale(u.screenScaleMultiplier, u.c.getValue()),
         u_xy: vScale(u.screenScaleMultiplier, u.xy.getValue()),
         u_maxI: u.maxI,
         u_theta: u.theta?.getValue(),

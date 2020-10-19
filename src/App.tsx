@@ -26,6 +26,9 @@ export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 export const resetPosSpringConfig = { mass: 1, tension: 200, friction: 75 };
 export const resetZoomSpringConfig = { mass: 1, tension: 300, friction: 60 };
 
+export const xyCtrlSpringConfig = { mass: 1, tension: 2000, friction: 100 };
+export const xyCtrlSpringDecayConfig = { mass: 1, tension: 500, friction: 75 };
+
 export const startPos: [number, number] = [-0.7746931, 0.1242266];
 export const startZoom = 85.0;
 export const startTheta = 0.6;
@@ -49,7 +52,7 @@ function App(): JSX.Element {
   const mandelbrotControls = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
       xy: vScale(1 / screenScaleMultiplier, startPos),
-      config: defaultSpringConfig,
+      // config: xyCtrlSpringConfig,
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
@@ -77,7 +80,7 @@ function App(): JSX.Element {
   const juliaControls = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
       xy: [0, 0] as [number, number],
-      config: defaultSpringConfig,
+      // config: defaultSpringConfig,
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({

@@ -8,6 +8,7 @@ import {
   UserHandlersPartial,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
+import { xyCtrlSpringConfig, xyCtrlSpringDecayConfig } from '../App';
 import {
   ViewerRotationControlSpring,
   ViewerXYControlSpring,
@@ -72,6 +73,7 @@ export function genericTouchBind({
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = zoomCtrl;
+  // give theta a shell structure
   const [{ theta }] = rotCtrl || [{ theta: { getValue: () => 0 } }, () => {}];
   return {
     handlers: {
@@ -141,9 +143,10 @@ export function genericTouchBind({
       onDrag: ({
         down,
         movement,
+        direction: [dx, dy],
         velocity,
-        direction,
         pinching,
+        last,
         memo = { xy: xy.getValue(), theta: theta.getValue() },
       }: FullGestureState<StateKey<'drag'>>) => {
         // let pinch handle movement
@@ -154,33 +157,38 @@ export function genericTouchBind({
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
         const realZoom =
-          (domTarget.current?.height || 1) * z.getValue() * screenScaleMultiplier;
+          (domTarget.current?.height || 100) * z.getValue() * screenScaleMultiplier;
 
-        const plotMovement: Vector = vScale(-2 / realZoom, movement);
+        const [px, py]: Vector = vScale(-2 / realZoom, movement);
+        // const relMove: Vector = vScale(2 / realZoom, movement);
 
-        const relMove: Vector = [plotMovement[0], -plotMovement[1]];
-        const relDir: Vector = [direction[0], -direction[1]];
+        const relMove: Vector = [px, -py];
+        // const relDir: Vector = [dx, -dy];
 
-        // console.log(memo.xy);
-        // console.log(relMove);
         const t = theta.getValue();
 
         setControlXY({
           // add to the current position the relative displacement (relMove), rotated by theta,
           // to maintain the correct displacement direction (without this it would move as if theta=0)
           xy: addV(memo.xy, vRotate(t, relMove)), // add the displacement to the starting position
-          immediate: down, // immediately apply if the gesture is active
-          config: {
-            // velocity also needs to be rotated according to theta
-            velocity: vScale(-velocity / realZoom, vRotate(t, relDir)), // set the velocity (gesture momentum)
-            decay: true,
-          },
+          // immediate: down, // immediately apply if the gesture is active
+          config: down ? xyCtrlSpringConfig : xyCtrlSpringDecayConfig,
+          //  {
+          //   // velocity also needs to be rotated according to theta
+          //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
+          //   // velocity: vScale(-velocity / realZoom, vRotate(t, relDir)), // set the velocity (gesture momentum)
+          //   // velocity: vMag(vScale(-velocity / realZoom, vRotate(t, relDir))), // set the velocity (gesture momentum)
+          //   // velocity: velocity / screenScaleMultiplier, // set the velocity (gesture momentum)
+          //   // mass: down ? 1 : 5,
+          //   ...xyCtrlSpringConfig,
+          //   tension: down ? xyCtrlSpringConfig.tension : xyCtrlSpringConfig.tension / 2,
+          //   // -@ts-expect-error - decay is undocumented?
+          //   // decay: true,
+          // },
         });
 
         // tell the renderer that it's being dragged on
         setDragging(down);
-        // try {
-        // } catch (e) {}
 
         return memo;
       },

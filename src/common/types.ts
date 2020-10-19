@@ -1,4 +1,13 @@
-import { OpaqueInterpolation, SpringConfig } from 'react-spring';
+import { CSSProperties } from 'react';
+import {
+  AnimatedValue,
+  OpaqueInterpolation,
+  SetUpdateFn,
+  SpringConfig,
+} from 'react-spring';
+
+// from react-spring
+export type OverwriteKeys<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] };
 
 interface SpringControl {
   config?: SpringConfig;
@@ -32,7 +41,7 @@ export interface ViewerControls {
 // AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, CSSProperties>, "xy">>, SetUpdateFn<OverwriteKeys<ViewerXYControl, CSSProperties>>]
 export type SpringAnimatedValueOverwrite<T> = OverwriteKeys<T, CSSProperties>;
 export type SpringAnimatedValueWithSetter<T> = [
-  AnimatedValue<Pick<SpringAnimatedValueOverwrite<T>>, keyof T>,
+  AnimatedValue<Pick<SpringAnimatedValueOverwrite<T>, keyof T>>,
   SetUpdateFn<SpringAnimatedValueOverwrite<T>>,
 ];
 
