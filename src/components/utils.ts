@@ -8,15 +8,11 @@ import {
   UserHandlersPartial,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { xyCtrlSpringConfig, xyCtrlSpringDecayConfig } from '../App';
-import {
-  ViewerRotationControlSpring,
-  ViewerXYControlSpring,
-  ViewerZoomControlSpring,
-} from '../common/types';
+import { ViewerControlSprings, ViewerLocation } from '../common/types';
+import { screenScaleMultiplier, springsConfigs } from '../common/values';
 
 // https://usehooks.com/useWindowSize/
-export function useWindowSize() {
+export function useWindowSize(): { width?: number; height?: number } {
   const isClient = typeof window === 'object';
 
   const getSize = useCallback(
@@ -32,7 +28,9 @@ export function useWindowSize() {
   useEffect(() => {
     if (!isClient) {
       // return false;
-      return () => {};
+      return () => {
+        // do nothing
+      };
     }
 
     function handleResize() {
@@ -48,9 +46,7 @@ export function useWindowSize() {
 
 export interface GenericTouchBindParams {
   domTarget: RefObject<HTMLCanvasElement>;
-  xyCtrl: ViewerXYControlSpring;
-  zoomCtrl: ViewerZoomControlSpring;
-  rotCtrl: ViewerRotationControlSpring;
+  controls: ViewerControlSprings;
   screenScaleMultiplier: number;
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
@@ -64,17 +60,13 @@ export interface GenericTouchBindReturn {
 // a touchbind for re-using across renderers
 export function genericTouchBind({
   domTarget,
-  xyCtrl,
-  zoomCtrl,
-  rotCtrl,
+  controls,
   screenScaleMultiplier,
-  // gl,
   setDragging,
 }: GenericTouchBindParams): GenericTouchBindReturn {
-  const [{ xy }, setControlXY] = xyCtrl;
-  const [{ z, minZoom, maxZoom }, setControlZoom] = zoomCtrl;
-  // give theta a shell structure
-  const [{ theta }] = rotCtrl || [{ theta: { getValue: () => 0 } }, () => {}];
+  const [{ xy }, setControlXY] = controls.xyCtrl;
+  const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
+  const [{ theta }] = controls.rotCtrl;
   return {
     handlers: {
       // prevent some browser events such as swipe-based navigation or
@@ -99,7 +91,7 @@ export function genericTouchBind({
         const zoom = z.getValue();
         // initial origin access
         // let [p, initialOrigin] = memo;
-        const newZ = zoom * (1 + dx * 5e-3);
+        const newZ = zoom * (1 + dx * 3e-2);
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
@@ -108,11 +100,12 @@ export function genericTouchBind({
 
         setControlZoom({
           z: newZclamp,
-          immediate: down,
-          config: {
-            // value needs revising, currently too slow
-            velocity: 10 * vd,
-          },
+          config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+          // immediate: true,
+          // config: {
+          //   // value needs revising, currently too slow
+          //   velocity: 10 * vd,
+          // },
         });
 
         // setControlPos({
@@ -126,11 +119,12 @@ export function genericTouchBind({
       onWheel: ({ movement: [, my], active }: FullGestureState<StateKey<'wheel'>>) => {
         const zoom = z.getValue();
         // set different multipliers based on zoom direction
-        //                              zoom     in    out
-        const newZ = zoom * (1 - my * (my < 0 ? 1e-3 : 6e-4));
+        //                              zoom     in      out
+        const newZ = zoom * (1 - my * (my < 0 ? 1.5e-3 : 8e-4));
 
         setControlZoom({
           z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+          config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
           // immediate: active,
           // config: {
           //   // velocity: active ? 0 : 50,
@@ -147,10 +141,11 @@ export function genericTouchBind({
         velocity,
         pinching,
         last,
+        cancel,
         memo = { xy: xy.getValue(), theta: theta.getValue() },
       }: FullGestureState<StateKey<'drag'>>) => {
         // let pinch handle movement
-        if (pinching) return;
+        if (pinching) cancel && cancel();
         // change according to this formula:
         // move (x, y) in the opposite direction of drag (pan with cursor)
         // divide by canvas size to scale appropriately
@@ -172,7 +167,7 @@ export function genericTouchBind({
           // to maintain the correct displacement direction (without this it would move as if theta=0)
           xy: addV(memo.xy, vRotate(t, relMove)), // add the displacement to the starting position
           // immediate: down, // immediately apply if the gesture is active
-          config: down ? xyCtrlSpringConfig : xyCtrlSpringDecayConfig,
+          config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
           //  {
           //   // velocity also needs to be rotated according to theta
           //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
@@ -204,4 +199,40 @@ export function genericTouchBind({
       // }
     },
   };
+}
+
+/**
+ * Warps the given controller to a desired viewer location.
+ * @param controls The controller to be animated
+ * @param location The (partial) viewer location to warp to: xy, zoom, theta
+ * @param immediate Should the update happen immediately? (Useful for testing)
+ */
+export function warpToPoint(
+  controls: ViewerControlSprings,
+  { xy, z, theta }: Partial<ViewerLocation>,
+  immediate = false,
+): void {
+  // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
+  if (xy !== undefined) {
+    controls.xyCtrl[1]({
+      // use screen scale multiplier for a simpler API
+      xy: vScale(1 / screenScaleMultiplier, xy),
+      config: springsConfigs.default.xy,
+      immediate: immediate,
+    });
+  }
+  if (z !== undefined) {
+    controls.zoomCtrl[1]({
+      z: z,
+      config: springsConfigs.default.zoom,
+      immediate: immediate,
+    });
+  }
+  if (theta !== undefined) {
+    controls.rotCtrl[1]({
+      theta: theta,
+      config: springsConfigs.default.rot,
+      immediate: immediate,
+    });
+  }
 }

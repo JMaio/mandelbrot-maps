@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
+import { screenScaleMultiplier } from '../../common/values';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
@@ -22,7 +23,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = props.screenScaleMultiplier; // -> global
+  // const screenScaleMultiplier = props.screenScaleMultiplier; // -> global
 
   // temporary bounds to prevent excessive panning
   // eslint-disable-next-line
@@ -58,9 +59,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
 
   const gtb = genericTouchBind({
     domTarget: canvasRef,
-    xyCtrl: props.controls.xyCtrl,
-    zoomCtrl: props.controls.zoomCtrl,
-    rotCtrl: props.controls.rotCtrl,
+    controls: props.controls,
     screenScaleMultiplier:
       screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1), // -> global
     // gl: gl,
@@ -73,7 +72,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
     touchBind();
   }, [touchBind]);
 
-  const [fps, setFps] = useState(0);
+  const [fps, setFps] = useState('');
 
   return (
     <SettingsContext.Consumer>
@@ -96,7 +95,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
               xy: xy,
               theta: theta,
               maxI: maxI,
-              screenScaleMultiplier: screenScaleMultiplier,
+              // screenScaleMultiplier: screenScaleMultiplier,
             }}
             ref={canvasRef}
             // glRef={gl}
@@ -112,7 +111,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
               xy: xy,
               theta: theta,
               maxI: maxI,
-              screenScaleMultiplier: screenScaleMultiplier,
+              // screenScaleMultiplier: screenScaleMultiplier,
             }}
             canvasRef={miniCanvasRef}
             // glRef={miniGl}

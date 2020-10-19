@@ -1,23 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
+import { JuliaRendererProps } from '../../common/render';
+import { MandelbrotMapsWebGLUniforms } from '../../common/types';
+import { screenScaleMultiplier } from '../../common/values';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
-import MinimapViewer from './MinimapViewer';
-import { genericTouchBind } from '../utils';
-import WebGLCanvas from './WebGLCanvas';
 import { SettingsContext } from '../settings/SettingsContext';
+import { genericTouchBind } from '../utils';
+import MinimapViewer from './MinimapViewer';
+import WebGLCanvas from './WebGLCanvas';
 
-export default function JuliaRenderer(props) {
+export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
-  const canvasRef = useRef();
-  const miniCanvasRef = useRef();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const miniCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  const gl = useRef();
-  const miniGl = useRef();
+  // const gl = useRef();
+  // const miniGl = useRef();
 
   // this multiplier subdivides the screen space into smaller increments
   // to allow for velocity calculations to not immediately decay, due to the
   // otherwise small scale that is being mapped to the screen.
-  const screenScaleMultiplier = props.screenmult;
+  // const screenScaleMultiplier = props.screenScaleMultiplier;
 
   // read incoming props
   const [{ xy }] = props.controls.xyCtrl;
@@ -38,21 +41,29 @@ export default function JuliaRenderer(props) {
     // showCrosshair: false,
   });
 
+  const u: MandelbrotMapsWebGLUniforms = {
+    zoom: z,
+    xy: xy,
+    c: props.c,
+    maxI: maxI,
+    // screenScaleMultiplier: screenScaleMultiplier,
+  };
+
   const [dragging, setDragging] = useState(false);
 
-  let gtb = genericTouchBind({
+  const gtb = genericTouchBind({
     domTarget: canvasRef,
-    xyCtrl: props.controls.xyCtrl,
-    zoomCtrl: props.controls.zoomCtrl,
+    controls: props.controls,
     screenScaleMultiplier:
       screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1),
-    gl: gl,
     setDragging: setDragging,
   });
 
-  let touchBind = useGesture(gtb.handlers, gtb.config);
+  const touchBind = useGesture(gtb.handlers, gtb.config);
 
-  useEffect(touchBind, [touchBind]);
+  useEffect(() => {
+    touchBind();
+  }, [touchBind]);
 
   return (
     <SettingsContext.Consumer>
@@ -67,29 +78,15 @@ export default function JuliaRenderer(props) {
             id="julia"
             fragShader={fragShader}
             useDPR={props.useDPR}
-            u={{
-              zoom: z,
-              xy: xy,
-              c: props.c,
-              maxI: maxI,
-              screenScaleMultiplier: screenScaleMultiplier,
-            }}
+            u={u}
             ref={canvasRef}
-            glRef={gl}
             dragging={dragging}
           />
           <MinimapViewer
             fragShader={miniFragShader}
             useDPR={settings.useDPR}
-            u={{
-              zoom: z,
-              xy: xy,
-              maxI: maxI,
-              c: props.c,
-              screenScaleMultiplier: screenScaleMultiplier,
-            }}
+            u={u}
             canvasRef={miniCanvasRef}
-            glRef={miniGl}
             onClick={() => setControlZoom({ z: 1 })}
             show={settings.showMinimap}
           />

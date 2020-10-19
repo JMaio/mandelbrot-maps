@@ -10,13 +10,13 @@ import {
 } from './types';
 
 export interface FPSCardProps {
-  fps: number;
+  fps: string;
   show: boolean;
 }
 
 export interface CoordinatesCardProps extends CardProps {
   show: boolean;
-  screenScaleMultiplier: number;
+  // screenScaleMultiplier: number;
   mandelbrot: {
     xy: OpaqueInterpolation<XYType>;
     zoom: OpaqueInterpolation<ZoomType>;
@@ -25,7 +25,7 @@ export interface CoordinatesCardProps extends CardProps {
   julia?: OpaqueInterpolation<XYType>;
 }
 
-export interface MandelbrotControls {
+export interface ViewerControls {
   xyCtrl: ViewerXYControlSpring;
   rotCtrl: ViewerRotationControlSpring;
   zoomCtrl: ViewerZoomControlSpring;
@@ -33,7 +33,7 @@ export interface MandelbrotControls {
 
 export interface ChangeCoordinatesCardProps extends CardProps {
   show: boolean;
-  screenScaleMultiplier: number;
-  mandelbrot: MandelbrotControls;
+  // screenScaleMultiplier: number;
+  mandelbrot: ViewerControls;
   julia?: OpaqueInterpolation<XYType>;
 }

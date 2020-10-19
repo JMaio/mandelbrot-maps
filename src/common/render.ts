@@ -1,6 +1,7 @@
 import { CanvasHTMLAttributes } from 'react';
-import { MandelbrotControls } from './info';
-import { MandelbrotMapsWebGLUniforms } from './types';
+import { OpaqueInterpolation } from 'react-spring';
+import { ViewerControls } from './info';
+import { MandelbrotMapsWebGLUniforms, XYType } from './types';
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
@@ -8,9 +9,9 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   /** WebGL Uniforms to be passed down to the shader - position, zoom, etc */
   u: MandelbrotMapsWebGLUniforms;
   /** The fragment shader to be used */
-  fragShader?: any;
-
-  fps?: any;
+  fragShader: string;
+  /** The fps setter, provided by React useState, optional in Julia */
+  fps?: React.Dispatch<React.SetStateAction<string>>;
   /** The device pixel ratio to be used can be overwritten with this value? */
   dpr?: number;
   /** Should the DPR value be used? */
@@ -20,12 +21,22 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
 }
 
 export interface MandelbrotRendererProps {
-  screenScaleMultiplier: number;
-  controls: MandelbrotControls;
+  // screenScaleMultiplier: number;
+  controls: ViewerControls;
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
   showCrosshair: boolean;
+}
+
+export interface JuliaRendererProps {
+  // screenScaleMultiplier: number;
+  controls: ViewerControls;
+  c: OpaqueInterpolation<XYType>;
+  maxI: number;
+  useDPR: boolean;
+  useAA: boolean;
+  // showCrosshair: boolean;
 }
 
 export interface MinimapViewerProps extends WebGLCanvasProps {

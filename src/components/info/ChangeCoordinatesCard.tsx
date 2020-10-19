@@ -1,35 +1,14 @@
 import { Button, Card, Grid, Grow, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
-import { vScale } from 'vec-la-fp';
-import {
-  resetPosSpringConfig,
-  resetZoomSpringConfig,
-  startPos,
-  startTheta,
-  startZoom,
-} from '../../App';
 import { ChangeCoordinatesCardProps } from '../../common/info';
+import { startPos, startTheta, startZoom } from '../../common/values';
+import { warpToPoint } from '../utils';
 
 const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element => {
   const [x, setX] = useState(startPos[0]);
   const [y, setY] = useState(startPos[1]);
   const [zoom, setZoom] = useState(startZoom);
   const [theta, setTheta] = useState(startTheta);
-
-  const go = () => {
-    props.mandelbrot.xyCtrl[1]({
-      xy: vScale(1 / props.screenScaleMultiplier, [x, y]),
-      config: resetPosSpringConfig,
-    });
-    props.mandelbrot.zoomCtrl[1]({
-      z: zoom,
-      config: resetZoomSpringConfig,
-    });
-    props.mandelbrot.rotCtrl[1]({
-      theta: theta,
-      config: resetZoomSpringConfig,
-    });
-  };
 
   return (
     <Grow in={props.show}>
@@ -77,7 +56,12 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
               label="theta"
             />
           </Grid>
-          <Button style={{ marginTop: 12 }} onClick={() => go()}>
+          <Button
+            style={{ marginTop: 12 }}
+            onClick={() =>
+              warpToPoint(props.mandelbrot, { xy: [x, y], z: zoom, theta: theta })
+            }
+          >
             Go
           </Button>
         </Grid>

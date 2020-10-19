@@ -17,6 +17,15 @@ export type XYType = [number, number];
 export type ZoomType = number;
 export type ThetaType = number;
 
+/**
+ * Holds viewer location data (can be used to control a view)
+ */
+export interface ViewerLocation {
+  xy: XYType;
+  z: ZoomType;
+  theta: ThetaType;
+}
+
 export interface ViewerXYControl extends SpringControl {
   xy: XYType;
 }
@@ -51,6 +60,12 @@ export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<
   ViewerRotationControl
 >;
 
+export interface ViewerControlSprings {
+  xyCtrl: ViewerXYControlSpring;
+  zoomCtrl: ViewerZoomControlSpring;
+  rotCtrl: ViewerRotationControlSpring;
+}
+
 export interface MandelbrotMapsWebGLUniforms {
   xy: OpaqueInterpolation<XYType>;
   zoom: OpaqueInterpolation<ZoomType>;
@@ -58,7 +73,7 @@ export interface MandelbrotMapsWebGLUniforms {
   c?: {
     getValue: () => XYType;
   };
-  screenScaleMultiplier: number;
+  // screenScaleMultiplier: number;
   theta?: OpaqueInterpolation<ThetaType>;
 }
 

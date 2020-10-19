@@ -2,6 +2,7 @@ import { Card, Grow, Typography } from '@material-ui/core';
 import React from 'react';
 import { animated } from 'react-spring';
 import { CoordinatesCardProps } from '../../common/info';
+import { screenScaleMultiplier } from '../../common/values';
 
 const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
   return (
@@ -23,14 +24,14 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
           <animated.span>
             {props.mandelbrot.xy.interpolate(
               // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-              (x, y) => `${(x * props.screenScaleMultiplier).toFixed(7)} : x`,
+              (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
             )}
           </animated.span>
           <br />
           <animated.span>
             {props.mandelbrot.xy.interpolate(
               // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-              (x, y) => `${(y * props.screenScaleMultiplier).toFixed(7)} : y`,
+              (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
             )}
           </animated.span>
           <br />
