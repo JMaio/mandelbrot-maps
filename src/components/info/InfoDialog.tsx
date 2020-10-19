@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, { PropsWithChildren, useState } from 'react';
+import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -23,56 +23,69 @@ import {
 } from '@material-ui/core';
 import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import MuiAlert from '@material-ui/lab/Alert';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { surveyLink } from '../surveyLink.json';
 
 // for evaluating build time
 import preval from 'preval.macro';
+import clientDetect from '../../dist/clientDetect';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'row',
-    // align: "middle",
-  },
-  image: {
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    marginRight: 8,
-    height: 50,
-  },
-  closeButton: {
-    // position: 'absolute',
-    // right: theme.spacing(1),
-    // top: theme.spacing(1),
-    marginLeft: 'auto',
-    color: theme.palette.grey[500],
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      margin: 0,
+      padding: theme.spacing(2),
+      display: 'flex',
+      flexDirection: 'row',
+      // align: "middle",
+    },
+    image: {
+      marginTop: 'auto',
+      marginBottom: 'auto',
+      marginRight: 8,
+      height: 50,
+    },
+    closeButton: {
+      // position: 'absolute',
+      // right: theme.spacing(1),
+      // top: theme.spacing(1),
+      marginLeft: 'auto',
+      color: theme.palette.grey[500],
+    },
+  });
 
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <img src="logo-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
-      <Typography
-        variant="h1"
-        style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}
-      >
-        {children}
-      </Typography>
-      {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
+export interface DialogTitleProps extends PropsWithChildren<WithStyles<typeof styles>> {
+  onClose: () => void;
+  id: string;
+}
+
+// https://material-ui.com/guides/typescript/#usage-of-withstyles
+const DialogTitle = withStyles(styles)(
+  ({ children, classes, onClose, ...other }: DialogTitleProps) => {
+    return (
+      <MuiDialogTitle disableTypography className={classes.root} {...other}>
+        <img src="logo-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
+        <Typography
+          variant="h1"
+          style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}
+        >
+          {children}
+        </Typography>
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={onClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </MuiDialogTitle>
+    );
+  },
+);
 
 const DialogContent = withStyles((theme) => ({
   root: {
@@ -87,20 +100,29 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-function Alert(props) {
+function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function InfoDialog(props) {
+export default function InfoDialog(props: any) {
   const [open, setOpen] = props.ctrl;
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
+  // const showSnackBar = () => {
+  // new Promise(() => {
+  // setSnackBarOpen(false);
+  // }).then(() => {
+  // setSnackBarOpen(true);
+  // });
+  // };
 
   // guard against null / undefined window
-  const clientData = window.jscd || {};
+  const clientData = clientDetect(window);
+  // const clientData = window.jscd || {};
 
-  let writeToClipboard = (data) => {
+  const writeToClipboard = (data: string) => {
+    console.log(snackBarOpen);
     try {
       navigator.clipboard.writeText(data);
       setSnackBarOpen(true);
@@ -215,22 +237,22 @@ export default function InfoDialog(props) {
         <Snackbar
           open={snackBarOpen}
           autoHideDuration={5000}
-          onClose={() => setSnackBarOpen(false)}
+          // onClose={() => setSnackBarOpen(false)}
         >
           <Alert onClose={() => setSnackBarOpen(false)} severity="info">
             Device properties copied!
           </Alert>
         </Snackbar>
-        <Button
-          autoFocus
+        <Link
           href={surveyLink}
           target="_blank"
-          color="primary"
-          variant="outlined"
-          startIcon={<LaunchIcon />}
+          rel="noopener"
+          style={{ textDecoration: 'none' }}
         >
-          Feedback
-        </Button>
+          <Button autoFocus color="primary" variant="outlined" startIcon={<LaunchIcon />}>
+            Feedback
+          </Button>
+        </Link>
       </DialogActions>
       {/* </div> */}
     </Dialog>

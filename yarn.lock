@@ -1701,6 +1701,11 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
+"@types/preval.macro@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/preval.macro/-/preval.macro-3.0.0.tgz#c348162024c8ea22ea3d330d2497a1a21be64e38"
+  integrity sha512-mm7qx+Aj9bhMcK9Y3UHNy6zCQneRj+GBFlCi+cxtx66iLU4yarOupVLrFadlG+Cd4TEsdo4og0REhzUQQ7m3fg==
+
 "@types/prop-types@*":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
