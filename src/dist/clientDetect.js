@@ -181,14 +181,14 @@ export default function clientDetect(window) {
 
   try {
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  } catch (e) {
-    //   do nothing
-  }
-
-  if (gl) {
+    // move block here if webgl not available
+    // if (gl) {
     debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     gpuVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
     renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    // }
+  } catch (e) {
+    //   do nothing
   }
   // ----------------------------------------------------------------
 
