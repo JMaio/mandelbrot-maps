@@ -56,10 +56,11 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
             />
             <TextField
               size="small"
-              style={{ width: '3ch' }}
+              style={{ width: '5ch' }}
               onChange={(e) => setTheta(Number(e.target.value))}
               type="number"
               defaultValue={theta}
+              inputProps={{ step: 0.1 }}
               label="theta"
             />
           </Grid>
