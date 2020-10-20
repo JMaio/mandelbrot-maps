@@ -1,0 +1,3 @@
+src/registerServiceWorker.js
+src/serviceWorker.js
+public/clientDetect.js
