@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Grow, TextField } from '@material-ui/core';
+import { Button, Card, Grid, Grow, TextField, InputBase } from '@material-ui/core';
 import React, { useState } from 'react';
 import { ChangeCoordinatesCardProps } from '../../common/info';
 import { startPos, startTheta, startZoom } from '../../common/values';
@@ -30,14 +30,18 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
             size="small"
             style={{ width: '12ch' }}
             onChange={(e) => setX(Number(e.target.value))}
-            value={x}
+            type="number"
+            defaultValue={x}
+            inputProps={{ step: 0.01 }}
             label="x"
           />
           <TextField
             size="small"
             style={{ width: '12ch' }}
             onChange={(e) => setY(Number(e.target.value))}
-            value={y}
+            type="number"
+            defaultValue={y}
+            inputProps={{ step: 0.01 }}
             label="y"
           />
           <Grid container direction="row" justify="space-around">
@@ -45,14 +49,17 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
               size="small"
               style={{ width: '5ch' }}
               onChange={(e) => setZoom(Number(e.target.value))}
-              value={zoom}
+              type="number"
+              defaultValue={zoom}
+              inputProps={{ min: 0 }}
               label="zoom"
             />
             <TextField
               size="small"
               style={{ width: '3ch' }}
               onChange={(e) => setTheta(Number(e.target.value))}
-              value={theta}
+              type="number"
+              defaultValue={theta}
               label="theta"
             />
           </Grid>
