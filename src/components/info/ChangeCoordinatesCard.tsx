@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Grow, TextField, InputBase } from '@material-ui/core';
+import { Button, Card, Grid, Grow, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { ChangeCoordinatesCardProps } from '../../common/info';
 import { startPos, startTheta, startZoom } from '../../common/values';
