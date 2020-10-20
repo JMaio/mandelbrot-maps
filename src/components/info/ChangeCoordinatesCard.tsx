@@ -30,14 +30,18 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
             size="small"
             style={{ width: '12ch' }}
             onChange={(e) => setX(Number(e.target.value))}
-            value={x}
+            type="number"
+            defaultValue={x}
+            inputProps={{ step: 0.01 }}
             label="x"
           />
           <TextField
             size="small"
             style={{ width: '12ch' }}
             onChange={(e) => setY(Number(e.target.value))}
-            value={y}
+            type="number"
+            defaultValue={y}
+            inputProps={{ step: 0.01 }}
             label="y"
           />
           <Grid container direction="row" justify="space-around">
@@ -45,14 +49,18 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
               size="small"
               style={{ width: '5ch' }}
               onChange={(e) => setZoom(Number(e.target.value))}
-              value={zoom}
+              type="number"
+              defaultValue={zoom}
+              inputProps={{ min: 0 }}
               label="zoom"
             />
             <TextField
               size="small"
-              style={{ width: '3ch' }}
+              style={{ width: '5ch' }}
               onChange={(e) => setTheta(Number(e.target.value))}
-              value={theta}
+              type="number"
+              defaultValue={theta}
+              inputProps={{ step: 0.1 }}
               label="theta"
             />
           </Grid>
