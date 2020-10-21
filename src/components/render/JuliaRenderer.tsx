@@ -26,6 +26,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
   const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
   const [{ z }, setControlZoom] = props.controls.zoomCtrl;
+  const [{ theta }] = props.controls.rotCtrl;
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1;
 
@@ -45,6 +46,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     zoom: z,
     xy: xy,
     c: props.c,
+    theta: theta,
     maxI: maxI,
     // screenScaleMultiplier: screenScaleMultiplier,
   };
