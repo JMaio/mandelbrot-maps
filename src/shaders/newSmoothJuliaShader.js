@@ -64,7 +64,13 @@ void main() {
   
   // constant "c" to add, based on mandelbrot position
   vec2 c = u_c;
-  vec2 z = u_xy + p/u_zoom;
+
+  float sinT = sin(u_theta);
+  float cosT = cos(u_theta);
+
+  vec2 xy = vec2( p.x*cosT - p.y*sinT, p.x*sinT + p.y*cosT );
+  // c is based on offset and grid position, z_0 = 0
+  vec2 z = u_xy + xy/u_zoom;
 
   float l = julia(z, c);
   col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
