@@ -10,9 +10,10 @@ To deploy and host a production build, you should:
 
 1.  On your repo's Settings tab on GitHub, under the "Options" menu, scroll down to the "GitHub Pages" section. There, under "Source", select the `gh-pages` branch from the drop-down menu, and click "Save".
     ![GitHub pages section, no branch selected for deployment.](img/gh-settings-gh-pages-none.png)
+    
     After a few seconds, you should see this message - keep a note of the URL as it's needed later: >Your site is published at https://[yourusername].github.io/mandelbrot-maps/
 
-        ![GitHub pages section, the gh-pages branch is selected for deployment.](img/gh-settings-gh-pages.png)
+    ![GitHub pages section, the gh-pages branch is selected for deployment.](img/gh-settings-gh-pages.png)
 
 2.  Open a terminal at the root of the repo and, depending on your package manager, run the `deploy` task (which calls the `gh-pages` package to deploy to GitHub). With `yarn`:
 
