@@ -57,6 +57,18 @@ export interface GenericTouchBindReturn {
   config: UseGestureConfig;
 }
 
+// --------------------------------------------------------------------------
+// https://gist.github.com/evdokimovm/0e7163faf7c8fe24e41e6b68461e4feb
+// Convert from degrees to radians.
+const degToRad = (deg: number): number => (deg * Math.PI) / 180;
+// Math.radians(90); // 1.5707963267948966
+
+// Convert from radians to degrees.
+// eslint-disable-next-line
+const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
+// Math.degrees(3.141592653589793); // 180
+// --------------------------------------------------------------------------
+
 // a touchbind for re-using across renderers
 export function genericTouchBind({
   domTarget,
@@ -67,6 +79,9 @@ export function genericTouchBind({
   const [{ xy }, setControlXY] = controls.xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
   const [{ theta }, setControlRot] = controls.rotCtrl;
+
+  const zoomMult = { in: 3e-3, out: 1e-3 };
+
   return {
     handlers: {
       // prevent some browser events such as swipe-based navigation or
@@ -77,21 +92,28 @@ export function genericTouchBind({
         event?.preventDefault(),
 
       onPinch: ({
-        vdva: [vd],
+        vdva: [vd, va],
         down,
-        delta: [dx],
-        origin,
+        da: [d, a],
+        // delta: [dx, dy],
         first,
-        memo = [xy.getValue()],
+        movement: [mx, my],
+        origin,
+        memo = { xy: xy.getValue(), z: z.getValue(), t: theta.getValue(), a: 0 },
       }: FullGestureState<StateKey<'pinch'>>) => {
         if (first) {
-          const [p] = memo;
-          return [p, origin];
+          memo.a = a;
+          //   // const [p] = memo;
+          //   // return [p, origin];
         }
-        const zoom = z.getValue();
+
+        // const t = theta.getValue();
+        // const zoom = z.getValue();
         // initial origin access
         // let [p, initialOrigin] = memo;
-        const newZ = zoom * (1 + dx * 3e-2);
+        const newZ = z.getValue() * (1 + 6e-2 * vd);
+        // if (last) {
+        // }
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
@@ -101,11 +123,11 @@ export function genericTouchBind({
         setControlZoom({
           z: newZclamp,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-          // immediate: true,
-          // config: {
-          //   // value needs revising, currently too slow
-          //   velocity: 10 * vd,
-          // },
+        });
+
+        setControlRot({
+          theta: memo.t + degToRad(a - memo.a),
+          config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
 
         // setControlPos({
@@ -123,31 +145,22 @@ export function genericTouchBind({
         memo = { zoom: z.getValue(), t: theta.getValue() },
       }: FullGestureState<StateKey<'wheel'>>) => {
         if (shiftKey) {
-          // const t = theta.getValue();
-
-          const newT = memo.t + my * 0.0015;
+          // if shift is pressed, rotate instead of zoom
+          const newT = memo.t + my * 1.5e-3;
 
           setControlRot({
             theta: newT,
             config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
-            // immediate: active,
-            // config: {
-            //   // velocity: active ? 0 : 50,
-            // },
           });
         } else {
-          // const zoom = z.getValue();
           // set different multipliers based on zoom direction
-          //                              zoom     in      out
-          const newZ = memo.zoom * (1 - my * (my < 0 ? 3e-3 : 1e-3));
+          // mouse movement negative = move up the page = zoom in
+          //                                   zoom        in           out
+          const newZ = memo.zoom * (1 - my * (my < 0 ? zoomMult.in : zoomMult.out));
 
           setControlZoom({
             z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
             config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-            // immediate: active,
-            // config: {
-            //   // velocity: active ? 0 : 50,
-            // },
           });
         }
         return memo;
