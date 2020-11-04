@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a140c49df0670cbd21c5353d761f5969",
+    "revision": "ad18fdc38b80ab50dcd48d01d65e40c4",
     "url": "/mandelbrot-maps/index.html"
   },
   {
-    "revision": "6998b6ffa3813c6a6f42",
+    "revision": "1237a4caeaa956daa205",
     "url": "/mandelbrot-maps/static/css/main.149fb1e2.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/mandelbrot-maps/static/js/2.26e709b3.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "6998b6ffa3813c6a6f42",
-    "url": "/mandelbrot-maps/static/js/main.37b34b9a.chunk.js"
+    "revision": "1237a4caeaa956daa205",
+    "url": "/mandelbrot-maps/static/js/main.25404ac5.chunk.js"
   },
   {
     "revision": "3340220f7fd06ebb1983",
