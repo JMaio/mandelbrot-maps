@@ -2,7 +2,7 @@ import { Button, Card, Grid, Grow, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { ChangeCoordinatesCardProps } from '../../common/info';
 import { startPos, startTheta, startZoom } from '../../common/values';
-import { warpToPoint } from '../utils';
+import { warpToPoint } from '../../common/utils';
 
 const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element => {
   const [x, setX] = useState(startPos[0]);

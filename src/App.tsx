@@ -26,7 +26,7 @@ import MandelbrotRenderer from './components/render/MandelbrotRenderer';
 import ServiceWorkerWrapper from './components/ServiceWorkerWrapper';
 import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
 import SettingsMenu from './components/settings/SettingsMenu';
-import { useWindowSize, warpToPoint } from './components/utils';
+import { useWindowSize, warpToPoint } from './common/utils';
 import theme from './theme/theme';
 
 function App(): JSX.Element {

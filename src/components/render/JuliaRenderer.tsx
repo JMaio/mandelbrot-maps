@@ -5,7 +5,7 @@ import { MandelbrotMapsWebGLUniforms } from '../../common/types';
 import { screenScaleMultiplier } from '../../common/values';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
-import { genericTouchBind } from '../utils';
+import { genericTouchBind } from '../../common/utils';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 

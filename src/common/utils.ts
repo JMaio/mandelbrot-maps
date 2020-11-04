@@ -8,8 +8,8 @@ import {
   UserHandlersPartial,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { ViewerControlSprings, ViewerLocation } from '../common/types';
-import { screenScaleMultiplier, springsConfigs } from '../common/values';
+import { ViewerControlSprings, ViewerLocation } from './types';
+import { screenScaleMultiplier, springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { width?: number; height?: number } {
@@ -66,7 +66,7 @@ export function genericTouchBind({
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
-  const [{ theta }] = controls.rotCtrl;
+  const [{ theta }, setControlRot] = controls.rotCtrl;
   return {
     handlers: {
       // prevent some browser events such as swipe-based navigation or
@@ -116,22 +116,41 @@ export function genericTouchBind({
         return memo;
       },
 
-      onWheel: ({ movement: [, my], active }: FullGestureState<StateKey<'wheel'>>) => {
-        const zoom = z.getValue();
-        // set different multipliers based on zoom direction
-        //                              zoom     in      out
-        const newZ = zoom * (1 - my * (my < 0 ? 1.5e-3 : 8e-4));
+      onWheel: ({
+        movement: [, my],
+        active,
+        shiftKey,
+        memo = { zoom: z.getValue(), t: theta.getValue() },
+      }: FullGestureState<StateKey<'wheel'>>) => {
+        if (shiftKey) {
+          // const t = theta.getValue();
 
-        setControlZoom({
-          z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
-          config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-          // immediate: active,
-          // config: {
-          //   // velocity: active ? 0 : 50,
-          // },
-        });
+          const newT = memo.t + my * 0.0015;
 
-        return zoom;
+          setControlRot({
+            theta: newT,
+            config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
+            // immediate: active,
+            // config: {
+            //   // velocity: active ? 0 : 50,
+            // },
+          });
+        } else {
+          // const zoom = z.getValue();
+          // set different multipliers based on zoom direction
+          //                              zoom     in      out
+          const newZ = memo.zoom * (1 - my * (my < 0 ? 3e-3 : 1e-3));
+
+          setControlZoom({
+            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+            // immediate: active,
+            // config: {
+            //   // velocity: active ? 0 : 50,
+            // },
+          });
+        }
+        return memo;
       },
 
       onDrag: ({

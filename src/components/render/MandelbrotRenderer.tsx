@@ -8,7 +8,7 @@ import newSmoothMandelbrotShader, {
 } from '../../shaders/newSmoothMandelbrotShader';
 import FPSCard from '../info/FPSCard';
 import { SettingsContext } from '../settings/SettingsContext';
-import { genericTouchBind } from '../utils';
+import { genericTouchBind } from '../../common/utils';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 
