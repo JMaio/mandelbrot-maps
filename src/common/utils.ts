@@ -95,13 +95,14 @@ export function genericTouchBind({
         vdva: [vd, va],
         down,
         da: [d, a],
-        // delta: [dx, dy],
+        // delta: [dd, da],
         first,
         movement: [mx, my],
-        origin,
+        // origin,
         memo = { xy: xy.getValue(), z: z.getValue(), t: theta.getValue(), a: 0 },
       }: FullGestureState<StateKey<'pinch'>>) => {
         if (first) {
+          // remember the angle at which the pinch gesture starts
           memo.a = a;
           //   // const [p] = memo;
           //   // return [p, origin];
@@ -111,7 +112,7 @@ export function genericTouchBind({
         // const zoom = z.getValue();
         // initial origin access
         // let [p, initialOrigin] = memo;
-        const newZ = z.getValue() * (1 + 6e-2 * vd);
+        const newZ = z.getValue() * (1 + 5e-1 * vd);
         // if (last) {
         // }
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
@@ -127,6 +128,7 @@ export function genericTouchBind({
 
         setControlRot({
           theta: memo.t + degToRad(a - memo.a),
+          immediate: true, // fixes issues with wrapping around from (0) to (-2pi)
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
 
