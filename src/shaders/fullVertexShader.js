@@ -1,5 +1,8 @@
 export const fullVertexShader = `
-attribute vec4 position;
+#version 300 es
+// specify OpenGL ES 3.0
+
+in vec4 position;
 
 void main() {
   gl_Position = position;
@@ -13,6 +16,7 @@ void main() {
 export const fullscreenVertexArray = {
   position: {
     numComponents: 3,
+    // eslint-disable-next-line
     data: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
   },
 };

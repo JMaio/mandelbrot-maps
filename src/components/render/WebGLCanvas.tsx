@@ -50,7 +50,14 @@ const WebGLCanvas = React.forwardRef<
   useEffect(() => {
     // console.log(gl);
     // console.log(gl.current);
-    gl.current = canvasRef.current.getContext('webgl');
+    gl.current = canvasRef.current.getContext('webgl2');
+    // console.log(gl.current);
+    console.log(
+      gl.current?.getShaderPrecisionFormat(
+        gl.current?.FRAGMENT_SHADER,
+        gl.current?.HIGH_FLOAT,
+      ),
+    );
   }, [canvasRef]);
 
   useEffect(() => {

@@ -23,8 +23,10 @@ const newSmoothMandelbrotShader = (
     stroke: 2,
     radius: 100,
   },
-): string => {
-  return `
+): string => `
+#version 300 es
+// specify OpenGL ES 3.0
+
 // Adapted by Joao Maio/2019, based on work by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
@@ -44,8 +46,17 @@ const newSmoothMandelbrotShader = (
 #define cross_stroke ${crosshairShape.stroke.toFixed(1)}
 #define cross_radius ${crosshairShape.radius.toFixed(1)}
 
-// set high float precision (lower than this may break colours on mobile)
-precision highp float;
+// https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices
+// A good pattern for "always give me the highest precision":
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+  // set high float precision (lower than this may break colours on mobile)
+  precision highp float;
+#else
+  precision mediump float;
+#endif
+
+// output fragment colour
+out vec4 fragColor;
 
 // need to know the resolution of the canvas
 uniform vec2 resolution;
@@ -134,9 +145,8 @@ void main() {
     #endif
 
     // Output to screen
-    gl_FragColor = vec4( col, 1.0 );
+    fragColor = vec4( col, 1.0 );
 }
-    `;
-};
+`;
 
 export default newSmoothMandelbrotShader;
