@@ -61,11 +61,12 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     setDragging: setDragging,
   });
 
-  const touchBind = useGesture(gtb.handlers, gtb.config);
+  // const touchBind =
+  useGesture(gtb.handlers, gtb.config);
 
-  useEffect(() => {
-    touchBind();
-  }, [touchBind]);
+  // useEffect(() => {
+  //   touchBind();
+  // }, [touchBind]);
 
   return (
     <SettingsContext.Consumer>

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
+import { genericTouchBind } from '../../common/utils';
 import { screenScaleMultiplier } from '../../common/values';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
@@ -8,7 +9,6 @@ import newSmoothMandelbrotShader, {
 } from '../../shaders/newSmoothMandelbrotShader';
 import FPSCard from '../info/FPSCard';
 import { SettingsContext } from '../settings/SettingsContext';
-import { genericTouchBind } from '../../common/utils';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 
@@ -66,11 +66,15 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
     setDragging: setDragging,
   });
 
-  const touchBind = useGesture(gtb.handlers, gtb.config);
+  // https://use-gesture.netlify.app/docs/changelog/#breaking
+  // When adding events directly to the dom element using `domTarget`
+  // you no longer need to clean the effect yourself.
+  // const touchBind =
+  useGesture(gtb.handlers, gtb.config);
 
-  useEffect(() => {
-    touchBind();
-  }, [touchBind]);
+  // useEffect(() => {
+  //   touchBind();
+  // }, [touchBind]);
 
   const [fps, setFps] = useState('');
 

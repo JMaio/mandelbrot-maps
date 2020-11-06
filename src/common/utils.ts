@@ -3,9 +3,10 @@ import { RefObject, useCallback, useEffect, useState } from 'react';
 import { addV } from 'react-use-gesture';
 import {
   FullGestureState,
+  Handlers,
   StateKey,
   UseGestureConfig,
-  UserHandlersPartial,
+  // UserHandlersPartial,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
 import { ViewerControlSprings, ViewerLocation } from './types';
@@ -53,7 +54,7 @@ export interface GenericTouchBindParams {
 }
 
 export interface GenericTouchBindReturn {
-  handlers: UserHandlersPartial;
+  handlers: Handlers;
   config: UseGestureConfig;
 }
 
