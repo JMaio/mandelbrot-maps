@@ -90,12 +90,15 @@ export function genericTouchBind({
     handlers: {
       // prevent some browser events such as swipe-based navigation or
       // pinch-based zoom and instead redirect them to this handler
-      onDragStart: ({ event }: FullGestureState<StateKey<'drag'>>) =>
-        event?.preventDefault(),
-      onPinchStart: ({ event }: FullGestureState<StateKey<'pinch'>>) =>
-        event?.preventDefault(),
+      // onDragStart: ({ event }: FullGestureState<StateKey<'drag'>>) =>
+      //   event?.preventDefault(),
+      // onPinchStart: ({ event }: FullGestureState<StateKey<'pinch'>>) =>
+      //   event?.preventDefault(),
+      // onWheelStart: ({ event }: FullGestureState<StateKey<'wheel'>>) =>
+      //   event?.preventDefault(),
 
       onPinch: ({
+        event,
         vdva: [vd, va],
         down,
         da: [d, a],
@@ -111,6 +114,9 @@ export function genericTouchBind({
           o: [0, 0] as Vector2,
         },
       }: FullGestureState<StateKey<'pinch'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
         if (first) {
           // remember the angle, location at which the pinch gesture starts
           memo.a = a;
@@ -145,11 +151,15 @@ export function genericTouchBind({
       },
 
       onWheel: ({
+        event,
         movement: [, my],
         active,
         shiftKey,
         memo = { zoom: z.getValue(), t: theta.getValue() },
       }: FullGestureState<StateKey<'wheel'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
         if (shiftKey) {
           // if shift is pressed, rotate instead of zoom
           const newT = memo.t + my * 1.5e-3;
@@ -173,6 +183,7 @@ export function genericTouchBind({
       },
 
       onDrag: ({
+        event,
         down,
         movement,
         direction: [dx, dy],
@@ -182,6 +193,9 @@ export function genericTouchBind({
         cancel,
         memo = { xy: xy.getValue(), theta: theta.getValue() },
       }: FullGestureState<StateKey<'drag'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
         // let pinch handle movement
         if (pinching) cancel && cancel();
         // change according to this formula:
