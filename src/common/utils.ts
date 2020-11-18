@@ -1,15 +1,16 @@
 import _ from 'lodash';
 import { RefObject, useCallback, useEffect, useState } from 'react';
-import { addV } from 'react-use-gesture';
+import { addV, subV } from 'react-use-gesture';
 import {
   FullGestureState,
+  Handlers,
   StateKey,
   UseGestureConfig,
-  UserHandlersPartial,
+  Vector2,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { ViewerControlSprings, ViewerLocation } from '../common/types';
-import { screenScaleMultiplier, springsConfigs } from '../common/values';
+import { ViewerControlSprings, ViewerLocation } from './types';
+import { screenScaleMultiplier, springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { width?: number; height?: number } {
@@ -53,9 +54,21 @@ export interface GenericTouchBindParams {
 }
 
 export interface GenericTouchBindReturn {
-  handlers: UserHandlersPartial;
+  handlers: Handlers;
   config: UseGestureConfig;
 }
+
+// --------------------------------------------------------------------------
+// https://gist.github.com/evdokimovm/0e7163faf7c8fe24e41e6b68461e4feb
+// Convert from degrees to radians.
+const degToRad = (deg: number): number => (deg * Math.PI) / 180;
+// Math.radians(90); // 1.5707963267948966
+
+// Convert from radians to degrees.
+// eslint-disable-next-line
+const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
+// Math.degrees(3.141592653589793); // 180
+// --------------------------------------------------------------------------
 
 // a touchbind for re-using across renderers
 export function genericTouchBind({
@@ -66,75 +79,111 @@ export function genericTouchBind({
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
-  const [{ theta }] = controls.rotCtrl;
+  const [{ theta }, setControlRot] = controls.rotCtrl;
+
+  const zoomMult = { in: 3e-3, out: 1e-3 };
+
+  const getRealZoom = (z: number) =>
+    (domTarget.current?.height || 100) * z * screenScaleMultiplier;
+
   return {
     handlers: {
       // prevent some browser events such as swipe-based navigation or
       // pinch-based zoom and instead redirect them to this handler
-      onDragStart: ({ event }: FullGestureState<StateKey<'drag'>>) =>
-        event?.preventDefault(),
-      onPinchStart: ({ event }: FullGestureState<StateKey<'pinch'>>) =>
-        event?.preventDefault(),
+      // onDragStart: ({ event }: FullGestureState<StateKey<'drag'>>) =>
+      //   event?.preventDefault(),
+      // onPinchStart: ({ event }: FullGestureState<StateKey<'pinch'>>) =>
+      //   event?.preventDefault(),
+      // onWheelStart: ({ event }: FullGestureState<StateKey<'wheel'>>) =>
+      //   event?.preventDefault(),
 
       onPinch: ({
-        vdva: [vd],
+        event,
+        vdva: [vd, va],
         down,
-        delta: [dx],
-        origin,
+        da: [d, a],
+        // delta: [dd, da],
         first,
-        memo = [xy.getValue()],
+        origin,
+        // movement, //: [mx, my],
+        memo = {
+          xy: xy.getValue(),
+          z: z.getValue(),
+          t: theta.getValue(),
+          a: 0,
+          o: [0, 0] as Vector2,
+        },
       }: FullGestureState<StateKey<'pinch'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
         if (first) {
-          const [p] = memo;
-          return [p, origin];
+          // remember the angle, location at which the pinch gesture starts
+          memo.a = a;
+          memo.o = origin;
         }
-        const zoom = z.getValue();
-        // initial origin access
-        // let [p, initialOrigin] = memo;
-        const newZ = zoom * (1 + dx * 3e-2);
+
+        const newZ = z.getValue() * (1 + 1e-1 * vd);
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
-        // let realZoom = gl.current.canvas.height * newZclamp * screenScaleMultiplier;
-        // let plotMovement = scale(subV(origin, initialOrigin), -2/realZoom);
-        // let relMove = [plotMovement[0], -plotMovement[1]];
+        const realZoom = getRealZoom(newZclamp);
+
+        const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
+        const relMove: Vector2 = [px, -py];
+
+        setControlXY({
+          xy: addV(memo.xy, vRotate(theta.getValue(), relMove)),
+        });
 
         setControlZoom({
           z: newZclamp,
+          immediate: down,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-          // immediate: true,
-          // config: {
-          //   // value needs revising, currently too slow
-          //   velocity: 10 * vd,
-          // },
         });
 
-        // setControlPos({
-        //   pos: addV(p, relMove),                    // add the displacement to the starting position
-        //   immediate: down,                                  // immediately apply if the gesture is active
-        // });
+        setControlRot({
+          theta: memo.t + degToRad(a - memo.a + 1e1 * va),
+          immediate: down, // fixes issues with wrapping around from (0) to (-2pi)
+          config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
+        });
 
         return memo;
       },
 
-      onWheel: ({ movement: [, my], active }: FullGestureState<StateKey<'wheel'>>) => {
-        const zoom = z.getValue();
-        // set different multipliers based on zoom direction
-        //                              zoom     in      out
-        const newZ = zoom * (1 - my * (my < 0 ? 1.5e-3 : 8e-4));
+      onWheel: ({
+        event,
+        movement: [, my],
+        active,
+        shiftKey,
+        memo = { zoom: z.getValue(), t: theta.getValue() },
+      }: FullGestureState<StateKey<'wheel'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
 
-        setControlZoom({
-          z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
-          config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-          // immediate: active,
-          // config: {
-          //   // velocity: active ? 0 : 50,
-          // },
-        });
+        if (shiftKey) {
+          // if shift is pressed, rotate instead of zoom
+          const newT = memo.t + my * 1.5e-3;
 
-        return zoom;
+          setControlRot({
+            theta: newT,
+            config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
+          });
+        } else {
+          // set different multipliers based on zoom direction
+          // mouse movement negative = move up the page = zoom in
+          //                                   zoom        in           out
+          const newZ = memo.zoom * (1 - my * (my < 0 ? zoomMult.in : zoomMult.out));
+
+          setControlZoom({
+            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+          });
+        }
+        return memo;
       },
 
       onDrag: ({
+        event,
         down,
         movement,
         direction: [dx, dy],
@@ -144,6 +193,9 @@ export function genericTouchBind({
         cancel,
         memo = { xy: xy.getValue(), theta: theta.getValue() },
       }: FullGestureState<StateKey<'drag'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
         // let pinch handle movement
         if (pinching) cancel && cancel();
         // change according to this formula:
@@ -151,8 +203,7 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
-        const realZoom =
-          (domTarget.current?.height || 100) * z.getValue() * screenScaleMultiplier;
+        const realZoom = getRealZoom(z.getValue());
 
         const [px, py]: Vector = vScale(-2 / realZoom, movement);
         // const relMove: Vector = vScale(2 / realZoom, movement);
@@ -162,10 +213,13 @@ export function genericTouchBind({
 
         const t = theta.getValue();
 
+        const vecXY = addV(memo.xy, vRotate(t, relMove)); // add the displacement to the starting position
+        // const velXY = vScale(velocity, vNorm(vecXY))
+
         setControlXY({
           // add to the current position the relative displacement (relMove), rotated by theta,
           // to maintain the correct displacement direction (without this it would move as if theta=0)
-          xy: addV(memo.xy, vRotate(t, relMove)), // add the displacement to the starting position
+          xy: vecXY,
           // immediate: down, // immediately apply if the gesture is active
           config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
           //  {

@@ -42,10 +42,6 @@ const WebGLCanvas = React.forwardRef<
 
   const dpr = props.useDPR ? window.devicePixelRatio : 1;
 
-  // useEffect(() => {
-  //   console.log(props.cursor?.getValue());
-  // });
-
   // initial context-getter
   useEffect(() => {
     // console.log(gl);
@@ -96,7 +92,7 @@ const WebGLCanvas = React.forwardRef<
         u_c: u.c === undefined ? 0 : vScale(screenScaleMultiplier, u.c.getValue()),
         u_xy: vScale(screenScaleMultiplier, u.xy.getValue()),
         u_maxI: u.maxI,
-        u_theta: u.theta?.getValue(),
+        u_theta: u.theta.getValue(),
       };
 
       (gl.current as WebGLRenderingContext).useProgram(

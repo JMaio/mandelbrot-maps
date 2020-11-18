@@ -70,11 +70,8 @@ export interface MandelbrotMapsWebGLUniforms {
   xy: OpaqueInterpolation<XYType>;
   zoom: OpaqueInterpolation<ZoomType>;
   maxI: number;
-  c?: {
-    getValue: () => XYType;
-  };
-  // screenScaleMultiplier: number;
-  theta?: OpaqueInterpolation<ThetaType>;
+  c?: { getValue: () => XYType };
+  theta: OpaqueInterpolation<ThetaType>;
 }
 
 export interface DefaultRendererProps {
