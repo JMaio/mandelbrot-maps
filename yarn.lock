@@ -11894,6 +11894,11 @@ worker-rpc@^0.1.0:
   dependencies:
     microevent.ts "~0.1.1"
 
+wouter@^2.5.3:
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/wouter/-/wouter-2.5.3.tgz#1bfb32590e4e46834d3155592f95926847706cb3"
+  integrity sha512-Df84mO4GJ4rb6S+HykH1phFoo5iiY9BtYa/PszxJIhu/LWqzHl2zfcXCvKm81qvlqSDTbwd3DI368enGX2ZRJw==
+
 wrap-ansi@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-5.1.0.tgz#1fd1f67235d5b6d0fee781056001bfb694c03b09"

@@ -47,6 +47,9 @@ const WebGLCanvas = React.forwardRef<
     // console.log(gl);
     // console.log(gl.current);
     gl.current = canvasRef.current.getContext('webgl');
+    console.log(`WebGL canvas context created`);
+    // remove this context?
+    // return () => gl.current.
   }, [canvasRef]);
 
   useEffect(() => {

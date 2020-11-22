@@ -143,7 +143,8 @@ export function genericTouchBind({
 
         setControlRot({
           theta: memo.t + degToRad(a - memo.a + 1e1 * va),
-          immediate: down, // fixes issues with wrapping around from (0) to (-2pi)
+          // fixes issues with wrapping around from (0) to (-2pi)
+          immediate: down,
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
 
@@ -177,6 +178,8 @@ export function genericTouchBind({
           setControlZoom({
             z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
             config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+            // reset immediate value from warp function
+            immediate: false,
           });
         }
         return memo;
@@ -222,6 +225,8 @@ export function genericTouchBind({
           xy: vecXY,
           // immediate: down, // immediately apply if the gesture is active
           config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
+          // reset immediate value from warp function
+          immediate: false,
           //  {
           //   // velocity also needs to be rotated according to theta
           //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
@@ -263,7 +268,7 @@ export function genericTouchBind({
  */
 export function warpToPoint(
   controls: ViewerControlSprings,
-  { xy, z, theta }: Partial<ViewerLocation>,
+  { xy, z, theta }: ViewerLocation,
   immediate = false,
 ): void {
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
