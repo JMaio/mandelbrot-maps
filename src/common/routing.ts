@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { vScale } from 'vec-la-fp';
-import {
-  ViewerControlSprings,
-  ViewerLocation,
-  ViewerRotationControl,
-  ViewerXYControl,
-  ViewerZoomControl,
-  XYType,
-} from './types';
+import { ViewerLocation, XYType } from './types';
 import {
   screenScaleMultiplier,
   toFloatDisplayDefault,
@@ -65,7 +58,7 @@ export class ViewerURLManager {
   }
 
   updateViewer(name: string, v: Partial<ViewerLocation>): void {
-    console.log('updateViewer');
+    // console.log('updateViewer');
     const { xy, z, theta } = v;
     // const [[{ xy }], [{ z }], [{ theta }]] = [xyC]
     // const [xy] = [xyCtrl?.xy];
