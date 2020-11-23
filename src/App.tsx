@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpaqueInterpolation, useSpring } from 'react-spring';
 import { vScale } from 'vec-la-fp';
 import './App.css';
-import { useHashLocation, ViewerURLManager } from './common/routing';
+import { updateHash, useHashLocation, ViewerURLManager } from './common/routing';
 import {
   ViewerControlSprings,
   ViewerLocation,
@@ -14,11 +14,10 @@ import {
 } from './common/types';
 import { useWindowSize, warpToPoint } from './common/utils';
 import {
+  defaultJuliaStart,
+  defaultMandelbrotStart,
   screenScaleMultiplier,
   springsConfigs,
-  startPos,
-  startTheta,
-  startZoom,
   viewerOrigin,
 } from './common/values';
 import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
@@ -45,63 +44,60 @@ function App(): JSX.Element {
   }, []);
 
   // console.log(urlManager.asFullHashURL());
-  const updateHash = useCallback(
-    (name: string, v: Partial<ViewerLocation>) => {
-      console.log(loc);
-      // console.log(name, v);
-      // urlManager.updateFromViewer(mandelbrotControls, juliaControls);
-      urlManager.updateViewer(name, v);
-      const u = urlManager.asFullHashURL();
-      // console.log(u);
-      navigate(u);
-    },
-    [loc, navigate, urlManager],
-  );
+  // const updateHash = useCallback(
+  //   (name: string, v: Partial<ViewerLocation>) => {
+  //     console.log(loc);
+  //     console.log(urlManager.vs);
+  //     // console.log(name, v);
+  //     // urlManager.updateFromViewer(mandelbrotControls, juliaControls);
+  //     urlManager.updateViewer(name, v);
+  //     const u = urlManager.asFullHashURL();
+  //     // console.log(u);
+  //     navigate(u);
+  //   },
+  //   [loc, navigate, urlManager],
+  // );
+  const updateAppHash = (name: string, v: ViewerControlSprings) =>
+    updateHash(urlManager, name, v, navigate);
 
-  const updateM = (v: Partial<ViewerLocation>) => updateHash('m', v);
-  const updateJ = (v: Partial<ViewerLocation>) => updateHash('j', v);
+  const updateM = () => updateAppHash('m', mandelbrotControls);
+  const updateJ = () => updateAppHash('j', juliaControls);
 
   const mandelbrotControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
-      xy: vScale(1 / screenScaleMultiplier, startPos),
+      xy: vScale(1 / screenScaleMultiplier, defaultMandelbrotStart.xy),
       config: springsConfigs.default.xy,
-      onRest: updateM,
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      z: startZoom,
+      z: defaultMandelbrotStart.z,
       minZoom: 0.5,
       maxZoom: 100000,
-      config: springsConfigs.default.zoom,
-      onRest: updateM,
+      config: { ...springsConfigs.default.zoom, precision: 0.000001 },
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: startTheta, // should this be rad or deg? rad
-      config: springsConfigs.default.rot,
-      onRest: updateM,
+      theta: defaultMandelbrotStart.theta, // all angles in rad
+      config: { ...springsConfigs.default.rot, precision: 0.000001 },
     })),
   };
 
   const juliaControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
-      xy: [0, 0] as [number, number],
+      xy: vScale(1 / screenScaleMultiplier, defaultJuliaStart.xy),
       config: springsConfigs.default.xy,
-      onRest: updateJ,
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      z: 0.5 as number,
+      z: defaultJuliaStart.z,
       minZoom: 0.5,
       maxZoom: 2000,
       config: springsConfigs.default.zoom,
-      onRest: updateJ,
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: 0, // should this be rad or deg? rad
+      theta: defaultJuliaStart.theta, // all angles in rad
       config: springsConfigs.default.rot,
-      onRest: updateJ,
     })),
   };
 
@@ -181,13 +177,18 @@ function App(): JSX.Element {
                   />
                 </div>
                 <Grid item xs className="renderer">
-                  <MandelbrotRenderer controls={mandelbrotControls} {...settings} />
+                  <MandelbrotRenderer
+                    controls={mandelbrotControls}
+                    {...settings}
+                    hashCallback={updateM}
+                  />
                 </Grid>
                 <Grid item xs className="renderer">
                   <JuliaRenderer
                     c={mandelbrotControls.xyCtrl[0].xy}
                     controls={juliaControls}
                     {...settings}
+                    hashCallback={updateJ}
                   />
                 </Grid>
               </Grid>

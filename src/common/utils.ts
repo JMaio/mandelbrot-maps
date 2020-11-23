@@ -46,6 +46,7 @@ export function useWindowSize(): { width?: number; height?: number } {
 }
 
 export interface GenericTouchBindParams {
+  hashCallback: () => void;
   domTarget: RefObject<HTMLCanvasElement>;
   controls: ViewerControlSprings;
   screenScaleMultiplier: number;
@@ -72,6 +73,7 @@ const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
 
 // a touchbind for re-using across renderers
 export function genericTouchBind({
+  hashCallback,
   domTarget,
   controls,
   screenScaleMultiplier,
@@ -102,8 +104,6 @@ export function genericTouchBind({
         da: [d, a],
         vdva: [vd, va],
         down,
-        da: [d, a],
-        // delta: [dd, da],
         movement: [md, ma],
         delta: [dd, da],
         first,
@@ -125,6 +125,7 @@ export function genericTouchBind({
           // remember the angle, location at which the pinch gesture starts
           // memo.a = a;
           memo.o = origin;
+          // memo.md = md;
         }
 
         // console.log(subV(origin, initial));
@@ -151,7 +152,6 @@ export function genericTouchBind({
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         const realZoom = getRealZoom(newZclamp);
-
         // get movement of pointer origin for panning
         const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
         const relMove: Vector2 = [px, -py];
@@ -163,16 +163,13 @@ export function genericTouchBind({
 
         setControlZoom({
           z: newZclamp,
-          immediate: down,
           immediate: false,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
         });
 
         setControlRot({
-          theta: memo.t + degToRad(a - memo.a + 1e1 * va),
           theta: memo.t + degToRad(ma),
           // fixes issues with wrapping around from (0) to (-2pi)
-          immediate: down,
           immediate: false,
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
@@ -276,6 +273,10 @@ export function genericTouchBind({
 
         return memo;
       },
+
+      onPinchEnd: hashCallback,
+      onWheelEnd: hashCallback,
+      onDragEnd: hashCallback,
     },
     config: {
       eventOptions: { passive: false, capture: false },

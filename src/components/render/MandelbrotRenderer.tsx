@@ -58,6 +58,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
   const [dragging, setDragging] = useState(false);
 
   const gtb = genericTouchBind({
+    hashCallback: props.hashCallback,
     domTarget: canvasRef,
     controls: props.controls,
     screenScaleMultiplier:

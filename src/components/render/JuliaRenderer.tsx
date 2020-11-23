@@ -40,6 +40,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
   const [dragging, setDragging] = useState(false);
 
   const gtb = genericTouchBind({
+    hashCallback: props.hashCallback,
     domTarget: canvasRef,
     controls: props.controls,
     screenScaleMultiplier:

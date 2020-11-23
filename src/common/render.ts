@@ -25,6 +25,7 @@ export interface RendererProps {
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
+  hashCallback: () => void;
 }
 
 export interface MandelbrotRendererProps extends RendererProps {
