@@ -3,7 +3,6 @@ import { useGesture } from 'react-use-gesture';
 import { JuliaRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
 import { genericTouchBind } from '../../common/utils';
-import { screenScaleMultiplier } from '../../common/values';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
@@ -42,8 +41,6 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
   const gtb = genericTouchBind({
     domTarget: canvasRef,
     controls: props.controls,
-    screenScaleMultiplier:
-      screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1),
     setDragging: setDragging,
   });
 

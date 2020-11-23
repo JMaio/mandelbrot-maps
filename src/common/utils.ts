@@ -10,7 +10,7 @@ import {
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
 import { ViewerControlSprings, ViewerLocation } from './types';
-import { screenScaleMultiplier, springsConfigs } from './values';
+import { springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { width?: number; height?: number } {
@@ -48,7 +48,7 @@ export function useWindowSize(): { width?: number; height?: number } {
 export interface GenericTouchBindParams {
   domTarget: RefObject<HTMLCanvasElement>;
   controls: ViewerControlSprings;
-  screenScaleMultiplier: number;
+  // screenScaleMultiplier: number;
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -74,7 +74,6 @@ const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
 export function genericTouchBind({
   domTarget,
   controls,
-  screenScaleMultiplier,
   setDragging,
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
@@ -83,8 +82,9 @@ export function genericTouchBind({
 
   const zoomMult = { in: 3e-3, out: 1e-3 };
 
-  const getRealZoom = (z: number) =>
-    (domTarget.current?.height || 100) * z * screenScaleMultiplier;
+  // used to have screenScaleMultiplier here
+  const getRealZoom = (z: number) => (domTarget.current?.height || 100) * z;
+  // * screenScaleMultiplier;
 
   return {
     handlers: {
@@ -294,14 +294,14 @@ export function genericTouchBind({
  */
 export function warpToPoint(
   controls: ViewerControlSprings,
-  { xy, z, theta }: ViewerLocation,
+  { xy, z, theta }: Partial<ViewerLocation>,
   immediate = false,
 ): void {
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
   if (xy !== undefined) {
     controls.xyCtrl[1]({
       // use screen scale multiplier for a simpler API
-      xy: vScale(1 / screenScaleMultiplier, xy),
+      xy: xy,
       config: springsConfigs.default.xy,
       immediate: immediate,
     });
@@ -322,5 +322,6 @@ export function warpToPoint(
   }
 }
 
-export const screenToReal = (x: number): number => x * screenScaleMultiplier;
-export const RealToScreen = (x: number): number => x / screenScaleMultiplier;
+// no longer using screenScaleMultiplier
+// export const screenToReal = (x: number): number => x * screenScaleMultiplier;
+// export const RealToScreen = (x: number): number => x / screenScaleMultiplier;

@@ -3,7 +3,11 @@ import { ViewerLocation } from './types';
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
 // otherwise small scale that is being mapped to the screen.
-export const screenScaleMultiplier = 1e-6;
+// export const screenScaleMultiplier = 1e-7;
+// TL;DR this was a workaround - react-spring allows for "precision"
+//       to be defined in each spring configuration, which is:
+//       > The smallest velocity before the animation is considered "not moving"
+export const defaultPrecision = 1e-7;
 
 export const viewerOrigin: ViewerLocation = {
   xy: [0, 0],
@@ -25,13 +29,13 @@ export const defaultJuliaStart: ViewerLocation = {
 export const springsConfigs = {
   /** used when the values are animated to a point, includes decay */
   default: {
-    xy: { mass: 1, tension: 500, friction: 75 },
+    xy: { mass: 1, tension: 500, friction: 75, precision: defaultPrecision },
     zoom: { mass: 1, tension: 300, friction: 40 },
     rot: { mass: 1, tension: 400, friction: 75 },
   },
   /** used when a user is interacting with the view */
   user: {
-    xy: { mass: 1, tension: 2000, friction: 75 },
+    xy: { mass: 1, tension: 2000, friction: 75, precision: defaultPrecision },
     zoom: { mass: 1, tension: 1200, friction: 75 },
     rot: { mass: 1, tension: 1200, friction: 75 },
   },

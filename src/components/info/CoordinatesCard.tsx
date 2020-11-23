@@ -2,7 +2,10 @@ import { Card, Typography } from '@material-ui/core';
 import React from 'react';
 import { animated } from 'react-spring';
 import { CoordinatesCardProps } from '../../common/info';
-import { screenScaleMultiplier } from '../../common/values';
+import {
+  defaultFloatFixedPrecision,
+  shortFloatFixedPrecision,
+} from '../../common/values';
 
 const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
   return (
@@ -22,23 +25,27 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
         <animated.span>
           {props.mandelbrot.xy.interpolate(
             // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${(x * screenScaleMultiplier).toFixed(7)} : x`,
+            (x, y) => `${x.toFixed(defaultFloatFixedPrecision)} : x`,
           )}
         </animated.span>
         <br />
         <animated.span>
           {props.mandelbrot.xy.interpolate(
             // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${(y * screenScaleMultiplier).toFixed(7)} : y`,
+            (x, y) => `${y.toFixed(defaultFloatFixedPrecision)} : y`,
           )}
         </animated.span>
         <br />
         <animated.span>
-          {props.mandelbrot.zoom.interpolate((z) => `${z.toFixed(2)} : z`)}
+          {props.mandelbrot.zoom.interpolate(
+            (z) => `${z.toFixed(shortFloatFixedPrecision)} : z`,
+          )}
         </animated.span>
         <br />
         <animated.span>
-          {props.mandelbrot.theta.interpolate((t) => `${t.toFixed(3)} : t`)}
+          {props.mandelbrot.theta.interpolate(
+            (t) => `${t.toFixed(shortFloatFixedPrecision)} : t`,
+          )}
         </animated.span>
       </Typography>
     </Card>

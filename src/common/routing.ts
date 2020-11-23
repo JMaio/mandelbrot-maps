@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { vScale } from 'vec-la-fp';
 import { ReactUseStateType, ViewerLocation, XYType } from './types';
 import {
   defaultJuliaStart,
   defaultMandelbrotStart,
-  screenScaleMultiplier,
   toFloatDisplayDefault,
   toFloatDisplayShort,
 } from './values';
@@ -57,10 +55,7 @@ export class ViewerURLManager {
     // const [[{ xy }], [{ z }], [{ theta }]] = [xyC]
     // const [xy] = [xyCtrl?.xy];
     const newV = this.vs[name].v;
-    if (xy !== undefined)
-      newV.xy = vScale(screenScaleMultiplier, xy).map((n) =>
-        toFloatDisplayDefault(n),
-      ) as XYType;
+    if (xy !== undefined) newV.xy = xy.map((n) => toFloatDisplayDefault(n)) as XYType;
     if (z !== undefined) newV.z = toFloatDisplayShort(z);
     if (theta !== undefined) newV.theta = toFloatDisplayShort(theta);
 
