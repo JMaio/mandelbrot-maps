@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { vScale } from 'vec-la-fp';
-import { ViewerLocation, XYType } from './types';
+import { ReactUseStateType, ViewerLocation, XYType } from './types';
 import {
+  defaultJuliaStart,
+  defaultMandelbrotStart,
   screenScaleMultiplier,
   toFloatDisplayDefault,
   toFloatDisplayShort,
@@ -46,15 +48,28 @@ export class ViewerURLManager {
   //   this.vs['j'] = j || new NamedHashURLViewer('j', viewerOrigin);
   // }
   constructor() {
-    console.log(currentViewerState());
-    const params = currentViewerState();
     this.vs = {};
-    this.vs['m'] = new NamedHashURLViewer('m', params['m'] || viewerOrigin);
-    this.vs['j'] = new NamedHashURLViewer('j', params['j'] || viewerOrigin);
+    this.updateFromURL();
+    // console.log(currentViewerState());
+    // const params = currentViewerState();
+    // this.vs['m'] = new NamedHashURLViewer(
+    //   'm',
+    //   params['m'] || { ...defaultMandelbrotStart },
+    // );
+    // this.vs['j'] = new NamedHashURLViewer('j', params['j'] || { ...defaultJuliaStart });
   }
 
   asFullHashURL(): string {
     return `#${this.vs['m'].asHashURL()}${this.vs['j'].asHashURL()}`;
+  }
+
+  updateFromURL(): void {
+    const params = currentViewerState();
+    this.vs['m'] = new NamedHashURLViewer(
+      'm',
+      params['m'] || { ...defaultMandelbrotStart },
+    );
+    this.vs['j'] = new NamedHashURLViewer('j', params['j'] || { ...defaultJuliaStart });
   }
 
   updateViewer(name: string, v: Partial<ViewerLocation>): void {
@@ -70,101 +85,20 @@ export class ViewerURLManager {
     if (z !== undefined) newV.z = toFloatDisplayShort(z);
     if (theta !== undefined) newV.theta = toFloatDisplayShort(theta);
 
-    // this.vs[name].v = {
-    //   xy: vScale(screenScaleMultiplier, xy).map((n) =>
-    //     toFloatDisplayDefault(n),
-    //   ) as XYType,
-    //   z: toFloatDisplayShort(z),
-    //   theta: toFloatDisplayShort(theta),
-    // };
     this.vs[name].v = newV;
   }
-
-  // updateM(v: Partial<ViewerControlSprings>): void {
-  //   const {
-  //     xyCtrl: [{ xy }],
-  //     zoomCtrl: [{ z }],
-  //     rotCtrl: [{ theta }],
-  //   } = v;
-  //   this.vs['m'].v = {
-  //     xy: vScale(screenScaleMultiplier, xy.getValue()).map((n) =>
-  //       toFloatDisplayDefault(n),
-  //     ) as XYType,
-  //     z: toFloatDisplayShort(z.getValue()),
-  //     theta: toFloatDisplayShort(theta.getValue()),
-  //   };
-  //   // if (name === 'm') {
-  //   //   this.m.v = newV;
-  //   // } else if (name === 'j') {
-  //   //   this.j.v = newV;
-  //   // }
-  // }
-  // updateJ(v: ViewerControlSprings): void {
-  //   const {
-  //     xyCtrl: [{ xy }],
-  //     zoomCtrl: [{ z }],
-  //     rotCtrl: [{ theta }],
-  //   } = v;
-  //   this.m.v = {
-  //     xy: vScale(screenScaleMultiplier, xy.getValue()).map((n) =>
-  //       toFloatDisplayDefault(n),
-  //     ) as XYType,
-  //     z: toFloatDisplayShort(z.getValue()),
-  //     theta: toFloatDisplayShort(theta.getValue()),
-  //   };
-  //   // if (name === 'm') {
-  //   //   this.m.v = newV;
-  //   // } else if (name === 'j') {
-  //   //   this.j.v = newV;
-  //   // }
-  // }
 
   updateFromViewer(m: Partial<ViewerLocation>, j: Partial<ViewerLocation>): void {
     this.updateViewer('m', m);
     this.updateViewer('j', j);
-    // // mandelbrot
-    // const {
-    //   xyCtrl: [{ xy: mxy }],
-    //   zoomCtrl: [{ z: mz }],
-    //   rotCtrl: [{ theta: mtheta }],
-    // } = m;
-    // this.m.v = {
-    //   xy: vScale(screenScaleMultiplier, mxy.getValue()).map((n) =>
-    //     toFloatDisplayDefault(n),
-    //   ) as XYType,
-    //   z: toFloatDisplayShort(mz.getValue()),
-    //   theta: toFloatDisplayShort(mtheta.getValue()),
-    // };
-    // // julia
-    // const {
-    //   xyCtrl: [{ xy: jxy }],
-    //   zoomCtrl: [{ z: jz }],
-    //   rotCtrl: [{ theta: jtheta }],
-    // } = j;
-    // this.j.v = {
-    //   xy: vScale(screenScaleMultiplier, jxy.getValue()).map((n) =>
-    //     toFloatDisplayDefault(n),
-    //   ) as XYType,
-    //   z: toFloatDisplayShort(jz.getValue()),
-    //   theta: toFloatDisplayShort(jtheta.getValue()),
-    // };
   }
-  // function fromHash()
-
-  // this should manage the hash part of the URL
-
-  // should have an "update()" method:
-  // takes in changes in the viewers, and writes to the URL
-
-  // state of the current viewers
-  // if only one parameter changes, the whole URL needs to update
 }
 
 // returns the current hash location in a normalized form
 // (excluding the leading '#' symbol)
 export const currentLocation = (): string => {
   // console.log(window.location);
-  const l = window.location.hash.replace('#/', '') || '';
+  const l = window.location.hash.replace('#', '') || '';
   return l;
 };
 
@@ -172,7 +106,7 @@ export const currentViewerState = (): { [k: string]: ViewerLocation } => {
   const l = currentLocation();
   const viewerParams: { [k: string]: ViewerLocation } = {};
   try {
-    const qs = l.split('/');
+    const qs = l.split('/').filter((v) => v.length > 0);
     qs.forEach((s) => {
       const [v, params] = s.split('@');
       const [x, y, z, t] = params.split(',').map(Number);
@@ -184,16 +118,19 @@ export const currentViewerState = (): { [k: string]: ViewerLocation } => {
   return viewerParams;
 };
 
-export const useHashLocation = (): [
-  string,
-  React.Dispatch<React.SetStateAction<string>>,
-] => {
+export const useHashNavigator = (): ((to: string) => void) =>
+  useCallback((to) => window.history.replaceState(null, document.title, to), []);
+
+export const useHashLocation = (): ReactUseStateType<string> => {
   const [loc, setLoc] = useState(currentLocation());
-  // console.log(loc);
 
   useEffect(() => {
     // this function is called whenever the hash changes
-    const handler = () => setLoc(currentLocation());
+    const handler = () => {
+      const l = currentLocation();
+      console.log(`hashchange => ${l}`);
+      setLoc(l);
+    };
 
     // subscribe to hash changes
     window.addEventListener('hashchange', handler);

@@ -11,14 +11,14 @@ export const viewerOrigin: ViewerLocation = {
   theta: 0,
 };
 export const defaultMandelbrotStart: ViewerLocation = {
-  xy: [-0.7746931, 0.1242266],
-  z: 85.0,
-  theta: 0.6,
+  xy: [0.2361652, 0.5633767],
+  z: 7,
+  theta: 0.2,
 };
 export const defaultJuliaStart: ViewerLocation = {
-  xy: [-0.7746931, 0.1242266],
-  z: 85.0,
-  theta: 0.6,
+  xy: [0.4364131, -0.6468786],
+  z: 3.78,
+  theta: 2.12,
 };
 
 export const springsConfigs = {

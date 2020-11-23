@@ -102,7 +102,6 @@ export function genericTouchBind({
         da: [d, a],
         vdva: [vd, va],
         down,
-        da: [d, a],
         // delta: [dd, da],
         movement: [md, ma],
         delta: [dd, da],
@@ -163,16 +162,13 @@ export function genericTouchBind({
 
         setControlZoom({
           z: newZclamp,
-          immediate: down,
           immediate: false,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
         });
 
         setControlRot({
-          theta: memo.t + degToRad(a - memo.a + 1e1 * va),
           theta: memo.t + degToRad(ma),
           // fixes issues with wrapping around from (0) to (-2pi)
-          immediate: down,
           immediate: false,
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });

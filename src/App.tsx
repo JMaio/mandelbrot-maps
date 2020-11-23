@@ -3,22 +3,27 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpaqueInterpolation, useSpring } from 'react-spring';
 import { vScale } from 'vec-la-fp';
 import './App.css';
-import { useHashLocation, ViewerURLManager } from './common/routing';
+import {
+  currentLocation,
+  useHashLocation,
+  useHashNavigator,
+  ViewerURLManager,
+} from './common/routing';
 import {
   ViewerControlSprings,
   ViewerLocation,
   ViewerRotationControl,
   ViewerXYControl,
   ViewerZoomControl,
+  XYType,
   ZoomType,
 } from './common/types';
 import { useWindowSize, warpToPoint } from './common/utils';
 import {
+  defaultJuliaStart,
+  defaultMandelbrotStart,
   screenScaleMultiplier,
   springsConfigs,
-  startPos,
-  startTheta,
-  startZoom,
   viewerOrigin,
 } from './common/values';
 import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
@@ -37,25 +42,25 @@ function App(): JSX.Element {
 
   // if app is started with a hash location, assume
   // it should be the starting position
+  // // detects hash updates
   const [loc, navigate] = useHashLocation();
+
+  // non-reloading hash update
+  const updateBrowserHash = useHashNavigator();
 
   const urlManager = useMemo(() => {
     // console.log('new url manager');
     return new ViewerURLManager();
   }, []);
 
-  // console.log(urlManager.asFullHashURL());
   const updateHash = useCallback(
     (name: string, v: Partial<ViewerLocation>) => {
-      console.log(loc);
-      // console.log(name, v);
-      // urlManager.updateFromViewer(mandelbrotControls, juliaControls);
       urlManager.updateViewer(name, v);
       const u = urlManager.asFullHashURL();
-      // console.log(u);
-      navigate(u);
+      console.log(`# => ${u}`);
+      updateBrowserHash(u);
     },
-    [loc, navigate, urlManager],
+    [updateBrowserHash, urlManager],
   );
 
   const updateM = (v: Partial<ViewerLocation>) => updateHash('m', v);
@@ -63,13 +68,13 @@ function App(): JSX.Element {
 
   const mandelbrotControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
-      xy: vScale(1 / screenScaleMultiplier, startPos),
+      xy: viewerOrigin.xy,
       config: springsConfigs.default.xy,
       onRest: updateM,
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      z: startZoom,
+      z: viewerOrigin.z,
       minZoom: 0.5,
       maxZoom: 100000,
       config: springsConfigs.default.zoom,
@@ -77,7 +82,7 @@ function App(): JSX.Element {
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: startTheta, // should this be rad or deg? rad
+      theta: viewerOrigin.theta, // all angles in rad
       config: springsConfigs.default.rot,
       onRest: updateM,
     })),
@@ -85,13 +90,13 @@ function App(): JSX.Element {
 
   const juliaControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
-      xy: [0, 0] as [number, number],
+      xy: viewerOrigin.xy,
       config: springsConfigs.default.xy,
       onRest: updateJ,
     })),
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
-      z: 0.5 as number,
+      z: viewerOrigin.z,
       minZoom: 0.5,
       maxZoom: 2000,
       config: springsConfigs.default.zoom,
@@ -99,7 +104,7 @@ function App(): JSX.Element {
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
-      theta: 0, // should this be rad or deg? rad
+      theta: viewerOrigin.theta, // all angles in rad
       config: springsConfigs.default.rot,
       onRest: updateJ,
     })),
@@ -111,14 +116,20 @@ function App(): JSX.Element {
   //   warpToPoint(juliaControls, v, immediate);
 
   useEffect(() => {
-    console.log('initial warp to requested url');
-    warpToPoint(mandelbrotControls, urlManager.vs['m'].v, true);
-    warpToPoint(juliaControls, urlManager.vs['j'].v, true);
+    console.log('warp to requested url');
+    const l = currentLocation();
+    console.log(l);
+    navigate(l);
+    warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
+    warpToPoint(juliaControls, urlManager.vs['j'].v);
     // disabling empty dependency array check: this effect should
     // only run once, when the page is initially navigated to
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loc]);
 
+  // useEffect(() => {
+  //   warpToPoint
+  // }, [loc])
   //// should update if user goes back / forward on the page?
   // useEffect(() => {
   //   warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
