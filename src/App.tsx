@@ -1,6 +1,6 @@
 import { Grid, ThemeProvider } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { OpaqueInterpolation, useSpring } from 'react-spring';
+import { useSpring } from 'react-spring';
 import './App.css';
 import {
   currentLocation,
@@ -14,12 +14,10 @@ import {
   ViewerRotationControl,
   ViewerXYControl,
   ViewerZoomControl,
-  ZoomType,
 } from './common/types';
 import { useWindowSize, warpToPoint } from './common/utils';
 import { springsConfigs, viewerOrigin } from './common/values';
-import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
-import CoordinatesCard from './components/info/CoordinatesCard';
+import CoordinateInterface from './components/info/CoordinateInterface';
 import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
@@ -144,31 +142,10 @@ function App(): JSX.Element {
                   position: 'absolute',
                 }}
               >
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                    margin: 20,
-                    width: 'auto',
-                    zIndex: 1,
-                  }}
-                >
-                  <CoordinatesCard
-                    show={settings.showCoordinates}
-                    mandelbrot={{
-                      xy: mandelbrotControls.xyCtrl[0].xy,
-                      zoom: mandelbrotControls.zoomCtrl[0].z as OpaqueInterpolation<
-                        ZoomType
-                      >,
-                      theta: mandelbrotControls.rotCtrl[0].theta,
-                    }}
-                  />
-                  <ChangeCoordinatesCard
-                    show={settings.showCoordinates}
-                    mandelbrot={mandelbrotControls}
-                  />
-                </div>
+                <CoordinateInterface
+                  show={settings.showCoordinates}
+                  mandelbrot={mandelbrotControls}
+                />
                 <Grid item xs className="renderer">
                   <MandelbrotRenderer controls={mandelbrotControls} {...settings} />
                 </Grid>

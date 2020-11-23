@@ -1,7 +1,6 @@
 import { CanvasHTMLAttributes } from 'react';
 import { OpaqueInterpolation } from 'react-spring';
-import { ViewerControls } from './info';
-import { MandelbrotMapsWebGLUniforms, XYType } from './types';
+import { MandelbrotMapsWebGLUniforms, ViewerControlSprings, XYType } from './types';
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
@@ -21,7 +20,7 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
 }
 
 export interface RendererProps {
-  controls: ViewerControls;
+  controls: ViewerControlSprings;
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
