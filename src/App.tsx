@@ -1,7 +1,6 @@
 import { Grid, ThemeProvider } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { OpaqueInterpolation, useSpring } from 'react-spring';
-import { vScale } from 'vec-la-fp';
 import './App.css';
 import {
   currentLocation,
@@ -15,17 +14,10 @@ import {
   ViewerRotationControl,
   ViewerXYControl,
   ViewerZoomControl,
-  XYType,
   ZoomType,
 } from './common/types';
 import { useWindowSize, warpToPoint } from './common/utils';
-import {
-  defaultJuliaStart,
-  defaultMandelbrotStart,
-  screenScaleMultiplier,
-  springsConfigs,
-  viewerOrigin,
-} from './common/values';
+import { springsConfigs, viewerOrigin } from './common/values';
 import ChangeCoordinatesCard from './components/info/ChangeCoordinatesCard';
 import CoordinatesCard from './components/info/CoordinatesCard';
 import InfoDialog from './components/info/InfoDialog';
@@ -42,7 +34,8 @@ function App(): JSX.Element {
 
   // if app is started with a hash location, assume
   // it should be the starting position
-  // // detects hash updates
+  // detects hash updates
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loc, navigate] = useHashLocation();
 
   // non-reloading hash update
@@ -53,16 +46,18 @@ function App(): JSX.Element {
     return new ViewerURLManager();
   }, []);
 
+  // generic callback
   const updateHash = useCallback(
     (name: string, v: Partial<ViewerLocation>) => {
       urlManager.updateViewer(name, v);
       const u = urlManager.asFullHashURL();
-      console.log(`# => ${u}`);
+      // console.log(`# => ${u}`);
       updateBrowserHash(u);
     },
     [updateBrowserHash, urlManager],
   );
 
+  // callbacks for springs to update url when animation stops
   const updateM = (v: Partial<ViewerLocation>) => updateHash('m', v);
   const updateJ = (v: Partial<ViewerLocation>) => updateHash('j', v);
 
@@ -110,31 +105,16 @@ function App(): JSX.Element {
     })),
   };
 
-  // const warpM = (v: Partial<ViewerLocation>, immediate = false) =>
-  //   warpToPoint(mandelbrotControls, v, immediate);
-  // const warpJ = (v: Partial<ViewerLocation>, immediate = false) =>
-  //   warpToPoint(juliaControls, v, immediate);
-
   useEffect(() => {
-    console.log('warp to requested url');
-    const l = currentLocation();
-    console.log(l);
-    navigate(l);
+    // viewer should update if user goes back / forward on the page
+    // parse current location after user change
+    urlManager.updateFromURL();
+    console.log(`Warping to requested url => ${currentLocation()}`);
+
+    // warp to the newly parsed locations
     warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
     warpToPoint(juliaControls, urlManager.vs['j'].v);
-    // disabling empty dependency array check: this effect should
-    // only run once, when the page is initially navigated to
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loc]);
-
-  // useEffect(() => {
-  //   warpToPoint
-  // }, [loc])
-  //// should update if user goes back / forward on the page?
-  // useEffect(() => {
-  //   warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
-  //   warpToPoint(juliaControls, urlManager.vs['j'].v);
-  // }, [loc]);
+  });
 
   const reset = () => {
     warpToPoint(mandelbrotControls, viewerOrigin);
@@ -144,8 +124,6 @@ function App(): JSX.Element {
   const [showInfo, setShowInfo] = useState(false);
 
   const toggleInfo = () => setShowInfo(!showInfo);
-
-  // const { settings } = useSettings();
 
   return (
     <ThemeProvider theme={theme}>

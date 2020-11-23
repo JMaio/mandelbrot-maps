@@ -15,7 +15,7 @@ export type settingsDefinitionsType = {
 export const defaultSettings = {
   showMinimap: true,
   showCrosshair: true,
-  showCoordinates: true,
+  showCoordinates: false,
   maxI: 250,
   showFPS: false,
   useDPR: false,
@@ -24,15 +24,19 @@ export const defaultSettings = {
 
 export type settingsWidgetType = {
   // - settings widgets key k must be in the set
-  // - its type must be the union of FormControlLabelProps (for displaying in the Material UI form)
-  //   and "k": the string representation of the setting, for updating the state correctly
+  // - its type must be of FormControlLabelProps (for displaying in the Material UI form)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [k in keyof settingsDefinitionsType]: FormControlLabelProps;
+  // using "k" results in an error since it is not used again
 };
 
 export type settingsGroupType = {
   name: string;
   widgets: {
+    // widget groups may contain any of the keys in the settingsDefinitionsType
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     [k in keyof Partial<settingsDefinitionsType>]: FormControlLabelProps;
+    // using "k" results in an error since it is not used again
   };
 };
 

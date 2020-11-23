@@ -10,26 +10,27 @@ export const viewerOrigin: ViewerLocation = {
   z: 1,
   theta: 0,
 };
+
 export const defaultMandelbrotStart: ViewerLocation = {
   xy: [0.2361652, 0.5633767],
-  z: 7,
+  z: 4,
   theta: 0.2,
 };
 export const defaultJuliaStart: ViewerLocation = {
   xy: [0.4364131, -0.6468786],
-  z: 3.78,
+  z: 4,
   theta: 2.12,
 };
 
 export const springsConfigs = {
+  /** used when the values are animated to a point, includes decay */
   default: {
-    /** used when the values are animated to a point, includes decay */
     xy: { mass: 1, tension: 500, friction: 75 },
     zoom: { mass: 1, tension: 300, friction: 40 },
     rot: { mass: 1, tension: 400, friction: 75 },
   },
+  /** used when a user is interacting with the view */
   user: {
-    /** used when a user is interacting with the view */
     xy: { mass: 1, tension: 2000, friction: 75 },
     zoom: { mass: 1, tension: 1200, friction: 75 },
     rot: { mass: 1, tension: 1200, friction: 75 },

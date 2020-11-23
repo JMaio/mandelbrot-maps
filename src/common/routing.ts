@@ -7,15 +7,7 @@ import {
   screenScaleMultiplier,
   toFloatDisplayDefault,
   toFloatDisplayShort,
-  viewerOrigin,
 } from './values';
-// import { Router, Route } from 'wouter';
-
-// export interface NamedHashURLViewerInterface {
-//   name: string;
-//   v: ViewerLocation;
-//   viewerAsHashURL: () => string
-// }
 
 export class NamedHashURLViewer {
   name: string;
@@ -40,23 +32,10 @@ export class ViewerURLManager {
   vs: {
     [k: string]: NamedHashURLViewer;
   };
-  // m: NamedHashURLViewer;
-  // j: NamedHashURLViewer;
-  // constructor(m?: NamedHashURLViewer, j?: NamedHashURLViewer) {
-  //   this.vs = {};
-  //   this.vs['m'] = m || new NamedHashURLViewer('m', viewerOrigin);
-  //   this.vs['j'] = j || new NamedHashURLViewer('j', viewerOrigin);
-  // }
+
   constructor() {
     this.vs = {};
     this.updateFromURL();
-    // console.log(currentViewerState());
-    // const params = currentViewerState();
-    // this.vs['m'] = new NamedHashURLViewer(
-    //   'm',
-    //   params['m'] || { ...defaultMandelbrotStart },
-    // );
-    // this.vs['j'] = new NamedHashURLViewer('j', params['j'] || { ...defaultJuliaStart });
   }
 
   asFullHashURL(): string {
@@ -118,19 +97,17 @@ export const currentViewerState = (): { [k: string]: ViewerLocation } => {
   return viewerParams;
 };
 
+// non-reloading hash change
 export const useHashNavigator = (): ((to: string) => void) =>
   useCallback((to) => window.history.replaceState(null, document.title, to), []);
 
+// https://github.com/molefrog/wouter#customizing-the-location-hook
 export const useHashLocation = (): ReactUseStateType<string> => {
   const [loc, setLoc] = useState(currentLocation());
 
   useEffect(() => {
     // this function is called whenever the hash changes
-    const handler = () => {
-      const l = currentLocation();
-      console.log(`hashchange => ${l}`);
-      setLoc(l);
-    };
+    const handler = () => setLoc(currentLocation());
 
     // subscribe to hash changes
     window.addEventListener('hashchange', handler);
