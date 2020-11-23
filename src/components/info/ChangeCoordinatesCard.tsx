@@ -1,14 +1,14 @@
 import { Button, Card, Grid, Grow, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { ChangeCoordinatesCardProps } from '../../common/info';
-import { startPos, startTheta, startZoom } from '../../common/values';
 import { warpToPoint } from '../../common/utils';
+import { defaultMandelbrotStart } from '../../common/values';
 
 const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element => {
-  const [x, setX] = useState(startPos[0]);
-  const [y, setY] = useState(startPos[1]);
-  const [zoom, setZoom] = useState(startZoom);
-  const [theta, setTheta] = useState(startTheta);
+  const [xy, setXY] = useState(defaultMandelbrotStart.xy);
+  const [x, y] = xy;
+  const [zoom, setZoom] = useState(defaultMandelbrotStart.z);
+  const [theta, setTheta] = useState(defaultMandelbrotStart.theta);
 
   return (
     <Grow in={props.show}>
@@ -29,7 +29,7 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
           <TextField
             size="small"
             style={{ width: '12ch' }}
-            onChange={(e) => setX(Number(e.target.value))}
+            onChange={(e) => setXY(([x, y]) => [Number(e.target.value), y])}
             type="number"
             defaultValue={x}
             inputProps={{ step: 0.01 }}
@@ -38,7 +38,7 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
           <TextField
             size="small"
             style={{ width: '12ch' }}
-            onChange={(e) => setY(Number(e.target.value))}
+            onChange={(e) => setXY(([x, y]) => [x, Number(e.target.value)])}
             type="number"
             defaultValue={y}
             inputProps={{ step: 0.01 }}
@@ -67,7 +67,7 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
           <Button
             style={{ marginTop: 12 }}
             onClick={() =>
-              warpToPoint(props.mandelbrot, { xy: [x, y], z: zoom, theta: theta })
+              warpToPoint(props.mandelbrot, { xy: xy, z: zoom, theta: theta })
             }
           >
             Go

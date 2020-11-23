@@ -99,11 +99,15 @@ export function genericTouchBind({
 
       onPinch: ({
         event,
+        da: [d, a],
         vdva: [vd, va],
         down,
         da: [d, a],
         // delta: [dd, da],
+        movement: [md, ma],
+        delta: [dd, da],
         first,
+        // initial, // initial [d, a]
         origin,
         // movement, //: [mx, my],
         memo = {
@@ -119,32 +123,57 @@ export function genericTouchBind({
 
         if (first) {
           // remember the angle, location at which the pinch gesture starts
-          memo.a = a;
+          // memo.a = a;
           memo.o = origin;
         }
 
-        const newZ = z.getValue() * (1 + 1e-1 * vd);
+        // console.log(subV(origin, initial));
+        // console.log(initial);
+        // console.log(origin);
+        // console.log(md);
+        // console.log(ma);
+        // const zd = md * 1e-2;
+
+        // new zoom is the product of initial zoom and a function of the delta since the pinch
+        //   (initial zoom) exponentially changed by md, with linear and exponential multipliers
+        //     linear multiplier:
+        //     exponential multiplier: scale faster as pinch becomes more distant
+        //     if decreasing, scale must decrease more slowly
+        const em = 1.33;
+        // const newZ =
+        //   memo.z * (1 + Math.sign(md) * 1e-2 * Math.abs(md) ** (md <= 0 ? 1 / em : em)); //(1 - zdelta * Math.abs(zdelta));
+        const newZ = _.clamp(memo.z + md * 1e-2, 0.5, 100_000) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
+        // console.log(Math.abs(md * 1e-2));
+        // console.log(
+        //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
+        // );
+        console.log(newZ);
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         const realZoom = getRealZoom(newZclamp);
 
+        // get movement of pointer origin for panning
         const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
         const relMove: Vector2 = [px, -py];
 
         setControlXY({
           xy: addV(memo.xy, vRotate(theta.getValue(), relMove)),
+          immediate: false,
         });
 
         setControlZoom({
           z: newZclamp,
           immediate: down,
+          immediate: false,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
         });
 
         setControlRot({
           theta: memo.t + degToRad(a - memo.a + 1e1 * va),
+          theta: memo.t + degToRad(ma),
           // fixes issues with wrapping around from (0) to (-2pi)
           immediate: down,
+          immediate: false,
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
 
@@ -168,6 +197,7 @@ export function genericTouchBind({
           setControlRot({
             theta: newT,
             config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
+            immediate: false,
           });
         } else {
           // set different multipliers based on zoom direction
@@ -295,3 +325,6 @@ export function warpToPoint(
     });
   }
 }
+
+export const screenToReal = (x: number): number => x * screenScaleMultiplier;
+export const RealToScreen = (x: number): number => x / screenScaleMultiplier;

@@ -20,23 +20,19 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   dragging?: boolean;
 }
 
-export interface MandelbrotRendererProps {
-  // screenScaleMultiplier: number;
+export interface RendererProps {
   controls: ViewerControls;
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
+}
+
+export interface MandelbrotRendererProps extends RendererProps {
   showCrosshair: boolean;
 }
 
-export interface JuliaRendererProps {
-  // screenScaleMultiplier: number;
-  controls: ViewerControls;
+export interface JuliaRendererProps extends RendererProps {
   c: OpaqueInterpolation<XYType>;
-  maxI: number;
-  useDPR: boolean;
-  useAA: boolean;
-  // showCrosshair: boolean;
 }
 
 export interface MinimapViewerProps extends WebGLCanvasProps {

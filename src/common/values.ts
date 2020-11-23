@@ -1,9 +1,5 @@
 import { ViewerLocation } from './types';
 
-export const startPos: [number, number] = [-0.7746931, 0.1242266];
-export const startZoom = 85.0;
-export const startTheta = 0.6;
-
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
 // otherwise small scale that is being mapped to the screen.
@@ -13,6 +9,16 @@ export const viewerOrigin: ViewerLocation = {
   xy: [0, 0],
   z: 1,
   theta: 0,
+};
+export const defaultMandelbrotStart: ViewerLocation = {
+  xy: [-0.7746931, 0.1242266],
+  z: 85.0,
+  theta: 0.6,
+};
+export const defaultJuliaStart: ViewerLocation = {
+  xy: [-0.7746931, 0.1242266],
+  z: 85.0,
+  theta: 0.6,
 };
 
 export const springsConfigs = {
@@ -25,8 +31,8 @@ export const springsConfigs = {
   user: {
     /** used when a user is interacting with the view */
     xy: { mass: 1, tension: 2000, friction: 75 },
-    zoom: { mass: 1, tension: 700, friction: 60 },
-    rot: { mass: 1, tension: 400, friction: 75 },
+    zoom: { mass: 1, tension: 1200, friction: 75 },
+    rot: { mass: 1, tension: 1200, friction: 75 },
   },
   // default and decay are merged to give them single "non-user" values
   // decay: {

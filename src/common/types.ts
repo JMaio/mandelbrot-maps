@@ -77,3 +77,5 @@ export interface MandelbrotMapsWebGLUniforms {
 export interface DefaultRendererProps {
   controls: ViewerControls;
 }
+
+export type ReactUseStateType<T> = [T, React.Dispatch<React.SetStateAction<T>>];
