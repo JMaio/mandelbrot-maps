@@ -87,7 +87,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
           <FPSCard fps={fps} show={settings.showFPS} />
 
           <WebGLCanvas
-            id="mandelbrot"
+            id="mandelbrot-canvas"
             fragShader={fragShader}
             useDPR={settings.useDPR}
             // touchBind={touchBind}
@@ -105,6 +105,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
           />
 
           <MinimapViewer
+            id="mandelbrot-minimap-canvas"
             fragShader={miniFragShader}
             useDPR={settings.useDPR}
             u={{

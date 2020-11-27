@@ -56,7 +56,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
           }}
         >
           <WebGLCanvas
-            id="julia"
+            id="julia-canvas"
             fragShader={fragShader}
             useDPR={props.useDPR}
             u={u}
@@ -64,6 +64,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
             dragging={dragging}
           />
           <MinimapViewer
+            id="julia-minimap-canvas"
             fragShader={miniFragShader}
             useDPR={settings.useDPR}
             u={u}

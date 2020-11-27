@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useMemo, useState } from 'react';
 import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -104,7 +104,7 @@ function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function InfoDialog(props: any) {
+export default function InfoDialog(props: any): JSX.Element {
   const [open, setOpen] = props.ctrl;
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
@@ -118,7 +118,7 @@ export default function InfoDialog(props: any) {
   // };
 
   // guard against null / undefined window
-  const clientData = clientDetect(window);
+  const clientData = useMemo(() => clientDetect(window), []);
   // const clientData = window.jscd || {};
 
   const writeToClipboard = (data: string) => {

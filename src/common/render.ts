@@ -17,6 +17,8 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   useDPR?: boolean;
   /** Specify whether the viewer is being dragged on, to set the appropriate cursor. */
   dragging?: boolean;
+  /** The HTML "id" to give to the canvas element, if any */
+  id?: string;
 }
 
 export interface RendererProps {
@@ -38,6 +40,7 @@ export interface MinimapViewerProps extends WebGLCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   onClick: () => void;
   show: boolean;
+  id?: string;
   //   dpr: number;
   //   u: MandelbrotMapsWebGLUniforms;
 

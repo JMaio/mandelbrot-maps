@@ -37,7 +37,7 @@ const WebGLCanvas = React.forwardRef<
     props.mini,
     props.u.zoom,
   ]);
-  const currZoom = useRef(zoom());
+  // const currZoom = useRef(zoom());
 
   const dpr = props.useDPR ? window.devicePixelRatio : 1;
 
@@ -141,6 +141,7 @@ const WebGLCanvas = React.forwardRef<
     <animated.canvas
       className="renderer"
       ref={refAny}
+      id={props.id}
       style={{
         // cursor should show whether the viewer is being grabbed
         cursor: props.dragging ? 'grabbing' : 'grab',
