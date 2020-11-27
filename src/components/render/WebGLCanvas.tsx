@@ -32,6 +32,7 @@ const WebGLCanvas = React.forwardRef<
   const setFps = props.fps;
 
   // have a zoom callback
+  // keeps minimaps at a fixed zoom level
   const zoom = useCallback(() => (props.mini ? 1.0 : props.u.zoom.getValue()), [
     props.mini,
     props.u.zoom,
@@ -79,13 +80,13 @@ const WebGLCanvas = React.forwardRef<
   // the main render function for WebGL
   const render = useCallback(
     (time) => {
+      const ctx = gl.current as WebGLRenderingContext;
+      const prog = programInfo.current as twgl.ProgramInfo;
+      const buff = bufferInfo.current as twgl.BufferInfo;
+
       twgl.resizeCanvasToDisplaySize(canvasRef.current, dpr);
-      (gl.current as WebGLRenderingContext).viewport(
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height,
-      );
+      // scale the viewport to the canvas size
+      ctx.viewport(0, 0, canvasRef.current.width, canvasRef.current.height);
 
       const uniforms = {
         resolution: [canvasRef.current.width, canvasRef.current.height],
@@ -96,19 +97,10 @@ const WebGLCanvas = React.forwardRef<
         u_theta: u.theta.getValue(),
       };
 
-      (gl.current as WebGLRenderingContext).useProgram(
-        (programInfo.current as twgl.ProgramInfo).program,
-      );
-      twgl.setBuffersAndAttributes(
-        gl.current as WebGLRenderingContext,
-        programInfo.current as twgl.ProgramInfo,
-        bufferInfo.current as twgl.BufferInfo,
-      );
-      twgl.setUniforms(programInfo.current as twgl.ProgramInfo, uniforms);
-      twgl.drawBufferInfo(
-        gl.current as WebGLRenderingContext,
-        bufferInfo.current as twgl.BufferInfo,
-      );
+      ctx.useProgram(prog.program);
+      twgl.setBuffersAndAttributes(ctx, prog, buff);
+      twgl.setUniforms(prog, uniforms);
+      twgl.drawBufferInfo(ctx, buff);
 
       // calculate fps
       if (setFps !== undefined) {
