@@ -39,17 +39,14 @@ function App(): JSX.Element {
   // non-reloading hash update
   const updateBrowserHash = useHashNavigator();
 
-  const urlManager = useMemo(() => {
-    // console.log('new url manager');
-    return new ViewerURLManager();
-  }, []);
+  const urlManager = useMemo(() => new ViewerURLManager(), []);
 
   // generic callback
   const updateHash = useCallback(
     (name: string, v: Partial<ViewerLocation>) => {
       urlManager.updateViewer(name, v);
       const u = urlManager.asFullHashURL();
-      // console.log(`# => ${u}`);
+      // console.debug(`Updated # for ${name} => ${u}`);
       updateBrowserHash(u);
     },
     [updateBrowserHash, urlManager],
@@ -112,7 +109,9 @@ function App(): JSX.Element {
     // warp to the newly parsed locations
     warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
     warpToPoint(juliaControls, urlManager.vs['j'].v);
-  });
+    // this update process should only trigger when the hash location changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loc]);
 
   const reset = () => {
     warpToPoint(mandelbrotControls, viewerOrigin);

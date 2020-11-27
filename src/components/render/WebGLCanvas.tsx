@@ -37,46 +37,60 @@ const WebGLCanvas = React.forwardRef<
     props.mini,
     props.u.zoom,
   ]);
-  // const currZoom = useRef(zoom());
 
   const dpr = props.useDPR ? window.devicePixelRatio : 1;
 
-  // initial context-getter
-  useEffect(() => {
-    // console.log(gl);
-    // console.log(gl.current);
+  // canvas setup step - get webgl context
+  const setupCanvas = useCallback(() => {
     gl.current = canvasRef.current.getContext('webgl');
-    console.log(`WebGL canvas context created`);
-    // remove this context?
-    // return () => gl.current.
-  }, [canvasRef]);
+    console.debug(`WebGL canvas context created`);
+  }, [gl, canvasRef]);
 
   useEffect(() => {
-    // console.log(`got canvas context: ${gl.current}`);
-    bufferInfo.current = twgl.createBufferInfoFromArrays(
-      gl.current as WebGLRenderingContext,
-      fullscreenVertexArray,
+    setupCanvas();
+
+    // https://www.khronos.org/webgl/wiki/HandlingContextLost
+    canvasRef.current.addEventListener(
+      'webglcontextlost',
+      (event) => {
+        console.error('WebGL context lost!');
+        event.preventDefault();
+        // trigger an error alert in future?
+      },
+      false,
     );
-  }, [gl]);
+    canvasRef.current.addEventListener(
+      'webglcontextrestored',
+      (event) => {
+        console.error('WebGL context restored! Setting up...');
+        setupCanvas();
+      },
+      false,
+    );
 
-  useEffect(() => {
-    currZoom.current = props.u.zoom.getValue();
-  }, [props.u]);
+    // remove this context?
+    // return () => gl.current ??
+  }, [canvasRef, setupCanvas]);
 
-  // re-compile program if shader changes
-  useEffect(() => {
-    programInfo.current = twgl.createProgramInfo(gl.current as WebGLRenderingContext, [
+  const compileShader = useCallback(() => {
+    const ctx = gl.current as WebGLRenderingContext;
+    bufferInfo.current = twgl.createBufferInfoFromArrays(ctx, fullscreenVertexArray);
+    programInfo.current = twgl.createProgramInfo(ctx, [
       fullVertexShader,
       props.fragShader,
     ]);
+    console.debug(`Fragment shader compiled`);
   }, [gl, props.fragShader]);
+
+  // re-compile program if shader changes
+  useEffect(compileShader, [compileShader]);
 
   const then = useRef(0);
   const frames = useRef(0);
   const elapsedTime = useRef(0);
   // fps update interval
   const interval = 1000;
-  // const mult = 1000 / interval;
+
   // the main render function for WebGL
   const render = useCallback(
     (time) => {
@@ -131,7 +145,6 @@ const WebGLCanvas = React.forwardRef<
     [gl, u, zoom, dpr, setFps, interval, canvasRef],
   );
 
-  //
   useEffect(() => {
     renderRequestRef.current = requestAnimationFrame(render);
     return () => cancelAnimationFrame(renderRequestRef.current as number);

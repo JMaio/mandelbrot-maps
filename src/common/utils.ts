@@ -292,11 +292,11 @@ export function genericTouchBind({
  * @param location The (partial) viewer location to warp to: xy, zoom, theta
  * @param immediate Should the update happen immediately? (Useful for testing)
  */
-export function warpToPoint(
+export const warpToPoint = (
   controls: ViewerControlSprings,
   { xy, z, theta }: Partial<ViewerLocation>,
   immediate = false,
-): void {
+): void => {
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
   if (xy !== undefined) {
     controls.xyCtrl[1]({
@@ -320,7 +320,7 @@ export function warpToPoint(
       immediate: immediate,
     });
   }
-}
+};
 
 // no longer using screenScaleMultiplier
 // export const screenToReal = (x: number): number => x * screenScaleMultiplier;
