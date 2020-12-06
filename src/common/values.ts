@@ -1,4 +1,4 @@
-import { ViewerLocation } from './types';
+import { RGBColour, ViewerLocation } from './types';
 
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
@@ -52,6 +52,8 @@ export const springsConfigs = {
   //   rot: { mass: 1, tension: 400, friction: 75 },
   // },
 };
+
+export const defaultShadingColour: RGBColour = [0.0, 0.6, 1.0];
 
 // export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 

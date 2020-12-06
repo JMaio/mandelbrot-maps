@@ -107,6 +107,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           u_xy: u.xy.getValue(),
           u_maxI: u.maxI,
           u_theta: u.theta.getValue(),
+          u_colour: u.colour,
         };
 
         ctx.useProgram(prog.program);
@@ -129,12 +130,6 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
 
             // document.getElementById('test').innerHTML = fps;
           }
-          // time *= 0.001;                      // convert to seconds
-          // const deltaTime = time - then.current; // compute time since last frame
-          // then.current = time;                // remember time for next frame
-          // const fs = 1 / deltaTime;           // compute frames per second
-          // console.log(fs);
-          // (fs.toFixed(1));  // update fps display
         }
 
         // The 'state' will always be the initial value here

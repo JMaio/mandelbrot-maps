@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
+import { RGBColour } from '../../common/types';
 import { genericTouchBind } from '../../common/utils';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
@@ -75,6 +76,8 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
 
   const [fps, setFps] = useState('');
 
+  const colour: RGBColour = [0.5, 0.5, 0.5];
+
   return (
     <SettingsContext.Consumer>
       {({ settings }) => (
@@ -96,6 +99,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
               xy: xy,
               theta: theta,
               maxI: maxI,
+              colour: colour, // vec3(0.0,0.6,1.0)
               // screenScaleMultiplier: screenScaleMultiplier,
             }}
             ref={canvasRef}
@@ -113,6 +117,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
               xy: xy,
               theta: theta,
               maxI: maxI,
+              colour: colour,
               // screenScaleMultiplier: screenScaleMultiplier,
             }}
             canvasRef={miniCanvasRef}
