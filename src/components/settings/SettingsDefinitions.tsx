@@ -1,5 +1,9 @@
-import { Slider, Switch } from '@material-ui/core';
 import React from 'react';
+import { Slider, Switch } from '@material-ui/core';
+import FormatPaintIcon from '@material-ui/icons/FormatPaint';
+import TouchAppIcon from '@material-ui/icons/TouchApp';
+import PhotoIcon from '@material-ui/icons/Photo';
+import ExtensionIcon from '@material-ui/icons/Extension';
 import {
   settingsDefinitionsType,
   settingsGroupType,
@@ -76,6 +80,7 @@ export const getSettingsWidgetsGrouping = (
   settingsWidgets: settingsWidgetType,
 ): Array<settingsGroupType> => [
   {
+    icon: ExtensionIcon,
     name: 'Interface',
     widgets: {
       showMinimap: settingsWidgets.showMinimap,
@@ -85,6 +90,7 @@ export const getSettingsWidgetsGrouping = (
     // ],
   },
   {
+    icon: PhotoIcon,
     name: 'Graphics',
     widgets: {
       maxI: settingsWidgets.maxI,

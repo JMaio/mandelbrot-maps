@@ -1,4 +1,4 @@
-import { FormControlLabelProps } from '@material-ui/core';
+import { FormControlLabelProps, SvgIcon } from '@material-ui/core';
 import React from 'react';
 // https://stackoverflow.com/a/39281228/9184658
 
@@ -32,6 +32,7 @@ export type settingsWidgetType = {
 
 export type settingsGroupType = {
   name: string;
+  icon: typeof SvgIcon;
   widgets: {
     // widget groups may contain any of the keys in the settingsDefinitionsType
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
