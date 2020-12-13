@@ -17,6 +17,9 @@ import MyLocationIcon from '@material-ui/icons/MyLocation';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useState } from 'react';
 import { SettingsMenuProps } from '../../common/settings';
+// react-colorful requires style imports
+// import 'react-colorful/dist/index.css';
+import '../../css/react-colorful.css';
 import { contrastBoxShadow } from '../../theme/theme';
 import { SettingsContext } from './SettingsContext';
 import { getSettingsWidgetsGrouping } from './SettingsDefinitions';
@@ -57,17 +60,6 @@ const GroupTitle = (props: { title: string; icon: SvgIconComponent }) => (
       </Typography>
     </Grid>
   </Grid>
-  // <Box
-  //   style={{
-  //     display: 'flex',
-  //     verticalAlign: 'middle',
-  //   }}
-  // >
-  //   <props.icon fontSize="small" />
-  //   <Typography variant="button" style={{ fontSize: 14, marginLeft: 4 }}>
-  //     {props.title}
-  //   </Typography>
-  // </Box>
 );
 
 export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
@@ -152,8 +144,17 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                           key={`${k}-control`}
                           style={{ userSelect: 'none' }}
                           {...(widget as FormControlLabelProps)}
-                          onChange={(e, val) => {
-                            console.log(`${k} -> ${val}`);
+                          // ...e catches all event arguments
+                          onChange={(...e) => {
+                            // the value is the last element of the "e" array
+                            // https://stackoverflow.com/a/12099341/9184658
+                            // > using destructuring is nice too:
+                            // > const [lastItem] = arr.slice(-1)
+                            // > – diachedelic Mar 11 '19 at 6:30
+                            const [val] = e.slice(-1);
+                            console.debug(`${k} ->`, val);
+                            // TODO: updating state like this seems to be very slow
+                            // either have individual useState pairs, or use a Map?
                             setSettings((prevState) => ({
                               ...prevState,
                               [k]: val,

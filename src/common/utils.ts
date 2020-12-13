@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RgbColor } from 'react-colorful';
 import { addV, subV } from 'react-use-gesture';
 import {
   FullGestureState,
@@ -9,7 +10,7 @@ import {
   Vector2,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { ViewerControlSprings, ViewerLocation } from './types';
+import { RgbFloatColour, ViewerControlSprings, ViewerLocation } from './types';
 import { springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
@@ -325,3 +326,6 @@ export const warpToPoint = (
 // no longer using screenScaleMultiplier
 // export const screenToReal = (x: number): number => x * screenScaleMultiplier;
 // export const RealToScreen = (x: number): number => x / screenScaleMultiplier;
+
+export const Rgb255ColourToFloat = (c: RgbColor): RgbFloatColour =>
+  [c.r, c.g, c.b].map((e) => e / 255) as RgbFloatColour;

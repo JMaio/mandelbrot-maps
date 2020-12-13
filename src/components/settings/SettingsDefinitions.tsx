@@ -1,9 +1,8 @@
-import React from 'react';
 import { Slider, Switch } from '@material-ui/core';
-import FormatPaintIcon from '@material-ui/icons/FormatPaint';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
-import PhotoIcon from '@material-ui/icons/Photo';
 import ExtensionIcon from '@material-ui/icons/Extension';
+import PhotoIcon from '@material-ui/icons/Photo';
+import React from 'react';
+import { RgbColorPicker } from 'react-colorful';
 import {
   settingsDefinitionsType,
   settingsGroupType,
@@ -74,6 +73,21 @@ export const settingsWidgets = (
     checked: settings.showFPS,
     control: <Switch />,
   },
+  colour: {
+    label: null,
+    style: {
+      marginTop: 14,
+      marginBottom: 10,
+      marginLeft: 0,
+      marginRight: 0,
+    },
+    control: (
+      <RgbColorPicker
+        // set the initial colour
+        color={settings.colour}
+      />
+    ),
+  },
 });
 
 export const getSettingsWidgetsGrouping = (
@@ -94,6 +108,7 @@ export const getSettingsWidgetsGrouping = (
     name: 'Graphics',
     widgets: {
       maxI: settingsWidgets.maxI,
+      colour: settingsWidgets.colour,
       useDPR: settingsWidgets.useDPR,
       useAA: settingsWidgets.useAA,
       showFPS: settingsWidgets.showFPS,

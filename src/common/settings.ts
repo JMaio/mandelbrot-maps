@@ -1,5 +1,7 @@
 import { FormControlLabelProps, SvgIcon } from '@material-ui/core';
 import React from 'react';
+import { RgbColor } from 'react-colorful';
+import { defaultShadingColour } from './values';
 // https://stackoverflow.com/a/39281228/9184658
 
 export type settingsDefinitionsType = {
@@ -10,6 +12,7 @@ export type settingsDefinitionsType = {
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
+  colour: RgbColor;
 };
 
 export const defaultSettings = {
@@ -20,6 +23,7 @@ export const defaultSettings = {
   showFPS: false,
   useDPR: false,
   useAA: false,
+  colour: defaultShadingColour,
 };
 
 export type settingsWidgetType = {
@@ -45,6 +49,12 @@ export type SettingsContextType = {
   settings: settingsDefinitionsType;
   setSettings: React.Dispatch<React.SetStateAction<settingsDefinitionsType>>;
   settingsWidgets: settingsWidgetType;
+  // newSettings: {
+  //   [k in keyof settingsDefinitionsType]: [
+  //     settingsDefinitionsType[k],
+  //     React.Dispatch<React.SetStateAction<settingsDefinitionsType[k]>>,
+  //   ];
+  // };
 };
 
 export interface SettingsMenuProps {

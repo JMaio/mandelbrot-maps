@@ -1,4 +1,5 @@
-import { RGBColour, ViewerLocation } from './types';
+import { RgbColor } from 'react-colorful';
+import { ViewerLocation } from './types';
 
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
@@ -53,7 +54,7 @@ export const springsConfigs = {
   // },
 };
 
-export const defaultShadingColour: RGBColour = [0.0, 0.6, 1.0];
+export const defaultShadingColour: RgbColor = { r: 0, g: 180, b: 255 };
 
 // export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 

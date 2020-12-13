@@ -122,6 +122,7 @@ void main() {
     vec2 c = u_xy + xy/u_zoom;
     
     float l = mandelbrot(c);
+    // col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
     col += 0.5 + 0.5*cos( 3.0 + l*0.15 + u_colour);
 
     // antialiasing

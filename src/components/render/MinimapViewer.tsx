@@ -5,8 +5,6 @@ import { simpleBoxShadow } from '../../theme/theme';
 import WebGLCanvas from './WebGLCanvas';
 
 const miniSize = 100;
-// TODO: make square with rounded corners?
-// const borderRadius = 8;
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRadius: theme.shape.borderRadius,

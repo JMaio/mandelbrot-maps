@@ -1,4 +1,5 @@
 import { CanvasHTMLAttributes } from 'react';
+import { RgbColor } from 'react-colorful';
 import { OpaqueInterpolation } from 'react-spring';
 import { MandelbrotMapsWebGLUniforms, ViewerControlSprings, XYType } from './types';
 
@@ -28,6 +29,7 @@ export interface RendererProps {
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
+  colour: RgbColor;
 }
 
 export interface RendererRenderValues {
