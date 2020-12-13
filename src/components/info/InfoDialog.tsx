@@ -25,6 +25,7 @@ import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { surveyLink } from '../surveyLink.json';
+import MandelbrotMapsLogo from '../../img/logo-192.png';
 
 // for evaluating build time
 import preval from 'preval.macro';
@@ -67,7 +68,11 @@ const DialogTitle = withStyles(styles)(
   ({ children, classes, onClose, ...other }: DialogTitleProps) => {
     return (
       <MuiDialogTitle disableTypography className={classes.root} {...other}>
-        <img src="logo-512.png" alt="Mandelbrot Maps logo" className={classes.image} />
+        <img
+          src={MandelbrotMapsLogo}
+          alt="Mandelbrot Maps logo"
+          className={classes.image}
+        />
         <Typography
           variant="h1"
           style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}
