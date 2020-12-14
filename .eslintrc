@@ -12,7 +12,7 @@
     },
     "extends": [
         "eslint:recommended",
-        // "plugin:react/recommended",
+        "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
         "react-app", // Uses the recommended rules Create React App
         "prettier/@typescript-eslint",
