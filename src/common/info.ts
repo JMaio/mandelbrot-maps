@@ -20,3 +20,8 @@ export interface ChangeCoordinatesCardProps extends CardProps {
   mandelbrot: ViewerControlSprings;
   julia?: OpaqueInterpolation<XYType>;
 }
+
+export interface InfoDialogProps {
+  // control whether the info dialog should be displayed
+  ctrl: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+}

@@ -29,6 +29,7 @@ import { surveyLink } from '../surveyLink.json';
 // for evaluating build time
 import preval from 'preval.macro';
 import clientDetect from '../../dist/clientDetect';
+import { InfoDialogProps } from '../../common/info';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
@@ -104,7 +105,7 @@ function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function InfoDialog(props: any): JSX.Element {
+export default function InfoDialog(props: InfoDialogProps): JSX.Element {
   const [open, setOpen] = props.ctrl;
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 

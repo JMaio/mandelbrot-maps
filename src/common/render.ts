@@ -30,6 +30,12 @@ export interface RendererProps {
   useAA: boolean;
 }
 
+export interface RendererRenderValues {
+  maxI?: number;
+  AA?: number;
+  B?: number;
+}
+
 export interface MandelbrotRendererProps extends RendererProps {
   showCrosshair: boolean;
 }
