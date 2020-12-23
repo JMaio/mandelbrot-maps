@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
 import { genericTouchBind } from '../../common/utils';
-import { screenScaleMultiplier } from '../../common/values';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
@@ -60,8 +59,6 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
   const gtb = genericTouchBind({
     domTarget: canvasRef,
     controls: props.controls,
-    screenScaleMultiplier:
-      screenScaleMultiplier / (props.useDPR ? window.devicePixelRatio : 1), // -> global
     // gl: gl,
     setDragging: setDragging,
   });
@@ -90,7 +87,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
           <FPSCard fps={fps} show={settings.showFPS} />
 
           <WebGLCanvas
-            id="mandelbrot"
+            id="mandelbrot-canvas"
             fragShader={fragShader}
             useDPR={settings.useDPR}
             // touchBind={touchBind}
@@ -108,6 +105,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
           />
 
           <MinimapViewer
+            id="mandelbrot-minimap-canvas"
             fragShader={miniFragShader}
             useDPR={settings.useDPR}
             u={{

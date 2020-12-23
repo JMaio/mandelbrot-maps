@@ -3,6 +3,7 @@ import {
   Divider,
   Fab,
   FormControlLabel,
+  FormControlLabelProps,
   FormGroup,
   Grid,
   makeStyles,
@@ -162,16 +163,16 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                     <GroupDivider />
                     <GroupTitle title={g.name} />
                     <FormGroup>
-                      {g.widgets.map((widget) => (
+                      {Object.entries(g.widgets).map(([k, widget]) => (
                         <FormControlLabel
-                          key={`${widget.label}-control`}
+                          key={`${k}-control`}
                           style={{ userSelect: 'none' }}
-                          {...widget}
+                          {...(widget as FormControlLabelProps)}
                           onChange={(e, val) => {
-                            console.log(`${widget.k} -> ${val}`);
+                            console.log(`${k} -> ${val}`);
                             setSettings((prevState) => ({
                               ...prevState,
-                              [widget.k]: val,
+                              [k]: val,
                             }));
                           }}
                         />

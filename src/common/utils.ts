@@ -10,7 +10,7 @@ import {
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
 import { ViewerControlSprings, ViewerLocation } from './types';
-import { screenScaleMultiplier, springsConfigs } from './values';
+import { springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { width?: number; height?: number } {
@@ -48,7 +48,7 @@ export function useWindowSize(): { width?: number; height?: number } {
 export interface GenericTouchBindParams {
   domTarget: RefObject<HTMLCanvasElement>;
   controls: ViewerControlSprings;
-  screenScaleMultiplier: number;
+  // screenScaleMultiplier: number;
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -74,7 +74,6 @@ const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
 export function genericTouchBind({
   domTarget,
   controls,
-  screenScaleMultiplier,
   setDragging,
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
@@ -83,8 +82,9 @@ export function genericTouchBind({
 
   const zoomMult = { in: 3e-3, out: 1e-3 };
 
-  const getRealZoom = (z: number) =>
-    (domTarget.current?.height || 100) * z * screenScaleMultiplier;
+  // used to have screenScaleMultiplier here
+  const getRealZoom = (z: number) => (domTarget.current?.height || 100) * z;
+  // * screenScaleMultiplier;
 
   return {
     handlers: {
@@ -99,11 +99,14 @@ export function genericTouchBind({
 
       onPinch: ({
         event,
+        da: [d, a],
         vdva: [vd, va],
         down,
-        da: [d, a],
         // delta: [dd, da],
+        movement: [md, ma],
+        delta: [dd, da],
         first,
+        // initial, // initial [d, a]
         origin,
         // movement, //: [mx, my],
         memo = {
@@ -119,31 +122,54 @@ export function genericTouchBind({
 
         if (first) {
           // remember the angle, location at which the pinch gesture starts
-          memo.a = a;
+          // memo.a = a;
           memo.o = origin;
         }
 
-        const newZ = z.getValue() * (1 + 1e-1 * vd);
+        // console.log(subV(origin, initial));
+        // console.log(initial);
+        // console.log(origin);
+        // console.log(md);
+        // console.log(ma);
+        // const zd = md * 1e-2;
+
+        // new zoom is the product of initial zoom and a function of the delta since the pinch
+        //   (initial zoom) exponentially changed by md, with linear and exponential multipliers
+        //     linear multiplier:
+        //     exponential multiplier: scale faster as pinch becomes more distant
+        //     if decreasing, scale must decrease more slowly
+        // const em = 1.33;
+        // const newZ =
+        //   memo.z * (1 + Math.sign(md) * 1e-2 * Math.abs(md) ** (md <= 0 ? 1 / em : em)); //(1 - zdelta * Math.abs(zdelta));
+        const newZ = _.clamp(memo.z + md * 1e-2, 0.5, 100_000) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
+        // console.log(Math.abs(md * 1e-2));
+        // console.log(
+        //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
+        // );
+        console.log(newZ);
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         const realZoom = getRealZoom(newZclamp);
 
+        // get movement of pointer origin for panning
         const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
         const relMove: Vector2 = [px, -py];
 
         setControlXY({
           xy: addV(memo.xy, vRotate(theta.getValue(), relMove)),
+          immediate: false,
         });
 
         setControlZoom({
           z: newZclamp,
-          immediate: down,
+          immediate: false,
           config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
         });
 
         setControlRot({
-          theta: memo.t + degToRad(a - memo.a + 1e1 * va),
-          immediate: down, // fixes issues with wrapping around from (0) to (-2pi)
+          theta: memo.t + degToRad(ma),
+          // fixes issues with wrapping around from (0) to (-2pi)
+          immediate: false,
           config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
         });
 
@@ -167,6 +193,7 @@ export function genericTouchBind({
           setControlRot({
             theta: newT,
             config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
+            immediate: false,
           });
         } else {
           // set different multipliers based on zoom direction
@@ -177,6 +204,8 @@ export function genericTouchBind({
           setControlZoom({
             z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
             config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+            // reset immediate value from warp function
+            immediate: false,
           });
         }
         return memo;
@@ -222,6 +251,8 @@ export function genericTouchBind({
           xy: vecXY,
           // immediate: down, // immediately apply if the gesture is active
           config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
+          // reset immediate value from warp function
+          immediate: false,
           //  {
           //   // velocity also needs to be rotated according to theta
           //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
@@ -261,16 +292,16 @@ export function genericTouchBind({
  * @param location The (partial) viewer location to warp to: xy, zoom, theta
  * @param immediate Should the update happen immediately? (Useful for testing)
  */
-export function warpToPoint(
+export const warpToPoint = (
   controls: ViewerControlSprings,
   { xy, z, theta }: Partial<ViewerLocation>,
   immediate = false,
-): void {
+): void => {
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
   if (xy !== undefined) {
     controls.xyCtrl[1]({
       // use screen scale multiplier for a simpler API
-      xy: vScale(1 / screenScaleMultiplier, xy),
+      xy: xy,
       config: springsConfigs.default.xy,
       immediate: immediate,
     });
@@ -289,4 +320,8 @@ export function warpToPoint(
       immediate: immediate,
     });
   }
-}
+};
+
+// no longer using screenScaleMultiplier
+// export const screenToReal = (x: number): number => x * screenScaleMultiplier;
+// export const RealToScreen = (x: number): number => x / screenScaleMultiplier;

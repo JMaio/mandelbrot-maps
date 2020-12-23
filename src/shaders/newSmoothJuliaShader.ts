@@ -1,14 +1,12 @@
 // TODO set max iterations as parameter
 
+import { RendererRenderValues } from '../common/render';
+
 const newSmoothJuliaShader = ({
   maxI = 300,
   AA = 1,
   B = 64,
-  // crosshair = {
-  //     stroke: 0,
-  //     radius: 0
-  // },
-}) => `
+}: RendererRenderValues): string => `
 
 #define AA ${AA}
 #define MAXI ${maxI}

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useMemo, useState } from 'react';
 import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -29,6 +29,7 @@ import { surveyLink } from '../surveyLink.json';
 // for evaluating build time
 import preval from 'preval.macro';
 import clientDetect from '../../dist/clientDetect';
+import { InfoDialogProps } from '../../common/info';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
@@ -104,7 +105,7 @@ function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function InfoDialog(props: any) {
+export default function InfoDialog(props: InfoDialogProps): JSX.Element {
   const [open, setOpen] = props.ctrl;
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
@@ -118,7 +119,7 @@ export default function InfoDialog(props: any) {
   // };
 
   // guard against null / undefined window
-  const clientData = clientDetect(window);
+  const clientData = useMemo(() => clientDetect(window), []);
   // const clientData = window.jscd || {};
 
   const writeToClipboard = (data: string) => {
@@ -156,7 +157,8 @@ export default function InfoDialog(props: any) {
         </Typography>
         <Typography gutterBottom>
           The project was simultaneously undertaken by Freddie Bawden, also under the
-          supervision of Philip Wadler. Freddie's version of the project is available at:{' '}
+          supervision of Philip Wadler. Freddie&apos;s version of the project is available
+          at:{' '}
           <Link href="http://mmaps.freddiejbawden.com/" target="_blank">
             mmaps.freddiejbawden.com
           </Link>

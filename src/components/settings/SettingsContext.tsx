@@ -1,6 +1,10 @@
 import React, { createContext, ReactNode, useState } from 'react';
-import { SettingsContextType, settingsDefinitionsType } from '../../common/settings';
-import defaultSettings, { settingsWidgets } from './SettingsDefinitions';
+import {
+  defaultSettings,
+  SettingsContextType,
+  settingsDefinitionsType,
+} from '../../common/settings';
+import { settingsWidgets } from './SettingsDefinitions';
 
 export const SettingsContext = createContext<SettingsContextType>({
   // provide the context with the default values

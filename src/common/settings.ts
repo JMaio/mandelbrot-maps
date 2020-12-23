@@ -12,18 +12,32 @@ export type settingsDefinitionsType = {
   useAA: boolean;
 };
 
-// using "key" results in an error since it is not used again
-// // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const defaultSettings = {
+  showMinimap: true,
+  showCrosshair: true,
+  showCoordinates: false,
+  maxI: 250,
+  showFPS: false,
+  useDPR: false,
+  useAA: false,
+};
+
 export type settingsWidgetType = {
-  [key in keyof settingsDefinitionsType]: FormControlLabelProps & { k: key };
+  // - settings widgets key k must be in the set
+  // - its type must be of FormControlLabelProps (for displaying in the Material UI form)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [k in keyof settingsDefinitionsType]: FormControlLabelProps;
+  // using "k" results in an error since it is not used again
 };
 
 export type settingsGroupType = {
   name: string;
-  widgets: Array<FormControlLabelProps & { k: keyof settingsDefinitionsType }>;
-  // [key in keyof settingsDefinitionsType]: ;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // };
+  widgets: {
+    // widget groups may contain any of the keys in the settingsDefinitionsType
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    [k in keyof Partial<settingsDefinitionsType>]: FormControlLabelProps;
+    // using "k" results in an error since it is not used again
+  };
 };
 
 export type SettingsContextType = {

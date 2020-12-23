@@ -36,6 +36,7 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
         {/* // 
       // > */}
         <WebGLCanvas
+          id={props.id}
           mini={true}
           ref={canvasRef}
           {...rest}
