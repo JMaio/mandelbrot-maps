@@ -4,7 +4,7 @@ import { MandelbrotMapsWebGLUniforms, ViewerControlSprings, XYType } from './typ
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
-  glRef?: React.MutableRefObject<WebGLRenderingContext>;
+  // glRef?: React.MutableRefObject<WebGLRenderingContext>;
   /** WebGL Uniforms to be passed down to the shader - position, zoom, etc */
   u: MandelbrotMapsWebGLUniforms;
   /** The fragment shader to be used */
@@ -19,6 +19,8 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   dragging?: boolean;
   /** The HTML "id" to give to the canvas element, if any */
   id?: string;
+  /** Should this be a mini viewer? */
+  mini?: boolean;
 }
 
 export interface RendererProps {

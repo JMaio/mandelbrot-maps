@@ -156,7 +156,8 @@ export default function InfoDialog(props: any): JSX.Element {
         </Typography>
         <Typography gutterBottom>
           The project was simultaneously undertaken by Freddie Bawden, also under the
-          supervision of Philip Wadler. Freddie's version of the project is available at:{' '}
+          supervision of Philip Wadler. Freddie&apos;s version of the project is available
+          at:{' '}
           <Link href="http://mmaps.freddiejbawden.com/" target="_blank">
             mmaps.freddiejbawden.com
           </Link>
