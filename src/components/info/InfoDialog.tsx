@@ -221,11 +221,14 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
 
         <Divider style={{ marginTop: 30, marginBottom: 30 }} />
 
-        <Box style={{ display: 'flex' }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="overline" align="center" style={{ margin: 'auto' }}>
             Build:
-            <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography>
             {/* {console.log(new Date(dateTimeStamp).toLocaleString('en-GB', { timeZone: 'UTC' }))} */}
+          </Typography>
+          <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography>
+          <Typography style={{ fontFamily: 'monospace' }}>
+            {process.env.REACT_APP_GIT_SHA}
           </Typography>
         </Box>
       </DialogContent>

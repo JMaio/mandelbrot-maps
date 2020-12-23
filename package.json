@@ -28,8 +28,8 @@
     "wouter": "^2.6.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
+    "build": "cross-env REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
     "build:ci": "cross-env CI=true yarn build",
     "build:localhost": "cross-env PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
