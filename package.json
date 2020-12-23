@@ -17,7 +17,7 @@
     "lodash": "^4.17.19",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-scripts": "3.4.3",
+    "react-scripts": "4.0.1",
     "react-spring": "^8.0.27",
     "react-use-gesture": "^8.0.1",
     "twgl.js": "^4.17.0",
