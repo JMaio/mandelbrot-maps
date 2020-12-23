@@ -3,6 +3,7 @@ import { ReactUseStateType, ViewerLocation, XYType } from './types';
 import {
   defaultJuliaStart,
   defaultMandelbrotStart,
+  defaultViewerStart,
   toFloatDisplayDefault,
   toFloatDisplayShort,
 } from './values';
@@ -78,15 +79,29 @@ export const currentLocation = (): string => {
 
 export const currentViewerState = (): { [k: string]: ViewerLocation } => {
   const l = currentLocation();
+  // key 'k' used to index which viewer is parsed
   const viewerParams: { [k: string]: ViewerLocation } = {};
+  // actually parse the hash
   try {
+    // separate each viewer's string, remove the empty string from the start
+    // (/abc/123) split => ['', 'abc', '123']
     const qs = l.split('/').filter((v) => v.length > 0);
     qs.forEach((s) => {
+      // viewer [name, params] is separated by @ sign
+      // assume this first split must succeed for any input to be parseable
       const [v, params] = s.split('@');
-      const [x, y, z, t] = params.split(',').map(Number);
-      viewerParams[v] = { xy: [x, y] as XYType, z: z, theta: t };
+      const parsedVals = params.split(',').map(Number);
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+      if (parsedVals.some(isNaN)) {
+        // at least one parsing fail, stop now
+        viewerParams[v] = defaultViewerStart[v];
+      } else {
+        const [x, y, z, t] = parsedVals;
+        viewerParams[v] = { xy: [x, y] as XYType, z: z, theta: t };
+      }
     });
   } catch (error) {
+    // uhhhh, something's wrong
     console.log(error);
   }
   return viewerParams;

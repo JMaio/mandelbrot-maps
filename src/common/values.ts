@@ -25,6 +25,11 @@ export const defaultJuliaStart: ViewerLocation = {
   z: 4,
   theta: 2.12,
 };
+// indexable viewer start object
+export const defaultViewerStart: { [k: string]: ViewerLocation } = {
+  m: defaultMandelbrotStart,
+  j: defaultJuliaStart,
+};
 
 export const springsConfigs = {
   /** used when the values are animated to a point, includes decay */
