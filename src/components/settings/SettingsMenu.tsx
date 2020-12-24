@@ -11,11 +11,16 @@ import {
   Typography,
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import { SvgIconComponent } from '@material-ui/icons';
 import InfoIcon from '@material-ui/icons/Info';
 import MyLocationIcon from '@material-ui/icons/MyLocation';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useState } from 'react';
 import { SettingsMenuProps } from '../../common/settings';
+// react-colorful requires style imports
+// import 'react-colorful/dist/index.css';
+import '../../css/react-colorful.css';
+import { contrastBoxShadow } from '../../theme/theme';
 import { SettingsContext } from './SettingsContext';
 import { getSettingsWidgetsGrouping } from './SettingsDefinitions';
 
@@ -28,45 +33,39 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     zIndex: 2,
   },
-  button: {
-    padding: '6px 12px',
-    marginTop: 10,
+  settingsButton: {
+    boxShadow: contrastBoxShadow,
+  },
+  popoverCardGrid: {
+    paddingTop: 24,
+    paddingBottom: 16,
+    paddingRight: 24,
+    paddingLeft: 24,
   },
   sliderControl: {
     width: 30,
   },
 }));
 
-const GroupDivider = () => <Divider style={{ marginTop: 10, marginBottom: 4 }} />;
-const GroupTitle = (props: { title: string }) => (
-  <Typography variant="overline" style={{ fontSize: 14, marginBottom: 4 }}>
-    {props.title}
-  </Typography>
+const GroupDivider = () => <Divider style={{ marginTop: 8, marginBottom: 12 }} />;
+const GroupTitle = (props: { title: string; icon: SvgIconComponent }) => (
+  <Grid container alignItems="center" justify="center" spacing={1}>
+    {/* remove margin to center based only on text and not icon (not ideal) */}
+    <Grid item style={{ marginLeft: -24 }}>
+      <props.icon color="primary" fontSize="small" />
+    </Grid>
+    <Grid item>
+      <Typography color="primary" variant="button" style={{ fontSize: 14 }}>
+        {props.title}
+      </Typography>
+    </Grid>
+  </Grid>
 );
 
 export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement>();
-
-  // interface BottomButtonProps extends {
-  //   icon: JSX.Element;
-  //   text: string;
-  //   color: 'inherit' | 'default' | 'primary' | 'secondary' | undefined;
-  //   onClick: () => void;
-  // }
-  // const BottomButton = (props: BottomButtonProps) => (
-  //   <Button
-  //     variant="outlined"
-  //     color={props.color}
-  //     aria-controls={props.text.toLowerCase()}
-  //     onClick={() => props.onClick()}
-  //     className={classes.button}
-  //     startIcon={<MyLocationIcon />}
-  //   >
-  //     Reset
-  //   </Button>
-  // );
 
   const ResetButton = () => (
     <Button
@@ -76,7 +75,6 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
       onClick={() => {
         props.reset();
       }}
-      className={classes.button}
     >
       Reset
     </Button>
@@ -90,7 +88,6 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
         props.toggleInfo();
         setAnchorEl(undefined);
       }}
-      className={classes.button}
     >
       About
     </Button>
@@ -104,7 +101,10 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
         aria-label="settings"
         size="small"
         onClick={(e) => setAnchorEl(e.currentTarget)}
-        // className={classes.button}
+        // style={{
+        //   boxShadow: heavyBoxShadow,
+        // }}
+        className={classes.settingsButton}
       >
         <SettingsIcon />
       </Fab>
@@ -124,52 +124,37 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
             horizontal: 'right',
           }}
         >
-          <Grid
-            container
-            direction="column"
-            style={{
-              paddingLeft: '1.5em',
-              paddingRight: '1.5em',
-              paddingTop: '1em',
-              paddingBottom: '1em',
-            }}
-          >
+          <Grid container direction="column" className={classes.popoverCardGrid}>
             <Grid item container alignItems="center" justify="space-around">
               <Grid item>
-                <Typography variant="h1" style={{ fontSize: 20, padding: 10 }}>
+                <Typography variant="h1" style={{ fontSize: 20 }}>
                   Configuration
                 </Typography>
               </Grid>
-              {/* <Divider orientation="vertical" flexItem /> */}
-              {/* <Grid item>
-                <IconButton
-                  aria-label="info"
-                  size="medium"
-                  onClick={() => {
-                    // open info panel
-                    props.toggleInfo();
-                    // close popover
-                    setAnchorEl(undefined);
-                  }}
-                >
-                  <InfoIcon fontSize="inherit" />
-                </IconButton>
-              </Grid> */}
             </Grid>
             <SettingsContext.Consumer>
               {({ setSettings, settingsWidgets }) =>
                 getSettingsWidgetsGrouping(settingsWidgets).map((g) => (
                   <Grid item key={g.name}>
                     <GroupDivider />
-                    <GroupTitle title={g.name} />
+                    <GroupTitle icon={g.icon} title={g.name} />
                     <FormGroup>
                       {Object.entries(g.widgets).map(([k, widget]) => (
                         <FormControlLabel
                           key={`${k}-control`}
                           style={{ userSelect: 'none' }}
                           {...(widget as FormControlLabelProps)}
-                          onChange={(e, val) => {
-                            console.log(`${k} -> ${val}`);
+                          // ...e catches all event arguments
+                          onChange={(...e) => {
+                            // the value is the last element of the "e" array
+                            // https://stackoverflow.com/a/12099341/9184658
+                            // > using destructuring is nice too:
+                            // > const [lastItem] = arr.slice(-1)
+                            // > – diachedelic Mar 11 '19 at 6:30
+                            const [val] = e.slice(-1);
+                            console.debug(`${k} ->`, val);
+                            // TODO: updating state like this seems to be very slow
+                            // either have individual useState pairs, or use a Map?
                             setSettings((prevState) => ({
                               ...prevState,
                               [k]: val,
@@ -185,50 +170,20 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
 
             <GroupDivider />
 
-            <Grid container direction="row" justify="space-between" alignItems="stretch">
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="stretch"
+              spacing={1}
+            >
               <Grid item>
                 <ResetButton />
               </Grid>
-              <Grid item style={{ width: '0.5rem' }} />
               <Grid item>
                 <AboutButton />
               </Grid>
             </Grid>
-
-            {/* <Button
-              aria-controls="reset"
-              onClick={() => props.reset()}
-              className={classes.button}
-              startIcon={<MyLocationIcon />}
-            >
-              Reset
-            </Button> */}
-            {/* <Grid item xs>
-                <Button
-                  aria-controls="reset"
-                  onClick={() => props.reset()}
-                  className={classes.button}
-                  startIcon={<MyLocationIcon />}
-                >
-                  Reset
-                </Button>
-              </Grid>
-              <Grid item xs>
-                <Button
-                  aria-label="info"
-                  size="medium"
-                  onClick={() => {
-                    // open info panel
-                    props.toggleInfo();
-                    // close popover
-                    setAnchorEl(undefined);
-                  }}
-                  className={classes.button}
-                  startIcon={<InfoIcon />}
-                >
-                  About
-                </Button>
-              </Grid> */}
           </Grid>
         </Popover>
       </Backdrop>

@@ -24,6 +24,7 @@ uniform vec2  u_xy;
 uniform vec2  u_c;
 uniform float u_zoom;
 uniform float u_theta;
+uniform vec3  u_colour;
 
 float julia( vec2 z, vec2 c ) {
 
@@ -71,7 +72,9 @@ void main() {
   vec2 z = u_xy + xy/u_zoom;
 
   float l = julia(z, c);
-  col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
+  // col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
+  col += 0.5 + 0.5*cos( 3.0 + l*0.15 + u_colour);
+
 
   // antialiasing
   #if AA>1

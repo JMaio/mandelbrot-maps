@@ -129,6 +129,7 @@ function App(): JSX.Element {
         <Grid container>
           <SettingsContext.Consumer>
             {({ settings }) => (
+              // JSX expressions must have one parent element
               <Grid
                 item
                 container

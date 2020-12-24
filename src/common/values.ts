@@ -1,3 +1,4 @@
+import { RgbColor } from 'react-colorful';
 import { ViewerLocation } from './types';
 
 // this multiplier subdivides the screen space into smaller increments
@@ -52,6 +53,8 @@ export const springsConfigs = {
   //   rot: { mass: 1, tension: 400, friction: 75 },
   // },
 };
+
+export const defaultShadingColour: RgbColor = { r: 0, g: 180, b: 255 };
 
 // export const defaultSpringConfig = { mass: 1, tension: 100, friction: 200 };
 

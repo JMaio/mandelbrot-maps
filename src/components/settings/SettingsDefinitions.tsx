@@ -1,5 +1,8 @@
 import { Slider, Switch } from '@material-ui/core';
+import ExtensionIcon from '@material-ui/icons/Extension';
+import PhotoIcon from '@material-ui/icons/Photo';
 import React from 'react';
+import { RgbColorPicker } from 'react-colorful';
 import {
   settingsDefinitionsType,
   settingsGroupType,
@@ -70,12 +73,28 @@ export const settingsWidgets = (
     checked: settings.showFPS,
     control: <Switch />,
   },
+  colour: {
+    label: null,
+    style: {
+      marginTop: 14,
+      marginBottom: 10,
+      marginLeft: 0,
+      marginRight: 0,
+    },
+    control: (
+      <RgbColorPicker
+        // set the initial colour
+        color={settings.colour}
+      />
+    ),
+  },
 });
 
 export const getSettingsWidgetsGrouping = (
   settingsWidgets: settingsWidgetType,
 ): Array<settingsGroupType> => [
   {
+    icon: ExtensionIcon,
     name: 'Interface',
     widgets: {
       showMinimap: settingsWidgets.showMinimap,
@@ -85,9 +104,11 @@ export const getSettingsWidgetsGrouping = (
     // ],
   },
   {
+    icon: PhotoIcon,
     name: 'Graphics',
     widgets: {
       maxI: settingsWidgets.maxI,
+      colour: settingsWidgets.colour,
       useDPR: settingsWidgets.useDPR,
       useAA: settingsWidgets.useAA,
       showFPS: settingsWidgets.showFPS,

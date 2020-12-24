@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { JuliaRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
-import { genericTouchBind } from '../../common/utils';
+import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
@@ -34,6 +34,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     c: props.c,
     theta: theta,
     maxI: maxI,
+    colour: Rgb255ColourToFloat(props.colour),
   };
 
   const [dragging, setDragging] = useState(false);

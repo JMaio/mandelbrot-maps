@@ -3,7 +3,8 @@
         "**/.classpath": true,
         "**/.project": true,
         "**/.settings": true,
-        "**/.factorypath": true
+        "**/.factorypath": true,
+        "**/.git": false
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,

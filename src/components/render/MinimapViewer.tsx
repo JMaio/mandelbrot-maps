@@ -1,15 +1,20 @@
-import { ButtonBase, Grow } from '@material-ui/core';
+import { ButtonBase, Grow, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { MinimapViewerProps } from '../../common/render';
 import { simpleBoxShadow } from '../../theme/theme';
 import WebGLCanvas from './WebGLCanvas';
 
 const miniSize = 100;
-// TODO: make square with rounded corners?
-const borderRadius = 8;
+const useStyles = makeStyles((theme) => ({
+  root: {
+    borderRadius: theme.shape.borderRadius,
+  },
+}));
 
 const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
   const { canvasRef, onClick, show, ...rest } = props;
+  const classes = useStyles();
+
   return (
     <Grow in={show}>
       <ButtonBase
@@ -23,7 +28,7 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
           // cursor: 'pointer',
           height: miniSize,
           width: miniSize,
-          borderRadius: borderRadius,
+          // borderRadius: borderRadius,
           // border: "1px solid #000",
           boxShadow: simpleBoxShadow,
           overflow: 'hidden',
@@ -31,6 +36,7 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
           // display: zoom.interpolate((z) => (_.clamp(z - 1, 0, 1) === 0 ? 'none' : 'block')),
         }}
         onClick={onClick}
+        className={classes.root}
       >
         {/* <animated.div */}
         {/* // 
@@ -43,7 +49,7 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
           // setting border radius here stops the canvas clickable area from overflowing
           // outside the div circle, which would make the clickable area a rectangle
           style={{
-            borderRadius: borderRadius,
+            // borderRadius: borderRadius,
             // cursor should be "pointer" (looks clickable) if this is a minimap,
             cursor: 'pointer',
           }}

@@ -17,6 +17,9 @@ export type XYType = [number, number];
 export type ZoomType = number;
 export type ThetaType = number;
 
+/** An RGB colour in range [0, 255], maps to range [0, 1] by applying (x / 255) */
+export type RgbFloatColour = [number, number, number];
+
 /**
  * Holds viewer location data (can be used to control a view)
  */
@@ -72,6 +75,7 @@ export interface MandelbrotMapsWebGLUniforms {
   maxI: number;
   c?: { getValue: () => XYType };
   theta: OpaqueInterpolation<ThetaType>;
+  colour: RgbFloatColour;
 }
 
 export interface DefaultRendererProps {

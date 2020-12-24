@@ -9,6 +9,9 @@ const theme = createMuiTheme({
     },
     MuiButton: {
       variant: 'outlined',
+      style: {
+        borderRadius: 24,
+      },
     },
   },
   palette: {
@@ -22,8 +25,20 @@ const theme = createMuiTheme({
       main: colors.blue[700],
     },
   },
+  shape: {
+    borderRadius: 12,
+  },
 });
 
 export const simpleBoxShadow = '0px 2px 10px 1px rgba(0, 0, 0, 0.4)';
+export const lightBoxShadow = '0px 0px 10px 2px rgba(255, 255, 255, 0.8)';
+export const darkBoxShadow = '0px 0px 10px 2px rgba(0, 0, 0, 0.8)';
+
+/**
+ * A box shadow comprised of two overlaid box shadows:
+ * - a light box shadow (for contrasting against **dark** backgrounds)
+ * - a dark box shadow (for contrasting against **light** backgrounds)
+ */
+export const contrastBoxShadow = `${lightBoxShadow}, ${darkBoxShadow}`;
 
 export default theme;
