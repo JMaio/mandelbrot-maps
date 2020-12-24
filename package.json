@@ -38,7 +38,8 @@
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d build",
     "lint": "eslint \"./src/**.{js,jsx,ts,tsx}\"",
-    "lint:fix": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --fix"
+    "lint:fix": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "postinstall": "husky install"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -66,7 +67,7 @@
     "eslint-plugin-react": "^7.21.1",
     "eslint-plugin-react-hooks": "^4.1.2",
     "gh-pages": "^3.1.0",
-    "husky": "^4.3.6",
+    "husky": "^5.0.6",
     "jest-canvas-mock": "^2.2.0",
     "jest-webgl-canvas-mock": "^0.2.3",
     "jshint": "^2.10.2",
