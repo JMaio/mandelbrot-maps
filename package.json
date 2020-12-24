@@ -63,7 +63,8 @@
     "deploy": "gh-pages -d build",
     "lint": "eslint \"./src/**.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "release": "standard-version"
+    "release": "standard-version",
+    "release:patch": "yarn release --release-as patch"
   },
   "eslintConfig": {
     "extends": "react-app"
