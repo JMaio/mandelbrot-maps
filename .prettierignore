@@ -1,0 +1,4 @@
+# https://github.com/microsoft/graspologic-js/blob/main/.prettierignore
+.yarn/
+.pnp.js
+yarn.lock
