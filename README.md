@@ -4,7 +4,7 @@
     </a>
 <p>
 
-![Mandelbrot Maps on a phone and tablet](devices.png "Mandelbrot Maps on a phone and tablet")
+![Mandelbrot Maps on a phone and tablet](./img/devices.png "Mandelbrot Maps on a phone and tablet")
 
 # Mandelbrot Maps [![CircleCI](https://circleci.com/gh/JMaio/mandelbrot-maps.svg?style=shield)](https://circleci.com/gh/JMaio/mandelbrot-maps)
 
