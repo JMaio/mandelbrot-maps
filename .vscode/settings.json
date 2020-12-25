@@ -12,6 +12,7 @@
   // },
   // Set the default
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   // Enable per-language
   // "[javascript]": {
   //   "editor.formatOnSave": true
