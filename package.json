@@ -62,7 +62,7 @@
     "test:ci": "cross-env CI=true yarn test",
     "eject": "react-scripts eject",
     "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "yarn predeploy && gh-pages -d build",
     "lint": "eslint \"./src/**.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --fix",
     "release": "standard-version",
