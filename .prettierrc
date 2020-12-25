@@ -1,7 +1,9 @@
 {
-    "semi": true,
-    "trailingComma": "all",
-    "singleQuote": true,
-    "printWidth": 90,
-    "tabWidth": 2
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "printWidth": 90,
+  "tabWidth": 2,
+  // https://stackoverflow.com/a/53769213/9184658
+  "endOfLine": "auto"
 }
