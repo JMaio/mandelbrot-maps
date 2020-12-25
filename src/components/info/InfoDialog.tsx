@@ -24,7 +24,7 @@ import {
 import LaunchIcon from '@material-ui/icons/Launch';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { surveyLink } from '../surveyLink.json';
+import survey from '../surveyLink.json';
 import MandelbrotMapsLogo from '../../img/logo-192.png';
 
 // for evaluating build time
@@ -254,7 +254,7 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           </Alert>
         </Snackbar>
         <Link
-          href={surveyLink}
+          href={survey.link}
           target="_blank"
           rel="noopener"
           style={{ textDecoration: 'none' }}

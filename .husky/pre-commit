@@ -1,6 +1,0 @@
-#!/bin/sh
-. "$(dirname $0)/_/husky.sh"
-# https://github.com/conventional-changelog/commitlint/issues/1665#issuecomment-697236709
-# https://github.com/typicode/husky/issues/673#issuecomment-674292969
-# https://stackoverflow.com/a/61211178/9184658
-npx pretty-quick --staged --patern \"./src/**/*.{js,jsx,ts,tsx}\"

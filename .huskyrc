@@ -1,3 +1,7 @@
-# # ~/.huskyrc
-# # this loads nvm.sh and sets the correct PATH before running hook
-# . ~/.nvm/nvm.sh
+{
+  "hooks": {
+    "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+    "pre-commit": "lint-staged",
+    "pre-push": "yarn run test:ci"
+  }
+}
