@@ -6,10 +6,27 @@
     "**/.factorypath": true,
     "**/.git": false
   },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-    // "source.organizeImports": true,
-  },
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll.eslint": true
+  //   // "source.organizeImports": true,
+  // },
+
+  // Set the default
+  "editor.formatOnSave": true,
+  // Enable per-language
+  // "[javascript]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[typescriptreact]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[json]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[jsonc]": {
+  //   "editor.formatOnSave": true
+  // },
+
   "editor.tabSize": 2,
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "search.exclude": {
