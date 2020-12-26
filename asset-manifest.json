@@ -1,13 +1,15 @@
 {
   "files": {
     "main.css": "/mandelbrot-maps/static/css/main.dc7cdae1.chunk.css",
-    "main.js": "/mandelbrot-maps/static/js/main.f2ffbaae.chunk.js",
-    "main.js.map": "/mandelbrot-maps/static/js/main.f2ffbaae.chunk.js.map",
+    "main.js": "/mandelbrot-maps/static/js/main.c1177816.chunk.js",
+    "main.js.map": "/mandelbrot-maps/static/js/main.c1177816.chunk.js.map",
     "runtime-main.js": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js",
     "runtime-main.js.map": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js.map",
     "static/js/2.f342e76a.chunk.js": "/mandelbrot-maps/static/js/2.f342e76a.chunk.js",
     "static/js/2.f342e76a.chunk.js.map": "/mandelbrot-maps/static/js/2.f342e76a.chunk.js.map",
     "index.html": "/mandelbrot-maps/index.html",
+    "service-worker.js": "/mandelbrot-maps/service-worker.js",
+    "service-worker.js.map": "/mandelbrot-maps/service-worker.js.map",
     "static/css/main.dc7cdae1.chunk.css.map": "/mandelbrot-maps/static/css/main.dc7cdae1.chunk.css.map",
     "static/js/2.f342e76a.chunk.js.LICENSE.txt": "/mandelbrot-maps/static/js/2.f342e76a.chunk.js.LICENSE.txt",
     "static/media/logo-192.ba1bc0bf.png": "/mandelbrot-maps/static/media/logo-192.ba1bc0bf.png"
@@ -16,6 +18,6 @@
     "static/js/runtime-main.b9c7d549.js",
     "static/js/2.f342e76a.chunk.js",
     "static/css/main.dc7cdae1.chunk.css",
-    "static/js/main.f2ffbaae.chunk.js"
+    "static/js/main.c1177816.chunk.js"
   ]
 }
