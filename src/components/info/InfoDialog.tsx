@@ -242,7 +242,7 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           variant="outlined"
           startIcon={<FileCopyIcon />}
         >
-          Copy
+          Copy info
         </Button>
         <Snackbar
           open={snackBarOpen}
