@@ -157,13 +157,13 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           <Link href="https://jmaio.github.io/" target="_blank">
             Joao Maio
           </Link>{' '}
-          in 2019/2020 as part of an Honours Project at The University of Edinburgh, under
-          the supervision of Philip Wadler.
+          between 2019-2021 as part of an Honours Project at The University of Edinburgh,
+          under the supervision of Philip Wadler.
         </Typography>
         <Typography gutterBottom>
-          The project was simultaneously undertaken by Freddie Bawden, also under the
-          supervision of Philip Wadler. Freddie&apos;s version of the project is available
-          at:{' '}
+          In 2019/2020, another version of the project was created by Freddie Bawden, also
+          under the supervision of Philip Wadler. Freddie&apos;s version of the project is
+          available at:{' '}
           <Link href="http://mmaps.freddiejbawden.com/" target="_blank">
             mmaps.freddiejbawden.com
           </Link>
