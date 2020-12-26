@@ -115,17 +115,9 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
-  // const showSnackBar = () => {
-  // new Promise(() => {
-  // setSnackBarOpen(false);
-  // }).then(() => {
-  // setSnackBarOpen(true);
-  // });
-  // };
 
   // guard against null / undefined window
   const clientData = useMemo(() => clientDetect(window), []);
-  // const clientData = window.jscd || {};
 
   const writeToClipboard = (data: string) => {
     console.log(snackBarOpen);
@@ -144,7 +136,6 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
       open={open}
       maxWidth="md"
     >
-      {/* <div style={{ maxWidth: 700 }}> */}
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         Mandelbrot Maps
       </DialogTitle>
@@ -186,9 +177,6 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           </Link>
           .
         </Typography>
-        {/* <Typography>
-            &copy; Joao Maio 2020
-          </Typography> */}
 
         <Divider style={{ marginTop: 30, marginBottom: 30 }} />
 
@@ -224,7 +212,6 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
         <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="overline" align="center" style={{ margin: 'auto' }}>
             Build:
-            {/* {console.log(new Date(dateTimeStamp).toLocaleString('en-GB', { timeZone: 'UTC' }))} */}
           </Typography>
           <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography>
           <Typography style={{ fontFamily: 'monospace' }}>
@@ -264,7 +251,6 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           </Button>
         </Link>
       </DialogActions>
-      {/* </div> */}
     </Dialog>
   );
 }
