@@ -30,6 +30,7 @@ import { InfoDialogProps } from '../../common/info';
 import clientDetect from '../../dist/clientDetect';
 import MandelbrotMapsLogo from '../../img/logo-192.png';
 import survey from '../surveyLink.json';
+import { DialogInfoMarkdown } from './MarkdownOverrides';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
@@ -149,43 +150,7 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
         Mandelbrot Maps
       </DialogTitle>
       <DialogContent dividers style={{ maxWidth: 700 }}>
-        <Typography gutterBottom>
-          Mandelbrot Maps is an interactive fractal explorer built using React and WebGL.
-        </Typography>
-        <Typography gutterBottom>
-          Developed by{' '}
-          <Link href="https://jmaio.github.io/" target="_blank">
-            Joao Maio
-          </Link>{' '}
-          between 2019-2021 as part of an Honours Project at The University of Edinburgh,
-          under the supervision of Philip Wadler.
-        </Typography>
-        <Typography gutterBottom>
-          In 2019/2020, another version of the project was created by Freddie Bawden, also
-          under the supervision of Philip Wadler. Freddie&apos;s version of the project is
-          available at:{' '}
-          <Link href="http://mmaps.freddiejbawden.com/" target="_blank">
-            mmaps.freddiejbawden.com
-          </Link>
-        </Typography>
-        <Typography gutterBottom>
-          The{' '}
-          <Link
-            href="https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html"
-            target="_blank"
-          >
-            original Mandelbrot Maps project
-          </Link>{' '}
-          was developed by Iain Parris in 2008 as a Java Applet.
-        </Typography>
-        <Typography gutterBottom>
-          Mandelbrot set shader code adapted from{' '}
-          <Link href="https://www.shadertoy.com/view/4df3Rn">Mandelbrot - smooth</Link> by{' '}
-          <Link href="http://iquilezles.org/" target="_blank">
-            Inigo Quilez
-          </Link>
-          .
-        </Typography>
+        <DialogInfoMarkdown />
 
         <DialogDivider />
 
