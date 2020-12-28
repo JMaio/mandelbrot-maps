@@ -32,7 +32,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
   a: MdOverrideLink,
 };
 
-export const DialogInfoMarkdown = () => {
+export const DialogInfoMarkdown = (): JSX.Element => {
   const [infoMdText, setInfoMdText] = useState('');
 
   // https://github.com/facebook/create-react-app/issues/2961#issuecomment-322916352
