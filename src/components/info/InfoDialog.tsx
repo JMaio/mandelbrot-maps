@@ -135,6 +135,13 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
       aria-labelledby="customized-dialog-title"
       open={open}
       maxWidth="md"
+      PaperProps={{
+        style: {
+          // fill more of the screen with this dialog
+          margin: 16,
+          maxHeight: 'calc(100% - 32px)',
+        },
+      }}
     >
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         Mandelbrot Maps
