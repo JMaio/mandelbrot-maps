@@ -1,36 +1,35 @@
-import React, { PropsWithChildren, useMemo, useState } from 'react';
-import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
 import {
-  Link,
-  TableContainer,
-  Table,
-  Paper,
-  TableRow,
-  TableCell,
-  TableHead,
-  TableBody,
   Box,
   Divider,
+  Link,
+  Paper,
   Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@material-ui/core';
-import LaunchIcon from '@material-ui/icons/Launch';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import LaunchIcon from '@material-ui/icons/Launch';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import survey from '../surveyLink.json';
-import MandelbrotMapsLogo from '../../img/logo-192.png';
-
 // for evaluating build time
 import preval from 'preval.macro';
-import clientDetect from '../../dist/clientDetect';
+import React, { PropsWithChildren, useMemo, useState } from 'react';
 import { InfoDialogProps } from '../../common/info';
+import clientDetect from '../../dist/clientDetect';
+import MandelbrotMapsLogo from '../../img/logo-192.png';
+import survey from '../surveyLink.json';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
@@ -106,9 +105,11 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-function Alert(props: AlertProps) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+const Alert = (props: AlertProps) => (
+  <MuiAlert elevation={6} variant="filled" {...props} />
+);
+
+const DialogDivider = () => <Divider style={{ marginTop: 20, marginBottom: 20 }} />;
 
 export default function InfoDialog(props: InfoDialogProps): JSX.Element {
   const [open, setOpen] = props.ctrl;
@@ -119,13 +120,14 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
   // guard against null / undefined window
   const clientData = useMemo(() => clientDetect(window), []);
 
-  const writeToClipboard = (data: string) => {
+  const writeClientDataToClipboard = () => {
+    const data = JSON.stringify(clientData);
     console.log(snackBarOpen);
     try {
       navigator.clipboard.writeText(data);
       setSnackBarOpen(true);
     } catch (e) {
-      window.prompt('Auto copy to clipboard failed, copy manually from below:', data);
+      window.prompt('Auto copy to clipboard failed, please copy manually:', data);
     }
   };
 
@@ -185,12 +187,19 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           .
         </Typography>
 
-        <Divider style={{ marginTop: 30, marginBottom: 30 }} />
+        <DialogDivider />
 
         <Box style={{ display: 'flex' }}>
           <TableContainer
             component={Paper}
             style={{ width: 'auto', margin: 'auto', maxWidth: 460 }}
+            // attempt to stop manual copying of the table
+            onClick={writeClientDataToClipboard}
+            // https://stackoverflow.com/a/46337736/9184658
+            onContextMenu={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              e.preventDefault();
+              writeClientDataToClipboard();
+            }}
           >
             <Table size="small" aria-label="a dense table">
               <TableHead>
@@ -203,7 +212,7 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
               <TableBody>
                 {Object.entries(clientData).map(([k, v]) => (
                   <TableRow key={k}>
-                    <TableCell>{k}</TableCell>
+                    <TableCell style={{ userSelect: 'none' }}>{k}</TableCell>
                     <TableCell align="right" style={{ fontFamily: 'monospace' }}>
                       {String(v)}
                     </TableCell>
@@ -214,11 +223,11 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
           </TableContainer>
         </Box>
 
-        <Divider style={{ marginTop: 30, marginBottom: 30 }} />
+        <DialogDivider />
 
         <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography variant="overline" align="center" style={{ margin: 'auto' }}>
-            Build:
+          <Typography align="center" style={{ margin: 'auto' }}>
+            Build
           </Typography>
           <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography>
           <Typography style={{ fontFamily: 'monospace' }}>
@@ -230,7 +239,7 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
       <DialogActions>
         <Button
           onClick={() => {
-            writeToClipboard(JSON.stringify(clientData));
+            writeClientDataToClipboard();
           }}
           color="primary"
           variant="outlined"
@@ -241,7 +250,16 @@ export default function InfoDialog(props: InfoDialogProps): JSX.Element {
         <Snackbar
           open={snackBarOpen}
           autoHideDuration={5000}
-          // onClose={() => setSnackBarOpen(false)}
+          // clicking outside the snackbar would trigger close
+          onClose={(e, reason) => {
+            switch (reason) {
+              case 'clickaway':
+                // don't close the snackbar on clicking outside
+                break;
+              default:
+                setSnackBarOpen(false);
+            }
+          }}
         >
           <Alert onClose={() => setSnackBarOpen(false)} severity="info">
             Device properties copied!
