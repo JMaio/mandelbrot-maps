@@ -1,5 +1,5 @@
 import { Link, Typography } from '@material-ui/core';
-import { MarkdownToJSX } from 'markdown-to-jsx';
+import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import React, { useEffect, useState } from 'react';
 import infoTextMarkdown from './info.md';
 
