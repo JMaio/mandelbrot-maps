@@ -112,8 +112,10 @@ const Alert = (props: AlertProps) => (
 
 const DialogDivider = () => <Divider style={{ marginTop: 20, marginBottom: 20 }} />;
 
-export default function InfoDialog(props: InfoDialogProps): JSX.Element {
-  const [open, setOpen] = props.ctrl;
+export default function InfoDialog({
+  ctrl: [open, setOpen],
+  ...props
+}: InfoDialogProps): JSX.Element {
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
