@@ -12,8 +12,13 @@ const newSmoothJuliaShader = ({
 #define MAXI ${maxI}
 #define B ${B.toFixed(1)}
 
-// set high float precision (lower than this may break colours on mobile)
-precision highp float;
+// https://webglfundamentals.org/webgl/lessons/webgl-precision-issues.html
+// prefer high float precision (lower than this may break colours on mobile)
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+  precision highp float;
+#else
+  precision mediump float;
+#endif
 
 // need to know the resolution of the canvas
 uniform vec2 resolution;
