@@ -40,14 +40,32 @@ jobs:
   build:
     name: Test
     runs-on: ubuntu-latest
+    # https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-nodejs
     steps:
       - uses: actions/checkout@v2
-      - uses: borales/actions-yarn@v2.3.0
+      # https://github.com/actions/setup-node/#v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
         with:
-          cmd: install # will run `yarn install` command
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: build # will run `yarn build` command
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: test # will run `yarn test` command
+          # It will first check the local cache for a semver match
+          node-version: '14'
+      # GitHub-hosted runners have npm and Yarn dependency managers installed.
+      - name: Install 💿
+        run: yarn
+
+      - name: Build 📐
+        run: yarn build
+
+      - name: Test 🧪
+        run: yarn test
+
+      # - uses: actions/checkout@v2
+      # - uses: borales/actions-yarn@v2.3.0
+      #   with:
+      #     cmd: install # will run `yarn install` command
+      # - uses: borales/actions-yarn@v2.3.0
+      #   with:
+      #     cmd: build # will run `yarn build` command
+      # - uses: borales/actions-yarn@v2.3.0
+      #   with:
+      #     cmd: test # will run `yarn test` command
