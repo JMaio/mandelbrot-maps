@@ -91,6 +91,45 @@ export function genericTouchBind({
   const getRealZoom = (z: number) => (domTarget.current?.height || 100) * z;
   // * screenScaleMultiplier;
 
+  /** Re-usable logic for XY "panning" */
+  const updateXY = ({
+    xy,
+    theta,
+    relMove,
+    down,
+  }: {
+    xy: Vector2;
+    theta: number;
+    relMove: Vector2;
+    down: boolean;
+  }) =>
+    setControlXY({
+      // add to the current position the relative displacement (relMove), rotated by theta,
+      // to maintain the correct displacement direction (without this it would move as if theta=0)
+      xy: addV(xy, vScale(DPR, vRotate(theta, relMove))),
+      config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
+      // reset immediate value from warp function
+      immediate: false,
+    });
+
+  /** Re-usable logic for zooming */
+  const updateZ = ({ z, down }: { z: number; down: boolean }) =>
+    setControlZoom({
+      z: z,
+      config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+      // reset immediate value from warp function
+      immediate: false,
+    });
+
+  /** Re-usable logic for rotating */
+  const updateT = ({ t, down }: { t: number; down: boolean }) =>
+    setControlRot({
+      theta: t,
+      // reset immediate value from warp function
+      immediate: false,
+      config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
+    });
+
   return {
     handlers: {
       // prevent some browser events such as swipe-based navigation or
@@ -107,13 +146,11 @@ export function genericTouchBind({
         da: [d, a],
         vdva: [vd, va],
         down,
-        // delta: [dd, da],
         movement: [md, ma],
         delta: [dd, da],
         first,
         // initial, // initial [d, a]
         origin,
-        // movement, //: [mx, my],
         memo = {
           xy: xy.getValue(),
           z: z.getValue(),
@@ -131,13 +168,6 @@ export function genericTouchBind({
           memo.o = origin;
         }
 
-        // console.log(subV(origin, initial));
-        // console.log(initial);
-        // console.log(origin);
-        // console.log(md);
-        // console.log(ma);
-        // const zd = md * 1e-2;
-
         // new zoom is the product of initial zoom and a function of the delta since the pinch
         //   (initial zoom) exponentially changed by md, with linear and exponential multipliers
         //     linear multiplier:
@@ -151,7 +181,7 @@ export function genericTouchBind({
         // console.log(
         //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
         // );
-        console.log(newZ);
+        // console.log(newZ);
         const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
 
         const realZoom = getRealZoom(newZclamp);
@@ -160,22 +190,29 @@ export function genericTouchBind({
         const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
         const relMove: Vector2 = [px, -py];
 
-        setControlXY({
-          xy: addV(memo.xy, vRotate(theta.getValue(), relMove)),
-          immediate: false,
+        // setControlXY({
+        //   //
+        //   xy: addV(memo.xy, vRotate(theta.getValue(), relMove)),
+        //   immediate: false,
+        // });
+        // updateZ({});
+        updateXY({
+          xy: memo.xy,
+          theta: theta.getValue(),
+          relMove: relMove,
+          down: down,
         });
 
-        setControlZoom({
-          z: newZclamp,
-          immediate: false,
-          config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-        });
+        // setControlZoom({
+        //   z: newZclamp,
+        //   immediate: false,
+        //   config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+        // });
+        updateZ({ z: newZclamp, down: down });
 
-        setControlRot({
-          theta: memo.t + degToRad(ma),
-          // fixes issues with wrapping around from (0) to (-2pi)
-          immediate: false,
-          config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
+        updateT({
+          t: memo.t + degToRad(ma),
+          down: down,
         });
 
         return memo;
@@ -195,10 +232,9 @@ export function genericTouchBind({
           // if shift is pressed, rotate instead of zoom
           const newT = memo.t + my * 1.5e-3;
 
-          setControlRot({
-            theta: newT,
-            config: active ? springsConfigs.user.rot : springsConfigs.default.rot,
-            immediate: false,
+          updateT({
+            t: newT,
+            down: active,
           });
         } else {
           // set different multipliers based on zoom direction
@@ -206,11 +242,15 @@ export function genericTouchBind({
           //                                   zoom        in           out
           const newZ = memo.zoom * (1 - my * (my < 0 ? zoomMult.in : zoomMult.out));
 
-          setControlZoom({
+          // setControlZoom({
+          //   z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+          //   config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+          //   // reset immediate value from warp function
+          //   immediate: false,
+          // });
+          updateZ({
             z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
-            config: active ? springsConfigs.user.zoom : springsConfigs.default.zoom,
-            // reset immediate value from warp function
-            immediate: false,
+            down: active,
           });
         }
         return memo;
@@ -245,31 +285,38 @@ export function genericTouchBind({
         const relMove: Vector = [px, -py];
         // const relDir: Vector = [dx, -dy];
 
-        const t = theta.getValue();
+        // const t = theta.getValue();
 
-        const vecXY = addV(memo.xy, vRotate(t, relMove)); // add the displacement to the starting position
+        // const vecXY = addV(memo.xy, vRotate(t, relMove)); // add the displacement to the starting position
         // const velXY = vScale(velocity, vNorm(vecXY))
 
-        setControlXY({
-          // add to the current position the relative displacement (relMove), rotated by theta,
-          // to maintain the correct displacement direction (without this it would move as if theta=0)
-          xy: vecXY,
-          // immediate: down, // immediately apply if the gesture is active
-          config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
-          // reset immediate value from warp function
-          immediate: false,
-          //  {
-          //   // velocity also needs to be rotated according to theta
-          //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
-          //   // velocity: vScale(-velocity / realZoom, vRotate(t, relDir)), // set the velocity (gesture momentum)
-          //   // velocity: vMag(vScale(-velocity / realZoom, vRotate(t, relDir))), // set the velocity (gesture momentum)
-          //   // velocity: velocity / screenScaleMultiplier, // set the velocity (gesture momentum)
-          //   // mass: down ? 1 : 5,
-          //   ...xyCtrlSpringConfig,
-          //   tension: down ? xyCtrlSpringConfig.tension : xyCtrlSpringConfig.tension / 2,
-          //   // -@ts-expect-error - decay is undocumented?
-          //   // decay: true,
-          // },
+        // setControlXY({
+        //   // add to the current position the relative displacement (relMove), rotated by theta,
+        //   // to maintain the correct displacement direction (without this it would move as if theta=0)
+        //   xy: vecXY,
+        //   // immediate: down, // immediately apply if the gesture is active
+        //   config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
+        //   // reset immediate value from warp function
+        //   immediate: false,
+        //   //  {
+        //   //   // velocity also needs to be rotated according to theta
+        //   //   // -@ts-expect-error - velocity should be `[number, number]`, but only `number` allowed
+        //   //   // velocity: vScale(-velocity / realZoom, vRotate(t, relDir)), // set the velocity (gesture momentum)
+        //   //   // velocity: vMag(vScale(-velocity / realZoom, vRotate(t, relDir))), // set the velocity (gesture momentum)
+        //   //   // velocity: velocity / screenScaleMultiplier, // set the velocity (gesture momentum)
+        //   //   // mass: down ? 1 : 5,
+        //   //   ...xyCtrlSpringConfig,
+        //   //   tension: down ? xyCtrlSpringConfig.tension : xyCtrlSpringConfig.tension / 2,
+        //   //   // -@ts-expect-error - decay is undocumented?
+        //   //   // decay: true,
+        //   // },
+        // });
+
+        updateXY({
+          xy: memo.xy,
+          theta: theta.getValue(),
+          relMove: relMove,
+          down: down,
         });
 
         // tell the renderer that it's being dragged on
