@@ -29,6 +29,7 @@ import theme from './theme/theme';
 
 function App(): JSX.Element {
   const size = useWindowSize();
+  const DPR = window.devicePixelRatio;
 
   // if app is started with a hash location, assume
   // it should be the starting position
@@ -128,36 +129,43 @@ function App(): JSX.Element {
       <SettingsProvider>
         <Grid container>
           <SettingsContext.Consumer>
-            {({ settings }) => (
-              // JSX expressions must have one parent element
-              <Grid
-                item
-                container
-                direction={
-                  (size.width || 1) < (size.height || 0) ? 'column-reverse' : 'row'
-                }
-                justify="center"
-                className="fullSize"
-                style={{
-                  position: 'absolute',
-                }}
-              >
-                <CoordinateInterface
-                  show={settings.showCoordinates}
-                  mandelbrot={mandelbrotControls}
-                />
-                <Grid item xs className="renderer">
-                  <MandelbrotRenderer controls={mandelbrotControls} {...settings} />
-                </Grid>
-                <Grid item xs className="renderer">
-                  <JuliaRenderer
-                    c={mandelbrotControls.xyCtrl[0].xy}
-                    controls={juliaControls}
-                    {...settings}
+            {({ settings }) => {
+              const currentDPR = settings.useDPR ? DPR : 1;
+              const direction = size.w < size.h ? 'column-reverse' : 'row';
+              return (
+                // JSX expressions must have one parent element
+                <Grid
+                  item
+                  container
+                  direction={direction}
+                  justify="center"
+                  className="fullSize"
+                  style={{
+                    position: 'absolute',
+                  }}
+                >
+                  <CoordinateInterface
+                    show={settings.showCoordinates}
+                    mandelbrot={mandelbrotControls}
                   />
+                  <Grid item xs className="renderer">
+                    <MandelbrotRenderer
+                      controls={mandelbrotControls}
+                      DPR={currentDPR}
+                      {...settings}
+                    />
+                  </Grid>
+                  <Grid item xs className="renderer">
+                    <JuliaRenderer
+                      c={mandelbrotControls.xyCtrl[0].xy}
+                      controls={juliaControls}
+                      DPR={currentDPR}
+                      {...settings}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
+              );
+            }}
           </SettingsContext.Consumer>
 
           <SettingsMenu reset={() => reset()} toggleInfo={() => toggleInfo()} />

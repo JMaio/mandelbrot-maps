@@ -14,13 +14,14 @@ import { RgbFloatColour, ViewerControlSprings, ViewerLocation } from './types';
 import { springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
-export function useWindowSize(): { width?: number; height?: number } {
+export function useWindowSize(): { w: number; h: number } {
   const isClient = typeof window === 'object';
 
   const getSize = useCallback(
     () => ({
-      width: isClient ? window.innerWidth : undefined,
-      height: isClient ? window.innerHeight : undefined,
+      // default to zero, at least it's not undefined
+      w: isClient ? window.innerWidth : 0,
+      h: isClient ? window.innerHeight : 0,
     }),
     [isClient],
   );
@@ -41,7 +42,8 @@ export function useWindowSize(): { width?: number; height?: number } {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [getSize, isClient]); // Empty array ensures that effect is only run on mount and unmount
+  }, [getSize, isClient]);
+  // Empty array ensures that effect is only run on mount and unmount
 
   return windowSize;
 }
@@ -52,6 +54,7 @@ export interface GenericTouchBindParams {
   // screenScaleMultiplier: number;
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  DPR: number;
 }
 
 export interface GenericTouchBindReturn {
@@ -76,6 +79,7 @@ export function genericTouchBind({
   domTarget,
   controls,
   setDragging,
+  DPR,
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
