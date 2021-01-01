@@ -3,7 +3,10 @@
 import { Button, Snackbar } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import React, { FC, useEffect } from 'react';
-import * as serviceWorker from '../serviceWorker';
+import * as serviceWorker from '../serviceWorkerRegistration';
+// service worker config has been removed from CRA / react-scripts 4.0
+// https://github.com/facebook/create-react-app/issues/9776#issuecomment-728945921
+// files sourced from https://github.com/cra-template/pwa/tree/master/packages/cra-template-pwa-typescript
 
 const ServiceWorkerWrapper: FC = () => {
   const [showReload, setShowReload] = React.useState(false);

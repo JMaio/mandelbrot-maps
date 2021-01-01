@@ -11346,6 +11346,7 @@ fsevents@~2.1.2:
     jshint: ^2.10.2
     lint-staged: ^10.5.3
     lodash: ^4.17.19
+    markdown-to-jsx: ^7.1.0
     prettier: ^2.2.1
     pretty-quick: ^3.0.2
     preval.macro: ^5.0.0
@@ -11363,6 +11364,18 @@ fsevents@~2.1.2:
     typescript: ^4.1.2
     vec-la-fp: ^1.9.0
     web-vitals: ^1.0.1
+    workbox-background-sync: ^5.1.3
+    workbox-broadcast-update: ^5.1.3
+    workbox-cacheable-response: ^5.1.3
+    workbox-core: ^5.1.3
+    workbox-expiration: ^5.1.3
+    workbox-google-analytics: ^5.1.3
+    workbox-navigation-preload: ^5.1.3
+    workbox-precaching: ^5.1.3
+    workbox-range-requests: ^5.1.3
+    workbox-routing: ^5.1.3
+    workbox-strategies: ^5.1.3
+    workbox-streams: ^5.1.3
     wouter: ^2.6.0
   languageName: unknown
   linkType: soft
@@ -11401,6 +11414,15 @@ fsevents@~2.1.2:
   dependencies:
     object-visit: ^1.0.0
   checksum: 9e85e6d802183927229d9ad04d70a0e0c7225451994605674d3ed4e4a21f817b4d9aba42a775e98078ffe47cf67df44a50eb07f965f14afead5015c8692503bd
+  languageName: node
+  linkType: hard
+
+"markdown-to-jsx@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "markdown-to-jsx@npm:7.1.0"
+  peerDependencies:
+    react: ">= 0.14.0"
+  checksum: ca3843e5fa6165c390fad808cedb4bffbd2c71b509512d4ba2a8190203c352295d144b6fe395ec678555c862237eaae731371e03ff161efc7aa9dfe545b2bc51
   languageName: node
   linkType: hard
 
@@ -17764,7 +17786,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-background-sync@npm:^5.1.4":
+"workbox-background-sync@npm:^5.1.3, workbox-background-sync@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-background-sync@npm:5.1.4"
   dependencies:
@@ -17773,7 +17795,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-broadcast-update@npm:^5.1.4":
+"workbox-broadcast-update@npm:^5.1.3, workbox-broadcast-update@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-broadcast-update@npm:5.1.4"
   dependencies:
@@ -17826,7 +17848,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-cacheable-response@npm:^5.1.4":
+"workbox-cacheable-response@npm:^5.1.3, workbox-cacheable-response@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-cacheable-response@npm:5.1.4"
   dependencies:
@@ -17835,14 +17857,14 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-core@npm:^5.1.4":
+"workbox-core@npm:^5.1.3, workbox-core@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-core@npm:5.1.4"
   checksum: eaa6021ef9d7f3046619d09904171121286dee8c20299b00f4a06d85e8a549c0345f70cf5a5cb47c270641ffd3e319b40479c7a7bd4025c651f9ee215ee27014
   languageName: node
   linkType: hard
 
-"workbox-expiration@npm:^5.1.4":
+"workbox-expiration@npm:^5.1.3, workbox-expiration@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-expiration@npm:5.1.4"
   dependencies:
@@ -17851,7 +17873,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-google-analytics@npm:^5.1.4":
+"workbox-google-analytics@npm:^5.1.3, workbox-google-analytics@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-google-analytics@npm:5.1.4"
   dependencies:
@@ -17863,7 +17885,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-navigation-preload@npm:^5.1.4":
+"workbox-navigation-preload@npm:^5.1.3, workbox-navigation-preload@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-navigation-preload@npm:5.1.4"
   dependencies:
@@ -17872,7 +17894,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-precaching@npm:^5.1.4":
+"workbox-precaching@npm:^5.1.3, workbox-precaching@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-precaching@npm:5.1.4"
   dependencies:
@@ -17881,7 +17903,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-range-requests@npm:^5.1.4":
+"workbox-range-requests@npm:^5.1.3, workbox-range-requests@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-range-requests@npm:5.1.4"
   dependencies:
@@ -17890,7 +17912,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-routing@npm:^5.1.4":
+"workbox-routing@npm:^5.1.3, workbox-routing@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-routing@npm:5.1.4"
   dependencies:
@@ -17899,7 +17921,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-strategies@npm:^5.1.4":
+"workbox-strategies@npm:^5.1.3, workbox-strategies@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-strategies@npm:5.1.4"
   dependencies:
@@ -17909,7 +17931,7 @@ typescript@^4.1.2:
   languageName: node
   linkType: hard
 
-"workbox-streams@npm:^5.1.4":
+"workbox-streams@npm:^5.1.3, workbox-streams@npm:^5.1.4":
   version: 5.1.4
   resolution: "workbox-streams@npm:5.1.4"
   dependencies:

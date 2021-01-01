@@ -16,6 +16,7 @@
     "gl-matrix": "^3.1.0",
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.19",
+    "markdown-to-jsx": "^7.1.0",
     "react": "^17.0.1",
     "react-colorful": "^4.4.3",
     "react-dom": "^17.0.1",
@@ -26,6 +27,18 @@
     "typeface-roboto": "^1.1.13",
     "typescript": "^4.1.2",
     "vec-la-fp": "^1.9.0",
+    "workbox-background-sync": "^5.1.3",
+    "workbox-broadcast-update": "^5.1.3",
+    "workbox-cacheable-response": "^5.1.3",
+    "workbox-core": "^5.1.3",
+    "workbox-expiration": "^5.1.3",
+    "workbox-google-analytics": "^5.1.3",
+    "workbox-navigation-preload": "^5.1.3",
+    "workbox-precaching": "^5.1.3",
+    "workbox-range-requests": "^5.1.3",
+    "workbox-routing": "^5.1.3",
+    "workbox-strategies": "^5.1.3",
+    "workbox-streams": "^5.1.3",
     "wouter": "^2.6.0"
   },
   "devDependencies": {
@@ -54,8 +67,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "cross-env REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts start",
-    "build": "cross-env REACT_APP_GIT_SHA=$(git rev-parse --short HEAD) react-scripts build",
+    "start": "cross-env REACT_APP_GIT_SHA=$(git describe) react-scripts start",
+    "build": "cross-env REACT_APP_GIT_SHA=$(git describe) react-scripts build",
     "build:ci": "cross-env CI=true yarn build",
     "build:localhost": "cross-env PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",

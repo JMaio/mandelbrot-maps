@@ -2,6 +2,8 @@
 /**
  * JavaScript Client Detection
  * (C) viazenetti GmbH (Christian Ludwig)
+ *
+ * modified by @JMaio
  */
 export default function clientDetect(window) {
   var unknown = '-';
@@ -12,6 +14,14 @@ export default function clientDetect(window) {
     var width = window.screen.width ? window.screen.width : '';
     var height = window.screen.height ? window.screen.height : '';
     screenSize += '' + width + ' x ' + height;
+  }
+
+  // inner window
+  var windowSize = '';
+  if (window.screen.width) {
+    var w = window.innerWidth ? window.innerWidth : '';
+    var h = window.innerHeight ? window.innerHeight : '';
+    windowSize += '' + w + ' x ' + h;
   }
 
   // browser
@@ -204,6 +214,7 @@ export default function clientDetect(window) {
     mobile: mobile,
     platform: navigator.platform,
     screen: screenSize,
+    windowSize: windowSize,
     dpr: +window.devicePixelRatio.toFixed(3),
     gpu: renderer,
     gpuVendor: gpuVendor,

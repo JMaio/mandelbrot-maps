@@ -10,9 +10,9 @@
   //   "source.fixAll.eslint": true
   //   // "source.organizeImports": true,
   // },
-
   // Set the default
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   // Enable per-language
   // "[javascript]": {
   //   "editor.formatOnSave": true
@@ -26,7 +26,6 @@
   // "[jsonc]": {
   //   "editor.formatOnSave": true
   // },
-
   "editor.tabSize": 2,
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "search.exclude": {

@@ -50,7 +50,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
       // https://www.khronos.org/webgl/wiki/HandlingContextLost
       canvasRef.current.addEventListener(
         'webglcontextlost',
-        (event) => {
+        (event: Event) => {
           console.error('WebGL context lost!');
           event.preventDefault();
           // trigger an error alert in future?
@@ -59,7 +59,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
       );
       canvasRef.current.addEventListener(
         'webglcontextrestored',
-        (event) => {
+        (event: Event) => {
           console.error('WebGL context restored! Setting up...');
           setupCanvas();
         },
