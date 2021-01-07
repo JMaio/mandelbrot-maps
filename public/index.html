@@ -7,7 +7,17 @@
 
     <link rel="shortcut icon" href="%PUBLIC_URL%/logo-192.png" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon-192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- 
+      https://www.w3.org/TR/appmanifest
+      > NOTE: manifest.webmanifest or manifest.json?
+      > The official file extension for the manifest is .webmanifest. 
+      > Some web servers recognize this extension and transfer the file using the 
+      > standardized application manifest MIME type (application/manifest+json). 
+      > Developers can also choose a different extension (e.g. .json) or 
+      > none at all (e.g. /api/GetManifest), but are encouraged to transfer 
+      > the manifest using the application/manifest+json MIME type, although 
+      > any JSON MIME type is ok. -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0e4273" />
 
