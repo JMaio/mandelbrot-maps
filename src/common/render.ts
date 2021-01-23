@@ -58,3 +58,8 @@ export interface MinimapViewerProps extends WebGLCanvasProps {
   //   fragShader: any;
   //   glRef: React.MutableRefObject<HTMLCanvasElement>;
 }
+
+export interface ViewChangerProps {
+  vertical: boolean;
+  changeFunc: React.Dispatch<React.SetStateAction<[boolean, boolean]>>;
+}

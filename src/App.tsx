@@ -121,7 +121,21 @@ function App(): JSX.Element {
 
   const [showInfo, setShowInfo] = useState(false);
 
-  const toggleInfo = () => setShowInfo(!showInfo);
+  const toggleInfo = () => setShowInfo((i) => !i);
+
+  // [showMandelbrot, showJulia]
+  const [[showMandelbrot, showJulia], setViewerState] = useState<[boolean, boolean]>([
+    true,
+    true,
+  ]);
+  // const [showMandelbrot, setShowMandelbrot] = useState(true);
+  // const [showJulia, setShowJulia] = useState(true);
+  // const [showMandelbrot, showJulia] = viewerState;
+
+  // Wrap the Typography component with animated first
+  // const AnimatedTypography = animated(Typography)
+  // <AnimatedTypography></AnimatedTypography>
+  // const AnimatedGrid = animated(Grid);
 
   return (
     <ThemeProvider theme={theme}>
@@ -131,13 +145,14 @@ function App(): JSX.Element {
           <SettingsContext.Consumer>
             {({ settings }) => {
               const currentDPR = settings.useDPR ? DPR : 1;
-              const direction = size.w < size.h ? 'column-reverse' : 'row';
+              const vertical = size.w < size.h;
               return (
                 // JSX expressions must have one parent element
                 <Grid
                   item
                   container
-                  direction={direction}
+                  direction={vertical ? 'column-reverse' : 'row'}
+                  alignItems={vertical ? 'flex-end' : 'flex-start'}
                   justify="center"
                   className="fullSize"
                   style={{
@@ -148,14 +163,35 @@ function App(): JSX.Element {
                     show={settings.showCoordinates}
                     mandelbrot={mandelbrotControls}
                   />
-                  <Grid item xs className="renderer">
+                  <Grid
+                    item
+                    xs
+                    className="renderer"
+                    style={{
+                      // flex-grow takes up more space in a ratio format
+                      flexGrow: showMandelbrot ? 1 : 0, // percentFlex.m.interpolate((x) => x),
+                    }}
+                  >
                     <MandelbrotRenderer
                       controls={mandelbrotControls}
                       DPR={currentDPR}
                       {...settings}
                     />
                   </Grid>
-                  <Grid item xs className="renderer">
+
+                  <Grid item style={{ width: 0, height: 0, zIndex: 1 }}>
+                    <ViewChanger vertical={vertical} changeFunc={setViewerState} />
+                  </Grid>
+
+                  <Grid
+                    item
+                    xs
+                    className="renderer"
+                    style={{
+                      // flex-grow takes up more space in a ratio format
+                      flexGrow: showJulia ? 1 : 0, // percentFlex.j.interpolate((x) => x),
+                    }}
+                  >
                     <JuliaRenderer
                       c={mandelbrotControls.xyCtrl[0].xy}
                       controls={juliaControls}
