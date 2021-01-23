@@ -22,6 +22,7 @@ import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/render/MandelbrotRenderer';
+import ViewChanger from './components/render/ViewChanger';
 import ServiceWorkerWrapper from './components/ServiceWorkerWrapper';
 import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
 import SettingsMenu from './components/settings/SettingsMenu';
