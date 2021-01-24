@@ -130,3 +130,21 @@ export const useHashLocation = (): ReactUseStateType<string> => {
 
   return [loc, navigate];
 };
+
+export const usePageLoadListener = (): boolean => {
+  const [pageLoaded, setPageLoaded] = useState(false);
+  // listen to page loading events, to ease navigation
+
+  // update "pageLoaded" callback
+  const pageLoadHander = () => {
+    console.log('Page loaded callback fired.');
+    setPageLoaded(true);
+  };
+
+  useEffect(() => {
+    window.addEventListener('load', pageLoadHander);
+    return () => window.removeEventListener('load', pageLoadHander);
+  }, []);
+
+  return pageLoaded;
+};

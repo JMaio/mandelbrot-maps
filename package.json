@@ -13,6 +13,8 @@
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "bezier-easing": "^2.1.0",
+    "d3-ease": "^2.0.0",
     "gl-matrix": "^3.1.0",
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.19",
@@ -44,6 +46,7 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@types/d3-ease": "^2",
     "@types/preval.macro": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "4.9.0",
     "@typescript-eslint/parser": "4.9.0",

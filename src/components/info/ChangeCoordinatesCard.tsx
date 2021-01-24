@@ -64,7 +64,9 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
         </Grid>
         <Button
           style={{ marginTop: 12 }}
-          onClick={() => warpToPoint(props.mandelbrot, { xy: xy, z: zoom, theta: theta })}
+          onClick={() =>
+            warpToPoint(props.mandelbrot, { xy: xy, z: zoom, theta: theta }, {})
+          }
         >
           Go
         </Button>

@@ -2681,6 +2681,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/d3-ease@npm:^2":
+  version: 2.0.0
+  resolution: "@types/d3-ease@npm:2.0.0"
+  checksum: 364648482eedddf5c658b747c5f275fb13be0fc9e32d92597bc2eab2c2bcd42c951f1b8d7496544fd27235fb2103c043724fd65206662648edf6eba74a1e7c02
+  languageName: node
+  linkType: hard
+
 "@types/eslint@npm:^7.2.4":
   version: 7.2.6
   resolution: "@types/eslint@npm:7.2.6"
@@ -4316,6 +4323,13 @@ __metadata:
   dependencies:
     tweetnacl: ^0.14.3
   checksum: 3f57eb99bbc02352f68ff31e446997f4d21cc9a5e5286449dc1fe0116ec5dac5a4aa538967d45714fa9320312d2be8d16126f2d357da1dd40a3d546b96e097ed
+  languageName: node
+  linkType: hard
+
+"bezier-easing@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "bezier-easing@npm:2.1.0"
+  checksum: 6ee6bc647109e1dc86533eef31c673652cc97188590ff8ee2a4c0596d275d9e54383a3ea7c2b51500e9b2263718e252f296dbce050df3df888025eca4b453be8
   languageName: node
   linkType: hard
 
@@ -6288,6 +6302,13 @@ __metadata:
   version: 1.0.1
   resolution: "cyclist@npm:1.0.1"
   checksum: 74bc0a48c37bed8a430f103d0a880902768b7e3bcc0f9e098c4bd9630438c6b053b88e33c127e41316bb2da8d642a937015961a6cd563641ad2a5798dfecadd9
+  languageName: node
+  linkType: hard
+
+"d3-ease@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "d3-ease@npm:2.0.0"
+  checksum: 770df967fc54ef9c958966538688eab2c104188eb5a851072fc8e51e3191aa835f922f3249e8a11ecca60f35206801e5b429c8a0edd82b27323e69f821ba7d3f
   languageName: node
   linkType: hard
 
@@ -11324,6 +11345,7 @@ fsevents@~2.1.2:
     "@material-ui/icons": ^4.11.2
     "@material-ui/lab": ^4.0.0-alpha.57
     "@mdi/js": ^5.6.55
+    "@types/d3-ease": ^2
     "@types/jest": ^26.0.16
     "@types/lodash": ^4.14.165
     "@types/node": ^14.14.10
@@ -11332,7 +11354,9 @@ fsevents@~2.1.2:
     "@types/react-dom": ^17.0.0
     "@typescript-eslint/eslint-plugin": 4.9.0
     "@typescript-eslint/parser": 4.9.0
+    bezier-easing: ^2.1.0
     cross-env: ^7.0.3
+    d3-ease: ^2.0.0
     eslint-config-prettier: ^6.11.0
     eslint-config-react-app: ^6.0.0
     eslint-plugin-prettier: ^3.2.0

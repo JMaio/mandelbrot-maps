@@ -3,6 +3,7 @@ import { useGesture } from 'react-use-gesture';
 import { JuliaRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
 import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import { defaultJuliaViewerParams } from '../../common/values';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
@@ -44,6 +45,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     controls: props.controls,
     setDragging: setDragging,
     DPR: props.DPR,
+    defaultViewerParams: defaultJuliaViewerParams,
   });
 
   useGesture(gtb.handlers, gtb.config);

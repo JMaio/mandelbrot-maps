@@ -6,6 +6,7 @@ import {
   currentLocation,
   useHashLocation,
   useHashNavigator,
+  usePageLoadListener,
   ViewerURLManager,
 } from './common/routing';
 import {
@@ -41,6 +42,9 @@ function App(): JSX.Element {
   // non-reloading hash update
   const updateBrowserHash = useHashNavigator();
 
+  // listen to page loading to ease initial animation
+  const pageLoaded = usePageLoadListener();
+
   const urlManager = useMemo(() => new ViewerURLManager(), []);
 
   // generic callback
@@ -58,6 +62,7 @@ function App(): JSX.Element {
   const updateM = (v: Partial<ViewerLocation>) => updateHash('m', v);
   const updateJ = (v: Partial<ViewerLocation>) => updateHash('j', v);
 
+  // start viewers at "viewer origin" to animate into default locations
   const mandelbrotControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
       xy: viewerOrigin.xy,
@@ -67,8 +72,6 @@ function App(): JSX.Element {
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
       z: viewerOrigin.z,
-      minZoom: 0.5,
-      maxZoom: 100000,
       config: springsConfigs.default.zoom,
       onRest: updateM,
     })),
@@ -89,8 +92,6 @@ function App(): JSX.Element {
 
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
       z: viewerOrigin.z,
-      minZoom: 0.5,
-      maxZoom: 2000,
       config: springsConfigs.default.zoom,
       onRest: updateJ,
     })),
@@ -108,16 +109,20 @@ function App(): JSX.Element {
     urlManager.updateFromURL();
     console.log(`Warping to requested url => ${currentLocation()}`);
 
+    const timings = {
+      // delay the start if the page has not yet loaded ("initial" load)
+      delayStart: !pageLoaded,
+    };
     // warp to the newly parsed locations
-    warpToPoint(mandelbrotControls, urlManager.vs['m'].v);
-    warpToPoint(juliaControls, urlManager.vs['j'].v);
+    warpToPoint(mandelbrotControls, urlManager.vs['m'].v, timings);
+    warpToPoint(juliaControls, urlManager.vs['j'].v, timings);
     // this update process should only trigger when the hash location changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc]);
 
   const reset = () => {
-    warpToPoint(mandelbrotControls, viewerOrigin);
-    warpToPoint(juliaControls, viewerOrigin);
+    warpToPoint(mandelbrotControls, viewerOrigin, {});
+    warpToPoint(juliaControls, viewerOrigin, {});
   };
 
   const [showInfo, setShowInfo] = useState(false);

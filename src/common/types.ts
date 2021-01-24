@@ -36,8 +36,8 @@ export interface ViewerXYControl extends SpringControl {
 export interface ViewerZoomControl extends SpringControl {
   z: ZoomType;
   // last_pointer_dist: 0,
-  minZoom: ZoomType;
-  maxZoom: ZoomType;
+  // minZoom: ZoomType;
+  // maxZoom: ZoomType;
 }
 
 export interface ViewerRotationControl extends SpringControl {
@@ -50,6 +50,14 @@ export interface ViewerControls {
   rot: ViewerRotationControl;
 }
 
+/** A set of default viewer parameters, like for specifying boundaries */
+export interface DefaultViewerParams {
+  zoom: {
+    min: number;
+    max: number;
+  };
+}
+
 // AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, CSSProperties>, "xy">>, SetUpdateFn<OverwriteKeys<ViewerXYControl, CSSProperties>>]
 export type SpringAnimatedValueOverwrite<T> = OverwriteKeys<T, CSSProperties>;
 export type SpringAnimatedValueWithSetter<T> = [
@@ -59,9 +67,7 @@ export type SpringAnimatedValueWithSetter<T> = [
 
 export type ViewerXYControlSpring = SpringAnimatedValueWithSetter<ViewerXYControl>;
 export type ViewerZoomControlSpring = SpringAnimatedValueWithSetter<ViewerZoomControl>;
-export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<
-  ViewerRotationControl
->;
+export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<ViewerRotationControl>;
 
 export interface ViewerControlSprings {
   xyCtrl: ViewerXYControlSpring;

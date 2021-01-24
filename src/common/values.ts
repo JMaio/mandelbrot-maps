@@ -1,5 +1,6 @@
 import { RgbColor } from 'react-colorful';
-import { ViewerLocation } from './types';
+import { DefaultViewerParams, ViewerLocation } from './types';
+import BezierEasing from 'bezier-easing';
 
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
@@ -30,6 +31,20 @@ export const defaultJuliaStart: ViewerLocation = {
 export const defaultViewerStart: { [k: string]: ViewerLocation } = {
   m: defaultMandelbrotStart,
   j: defaultJuliaStart,
+};
+
+// could specify radial boundary in future?
+export const defaultMandelbrotViewerParams: DefaultViewerParams = {
+  zoom: {
+    min: 0.5,
+    max: 100_000,
+  },
+};
+export const defaultJuliaViewerParams: DefaultViewerParams = {
+  zoom: {
+    min: 0.5,
+    max: 100_000,
+  },
 };
 
 export const springsConfigs = {
@@ -72,3 +87,27 @@ export const toFloatDisplayDefault = (n: number): number =>
 
 export const toFloatDisplayShort = (n: number): number =>
   toFloatDisplay(n, shortFloatFixedPrecision);
+
+export const MaterialStandardEasing = BezierEasing(0.4, 0.0, 0.2, 1);
+
+export const MandelbrotMapsEasing = {
+  material: MaterialStandardEasing,
+  slowInMedOut: BezierEasing(0.8, 0, 0.7, 1),
+  slowInFastOut: BezierEasing(1, 0, 0.9, 1),
+  slowInVeryFastOut: BezierEasing(1, 0, 1, 0.2),
+  slowInInstantOut: BezierEasing(1, 0, 1, 0.01),
+  slowInGradualOut: BezierEasing(1, 0, 0.8, 0),
+  instantInSlowOut: BezierEasing(0, 1, 0.01, 1),
+
+  /** scale: should be in range [0, 1] */
+  slowInVariableOut: (scale: number) => {
+    // const diff = scale * 0.6;
+    console.log(scale);
+    // console.log([0.4 + scale * 0.55, 0.0, 0.2 + scale * 0.75, 1 - scale * 0.99]);
+    // return BezierEasing(0.4 + scale * 0.55, 0.0, 0.2 + scale * 0.75, 1 - scale * 0.99);
+    console.log([0.4 + scale * 0.6, 0, 0.2 + scale * 0.55, 1 - scale * 0.99]);
+    return BezierEasing(0.4 + scale * 0.6, 0, 0.2 + scale * 0.55, 1 - scale * 0.99);
+  },
+
+  // circle: BezierEasing(1, 0.0, 1, 1),
+};

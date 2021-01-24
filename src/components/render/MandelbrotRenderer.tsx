@@ -3,6 +3,7 @@ import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
 import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import { defaultMandelbrotViewerParams } from '../../common/values';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
@@ -72,6 +73,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
     // gl: gl,
     setDragging: setDragging,
     DPR: props.DPR,
+    defaultViewerParams: defaultMandelbrotViewerParams,
   });
 
   // https://use-gesture.netlify.app/docs/changelog/#breaking

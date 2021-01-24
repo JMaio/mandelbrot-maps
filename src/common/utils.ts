@@ -1,3 +1,4 @@
+import { easeExpOut } from 'd3-ease';
 import _ from 'lodash';
 import { RefObject, useCallback, useEffect, useState } from 'react';
 import { RgbColor } from 'react-colorful';
@@ -9,9 +10,14 @@ import {
   UseGestureConfig,
   Vector2,
 } from 'react-use-gesture/dist/types';
-import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { RgbFloatColour, ViewerControlSprings, ViewerLocation } from './types';
-import { springsConfigs } from './values';
+import { Vector, vFastDist, vRotate, vScale } from 'vec-la-fp';
+import {
+  DefaultViewerParams,
+  RgbFloatColour,
+  ViewerControlSprings,
+  ViewerLocation,
+} from './types';
+import { MandelbrotMapsEasing, MaterialStandardEasing, springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { w: number; h: number } {
@@ -55,6 +61,7 @@ export interface GenericTouchBindParams {
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   DPR: number;
+  defaultViewerParams: DefaultViewerParams;
 }
 
 export interface GenericTouchBindReturn {
@@ -80,9 +87,10 @@ export function genericTouchBind({
   controls,
   setDragging,
   DPR,
+  defaultViewerParams: bounds,
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
-  const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
+  const [{ z }, setControlZoom] = controls.zoomCtrl;
   const [{ theta }, setControlRot] = controls.rotCtrl;
 
   const zoomMult = { in: 3e-3, out: 1e-3 };
@@ -182,7 +190,7 @@ export function genericTouchBind({
         //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
         // );
         // console.log(newZ);
-        const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
+        const newZclamp = _.clamp(newZ, bounds.zoom.min, bounds.zoom.max);
 
         const realZoom = getRealZoom(newZclamp);
 
@@ -249,7 +257,7 @@ export function genericTouchBind({
           //   immediate: false,
           // });
           updateZ({
-            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            z: _.clamp(newZ, bounds.zoom.min, bounds.zoom.max),
             down: active,
           });
         }
@@ -343,35 +351,164 @@ export function genericTouchBind({
  * @param controls The controller to be animated
  * @param location The (partial) viewer location to warp to: xy, zoom, theta
  * @param immediate Should the update happen immediately? (Useful for testing)
+ * This function is "controlled" by default. It animates without
+ * spring physics, instead using a duration and an easing function.
  */
 export const warpToPoint = (
-  controls: ViewerControlSprings,
+  // the current positions and controls
+  { xyCtrl: [XY, setXY], zoomCtrl: [Z, setZ], rotCtrl: [T, setT] }: ViewerControlSprings,
+  // the desired "new" positions
   { xy, z, theta }: Partial<ViewerLocation>,
-  immediate = false,
+  {
+    // timings
+    immediate = false,
+    delayStart = false, // if this is an initial update, delay the start for clarity
+  }: { immediate?: boolean; delayStart?: boolean },
 ): void => {
+  // animation time
+  const defaultDuration = 1250;
+  // ms delay until the first animation
+  const delayInterval = delayStart ? 500 : 0;
+
+  // assume we will zoom in
+  let animateIn = true;
+
+  // scale zoom usage by displacement:
+  // -- low displacement => low zoom
+  // -- high displacement => zoom out, zoom back in
+
+  const none = () => {
+    // no animation
+  };
+  // determine which animations should be performed
+  // have the animation function stored here
+  // if it's never set, then it must not have been called
+  const animations = {
+    pan: none,
+    zoom: none,
+    rotate: none,
+  };
+
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
   if (xy !== undefined) {
-    controls.xyCtrl[1]({
-      // use screen scale multiplier for a simpler API
-      xy: xy,
-      config: springsConfigs.default.xy,
-      immediate: immediate,
-    });
+    const oldXY = XY.xy.getValue();
+    // distance between the two vectors determines the duration
+    const dXY = vFastDist(xy, oldXY);
+    console.log(`dXY: ${dXY}`);
+
+    animations.pan = () =>
+      setXY({
+        // use screen scale multiplier for a simpler API
+        xy: xy,
+        config: {
+          // ...springsConfigs.default.zoom,
+          duration: (0.1 + dXY) * defaultDuration,
+          easing: MaterialStandardEasing,
+        },
+        immediate: immediate,
+        // delay: delayInterval,
+      });
   }
-  if (z !== undefined) {
-    controls.zoomCtrl[1]({
-      z: z,
-      config: springsConfigs.default.zoom,
-      immediate: immediate,
-    });
-  }
+  // if (z !== undefined) {
+  //   animations.zoom();
+
+  //   // setZ({
+  //   //   z: z,
+  //   //   config: {
+  //   //     // ...springsConfigs.default.zoom,
+  //   //     duration: defaultDuration,
+  //   //     easing: MaterialStandardEasing,
+  //   //   },
+  //   //   // want this animation to be reasonably quick, but not too quick
+  //   //   // setting a time might make it too slow in some cases
+  //   //   // can we set a max velocity?
+  //   //   immediate: immediate,
+  //   //   delay: defaultDuration + delayInterval,
+  //   // });
+  // }
   if (theta !== undefined) {
-    controls.rotCtrl[1]({
-      theta: theta,
-      config: springsConfigs.default.rot,
-      immediate: immediate,
-    });
+    animations.rotate = () =>
+      setT({
+        theta: theta,
+        config: {
+          // ...springsConfigs.default.rot,
+          easing: MaterialStandardEasing,
+          duration: defaultDuration,
+        },
+        immediate: immediate,
+        // delay: delayInterval,
+      });
   }
+
+  // determine the order of animations
+  if (z !== undefined) {
+    const oldZ = Z.z.getValue();
+    // get a value greater than 1
+    const zoomIn = z >= oldZ;
+    console.log(oldZ, z);
+
+    animateIn = zoomIn;
+    // dz ~> [1, 100_001]
+    const dZ = 1 + Math.abs(oldZ - z);
+    // const dZ = 1 + (zoomIn ? newZ / z : z / newZ);
+
+    // this is hyperbolic so may need adjustment other than nth-roots
+    // scale duration based on the delta
+    // duration = dz ^ (1/5) * N ~> [1, 10]
+    // duration = dz ^ (1/6) * N ~> [1, 6.81292]
+    // duration = dz ^ (1/7) * N ~> [1, 5.17947]
+    // duration = dz ^ (1/8) * N ~> [1, 4.21696]
+    const expo = 7;
+    const speedModifier = Math.pow(dZ, 1 / expo);
+    const duration = speedModifier * defaultDuration;
+
+    console.log(dZ, duration);
+
+    // set a maximum zoom rate, by
+    // - calculating zoom difference
+    // - setting a duration based on this difference
+    animations.zoom = () =>
+      setZ({
+        z: z,
+        config: {
+          // ...springsConfigs.default.zoom,
+          duration: duration,
+          easing: zoomIn
+            ? // ? MandelbrotMapsEasing.instantInSlowOut
+              MandelbrotMapsEasing.slowInVariableOut(
+                (speedModifier - 1) / (100_000 ** (1 / expo) - 1),
+              )
+            : easeExpOut,
+        },
+        // want this animation to be reasonably quick, but not too quick
+        // setting a time might make it too slow in some cases
+        // can we set a max velocity?
+        immediate: immediate,
+        // delay: defaultDuration + delayInterval,
+      });
+  }
+
+  // // for zooming in, *pan* first
+  // const animateIn = [animations.pan, animations.zoom, animations.rotate];
+  // // for zooming out, *zoom* first
+  // const animateOut = [animations.zoom, animations.pan, animations.rotate];
+  // // default to animate in (if zoom undefined)
+  const animationOrder = animateIn
+    ? [animations.pan, animations.zoom, animations.rotate]
+    : [animations.zoom, animations.pan, animations.rotate];
+
+  // animations.zoom();
+  // run the animations
+  // Object.values(animations).map((f) => f());
+  // let
+  // if (animateIn) {
+
+  // }
+  // animationOrder.map((f) => console.log(f));
+  console.log(animateIn ? '[pan, zoom, rotate]' : '[zoom, pan, rotate]');
+  setTimeout(() => {
+    animationOrder.map((f) => f());
+  }, delayInterval);
 };
 
 // no longer using screenScaleMultiplier
