@@ -1,7 +1,7 @@
 import {
   Box,
   Divider,
-  Link,
+  Grid,
   Paper,
   Snackbar,
   Table,
@@ -21,6 +21,7 @@ import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/s
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import LaunchIcon from '@material-ui/icons/Launch';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 // for evaluating build time
@@ -47,7 +48,7 @@ const styles = (theme: Theme) =>
       marginTop: 'auto',
       marginBottom: 'auto',
       marginRight: 8,
-      height: 50,
+      height: 48,
     },
     closeButton: {
       // position: 'absolute',
@@ -152,6 +153,26 @@ export default function InfoDialog({
         Mandelbrot Maps
       </DialogTitle>
       <DialogContent dividers style={{ maxWidth: 700 }}>
+        <Grid
+          container
+          justify="center"
+          style={{
+            marginBottom: 16,
+          }}
+        >
+          <Grid item>
+            <Button
+              endIcon={<GitHubIcon />}
+              startIcon={<LaunchIcon />}
+              href="https://github.com/JMaio/mandelbrot-maps"
+              target="_blank"
+              rel="noopener"
+            >
+              View on GitHub
+            </Button>
+          </Grid>
+        </Grid>
+
         <DialogInfoMarkdown />
 
         <DialogDivider />
@@ -232,16 +253,16 @@ export default function InfoDialog({
             Device properties copied!
           </Alert>
         </Snackbar>
-        <Link
+        <Button
+          color="primary"
+          variant="outlined"
+          startIcon={<LaunchIcon />}
           href={survey.link}
           target="_blank"
           rel="noopener"
-          style={{ textDecoration: 'none' }}
         >
-          <Button autoFocus color="primary" variant="outlined" startIcon={<LaunchIcon />}>
-            Feedback
-          </Button>
-        </Link>
+          Feedback
+        </Button>
       </DialogActions>
     </Dialog>
   );
