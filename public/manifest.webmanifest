@@ -6,7 +6,14 @@
     {
       "src": "logo-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "logo-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any"
     },
     {
       "src": "logo-512.png",
