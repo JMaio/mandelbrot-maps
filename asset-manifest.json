@@ -1,24 +1,24 @@
 {
   "files": {
     "main.css": "/mandelbrot-maps/static/css/main.dc7cdae1.chunk.css",
-    "main.js": "/mandelbrot-maps/static/js/main.cf435719.chunk.js",
-    "main.js.map": "/mandelbrot-maps/static/js/main.cf435719.chunk.js.map",
+    "main.js": "/mandelbrot-maps/static/js/main.aedbb108.chunk.js",
+    "main.js.map": "/mandelbrot-maps/static/js/main.aedbb108.chunk.js.map",
     "runtime-main.js": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js",
     "runtime-main.js.map": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js.map",
-    "static/js/2.b2d13044.chunk.js": "/mandelbrot-maps/static/js/2.b2d13044.chunk.js",
-    "static/js/2.b2d13044.chunk.js.map": "/mandelbrot-maps/static/js/2.b2d13044.chunk.js.map",
+    "static/js/2.b937d4eb.chunk.js": "/mandelbrot-maps/static/js/2.b937d4eb.chunk.js",
+    "static/js/2.b937d4eb.chunk.js.map": "/mandelbrot-maps/static/js/2.b937d4eb.chunk.js.map",
     "index.html": "/mandelbrot-maps/index.html",
     "service-worker.js": "/mandelbrot-maps/service-worker.js",
     "service-worker.js.map": "/mandelbrot-maps/service-worker.js.map",
     "static/css/main.dc7cdae1.chunk.css.map": "/mandelbrot-maps/static/css/main.dc7cdae1.chunk.css.map",
-    "static/js/2.b2d13044.chunk.js.LICENSE.txt": "/mandelbrot-maps/static/js/2.b2d13044.chunk.js.LICENSE.txt",
+    "static/js/2.b937d4eb.chunk.js.LICENSE.txt": "/mandelbrot-maps/static/js/2.b937d4eb.chunk.js.LICENSE.txt",
     "static/media/info.5e092896.md": "/mandelbrot-maps/static/media/info.5e092896.md",
     "static/media/logo-192.6d04f0d3.png": "/mandelbrot-maps/static/media/logo-192.6d04f0d3.png"
   },
   "entrypoints": [
     "static/js/runtime-main.b9c7d549.js",
-    "static/js/2.b2d13044.chunk.js",
+    "static/js/2.b937d4eb.chunk.js",
     "static/css/main.dc7cdae1.chunk.css",
-    "static/js/main.cf435719.chunk.js"
+    "static/js/main.aedbb108.chunk.js"
   ]
 }
