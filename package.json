@@ -67,7 +67,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "cross-env REACT_APP_GIT_SHA=$(123) react-scripts start",
+    "start": "cross-env REACT_APP_GIT_SHA=$(git describe) react-scripts start",
     "build": "cross-env REACT_APP_GIT_SHA=$(git describe) react-scripts build",
     "build:ci": "cross-env CI=true yarn build",
     "build:localhost": "cross-env PUBLIC_URL='.' react-scripts build",
