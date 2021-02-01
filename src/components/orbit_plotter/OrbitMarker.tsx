@@ -1,8 +1,6 @@
 import React from 'react';
-import { Tooltip } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { ViewerControlSprings } from '../../common/types';
-import { formatComplexNumber } from '../../common/complex_number_helper';
 import { animated } from 'react-spring';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { XYType } from '../../common/types';
@@ -29,10 +27,9 @@ const complexToScreenCoordinate = (
 };
 
 type OrbitMarkerProps = {
-  show: boolean;
-  mapWidth: number;
-  mapHeight: number;
-  iterate: XYType;
+  rendererWidth: number;
+  rendererHeight: number;
+  point: XYType;
   mandelbrotControl: ViewerControlSprings;
   color: string;
 };
@@ -41,7 +38,7 @@ const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
   const [{ z }] = props.mandelbrotControl.zoomCtrl;
   const [{ theta }] = props.mandelbrotControl.rotCtrl;
 
-  const ASPECT_RATIO = props.mapWidth / props.mapHeight;
+  const ASPECT_RATIO = props.rendererWidth / props.rendererHeight;
 
   return (
     <animated.div
@@ -58,8 +55,8 @@ const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
                 -theta.getValue(),
                 z.getValue(),
                 ASPECT_RATIO,
-                props.mapHeight,
-                props.iterate,
+                props.rendererHeight,
+                props.point,
               )[0] - MARKER_SIZE
             );
           },
@@ -74,19 +71,17 @@ const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
                 -theta.getValue(),
                 z.getValue(),
                 ASPECT_RATIO,
-                props.mapHeight,
-                props.iterate,
+                props.rendererHeight,
+                props.point,
               )[1] - MARKER_SIZE
             );
           },
         ),
       }}
     >
-      <Tooltip title={`${formatComplexNumber(props.iterate)}`} placement="top">
-        <IconButton style={{ color: props.color }}>
-          <FiberManualRecordIcon style={{ width: MARKER_SIZE, height: MARKER_SIZE }} />
-        </IconButton>
-      </Tooltip>
+      <IconButton style={{ color: props.color }}>
+        <FiberManualRecordIcon style={{ width: MARKER_SIZE, height: MARKER_SIZE }} />
+      </IconButton>
     </animated.div>
   );
 };
