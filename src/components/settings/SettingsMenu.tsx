@@ -73,6 +73,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
       color="secondary"
       aria-controls="reset"
       onClick={() => {
+        // eslint-disable-next-line react/prop-types
         props.reset();
       }}
     >
@@ -85,6 +86,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
       color="primary"
       aria-controls="about"
       onClick={() => {
+        // eslint-disable-next-line react/prop-types
         props.toggleInfo();
         setAnchorEl(undefined);
       }}
