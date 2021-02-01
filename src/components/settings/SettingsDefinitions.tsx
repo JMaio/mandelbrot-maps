@@ -73,6 +73,11 @@ export const settingsWidgets = (
     checked: settings.showFPS,
     control: <Switch />,
   },
+  showOrbit: {
+    label: `Show orbit`,
+    checked: settings.showOrbit,
+    control: <Switch />,
+  },
   colour: {
     label: null,
     style: {
@@ -100,6 +105,7 @@ export const getSettingsWidgetsGrouping = (
       showMinimap: settingsWidgets.showMinimap,
       showCrosshair: settingsWidgets.showCrosshair,
       showCoordinates: settingsWidgets.showCoordinates,
+      showOrbit: settingsWidgets.showOrbit,
     },
     // ],
   },

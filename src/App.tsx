@@ -26,6 +26,7 @@ import ServiceWorkerWrapper from './components/ServiceWorkerWrapper';
 import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
 import SettingsMenu from './components/settings/SettingsMenu';
 import theme from './theme/theme';
+import OrbitPlotter from './components/orbit_plotter/OrbitPlotter';
 
 function App(): JSX.Element {
   const size = useWindowSize();
@@ -145,6 +146,20 @@ function App(): JSX.Element {
                 <CoordinateInterface
                   show={settings.showCoordinates}
                   mandelbrot={mandelbrotControls}
+                />
+                <OrbitPlotter
+                  show={settings.showOrbit}
+                  mandelbrot={mandelbrotControls}
+                  rendererWidth={
+                    (size.width || 1) < (size.height || 0)
+                      ? size.width || 1
+                      : (size.width || 1) / 2
+                  }
+                  rendererHeight={
+                    (size.width || 1) < (size.height || 0)
+                      ? (size.height || 0) / 2
+                      : size.height || 0
+                  }
                 />
                 <Grid item xs className="renderer">
                   <MandelbrotRenderer controls={mandelbrotControls} {...settings} />

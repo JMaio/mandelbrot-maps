@@ -9,6 +9,7 @@ export type settingsDefinitionsType = {
   showCrosshair: boolean;
   showCoordinates: boolean;
   showFPS: boolean;
+  showOrbit: boolean;
   maxI: number;
   useDPR: boolean;
   useAA: boolean;
@@ -21,6 +22,7 @@ export const defaultSettings = {
   showCoordinates: false,
   maxI: 250,
   showFPS: false,
+  showOrbit: false,
   useDPR: false,
   useAA: false,
   colour: defaultShadingColour,

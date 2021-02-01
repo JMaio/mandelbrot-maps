@@ -12,9 +12,10 @@ type OrbitManagerState = {
 };
 
 type OrbitPlotterProps = {
+  show: boolean;
   mandelbrot: ViewerControlSprings;
-  mapWidth: number;
-  mapHeight: number;
+  rendererWidth: number;
+  rendererHeight: number;
 };
 
 const withinBoundBox = (
@@ -42,7 +43,7 @@ const COLOUR_PREPERIODIC = '#EEEE00';
 
 export class OrbitPlotter extends Component<OrbitPlotterProps, OrbitManagerState> {
   tick() {
-    const ASPECT_RATIO = this.props.mapWidth / this.props.mapHeight;
+    const ASPECT_RATIO = this.props.rendererWidth / this.props.rendererHeight;
     const orbitInformation = orbitList(
       this.props.mandelbrot.xyCtrl[0].xy.getValue(),
       this.props.mandelbrot.xyCtrl[0].xy.getValue(),
@@ -71,8 +72,8 @@ export class OrbitPlotter extends Component<OrbitPlotterProps, OrbitManagerState
           <OrbitMarker
             key={p.toString()}
             iterate={p}
-            mapWidth={this.props.mapWidth}
-            mapHeight={this.props.mapHeight}
+            mapWidth={this.props.rendererWidth}
+            mapHeight={this.props.rendererHeight}
             show={true}
             mandelbrotControl={this.props.mandelbrot}
             color={color}
@@ -93,8 +94,9 @@ export class OrbitPlotter extends Component<OrbitPlotterProps, OrbitManagerState
   render() {
     return (
       <>
-        {this.state.orbitPoints}
+        {this.props.show ? this.state.orbitPoints : null}
         <OrbitCard
+          show={this.props.show}
           currentPoint={this.state.currentPoint}
           prePeriod={this.state.prePeriod}
           period={this.state.period}
