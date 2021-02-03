@@ -38,9 +38,6 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
         onClick={onClick}
         className={classes.root}
       >
-        {/* <animated.div */}
-        {/* // 
-      // > */}
         <WebGLCanvas
           id={props.id}
           mini={true}
@@ -54,7 +51,6 @@ const MinimapViewer = (props: MinimapViewerProps): JSX.Element => {
             cursor: 'pointer',
           }}
         />
-        {/* </animated.div> */}
       </ButtonBase>
     </Grow>
   );

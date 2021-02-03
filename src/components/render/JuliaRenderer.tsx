@@ -43,6 +43,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     domTarget: canvasRef,
     controls: props.controls,
     setDragging: setDragging,
+    DPR: props.DPR,
   });
 
   useGesture(gtb.handlers, gtb.config);
@@ -59,7 +60,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
           <WebGLCanvas
             id="julia-canvas"
             fragShader={fragShader}
-            useDPR={props.useDPR}
+            DPR={props.DPR}
             u={u}
             ref={canvasRef}
             dragging={dragging}
@@ -67,7 +68,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
           <MinimapViewer
             id="julia-minimap-canvas"
             fragShader={miniFragShader}
-            useDPR={settings.useDPR}
+            DPR={props.DPR}
             u={u}
             canvasRef={miniCanvasRef}
             onClick={() => setControlZoom({ z: 1 })}

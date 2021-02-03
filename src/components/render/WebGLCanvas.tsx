@@ -31,12 +31,12 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
 
     // have a zoom callback
     // keeps minimaps at a fixed zoom level
-    const zoom = useCallback(() => (props.mini ? 1.0 : props.u.zoom.getValue()), [
+    const zoom = useCallback(() => (props.mini ? 0.95 : props.u.zoom.getValue()), [
       props.mini,
       props.u.zoom,
     ]);
 
-    const dpr = props.useDPR ? window.devicePixelRatio : 1;
+    // const DPR = props.useDPR ? props.DPR : 1;
 
     // canvas setup step - get webgl context
     const setupCanvas = useCallback(() => {
@@ -96,7 +96,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         const prog = programInfo.current as twgl.ProgramInfo;
         const buff = bufferInfo.current as twgl.BufferInfo;
 
-        twgl.resizeCanvasToDisplaySize(canvasRef.current, dpr);
+        twgl.resizeCanvasToDisplaySize(canvasRef.current, props.DPR);
         // scale the viewport to the canvas size
         ctx.viewport(0, 0, canvasRef.current.width, canvasRef.current.height);
 
@@ -135,7 +135,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         // The 'state' will always be the initial value here
         renderRequestRef.current = requestAnimationFrame(render);
       },
-      [gl, u, zoom, dpr, setFps, interval, canvasRef],
+      [gl, u, zoom, props.DPR, setFps, interval, canvasRef],
     );
 
     useEffect(() => {

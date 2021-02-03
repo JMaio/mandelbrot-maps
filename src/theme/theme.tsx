@@ -9,9 +9,9 @@ const theme = createMuiTheme({
     },
     MuiButton: {
       variant: 'outlined',
-      style: {
-        borderRadius: 24,
-      },
+      // style: {
+      //   borderRadius: 24,
+      // },
     },
   },
   palette: {
