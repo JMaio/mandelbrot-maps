@@ -13,6 +13,7 @@ import {
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
+import { InfoOutlined } from '@material-ui/icons';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LaunchIcon from '@material-ui/icons/Launch';
@@ -57,24 +58,12 @@ export default function InfoDialog({
   };
 
   return (
-    <Dialog
-      onClose={handleClose}
-      aria-labelledby="customized-dialog-title"
-      open={open}
-      maxWidth="md"
-      PaperProps={{
-        style: {
-          // fill more of the screen with this dialog
-          margin: 16,
-          height: 960,
-          maxHeight: 'calc(100% - 32px)',
-        },
-      }}
-    >
-      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-        Mandelbrot Maps
+    <Dialog onClose={handleClose} open={open}>
+      <DialogTitle onClose={handleClose}>
+        <InfoOutlined style={{ marginRight: 8 }} />
+        About
       </DialogTitle>
-      <DialogContent dividers style={{ maxWidth: 700 }}>
+      <DialogContent dividers>
         <Grid
           container
           justify="center"

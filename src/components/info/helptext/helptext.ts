@@ -1,9 +1,6 @@
-import h0 from './0.md';
-import h1 from './1.md';
+import mdBasics from './basics.md';
+import mdControls from './controls.md';
 
-export const helptext = {
-  about: h0,
-  controls: h1,
-};
+export const helptext = [mdBasics, mdControls];
 
 export default helptext;

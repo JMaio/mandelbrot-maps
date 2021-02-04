@@ -13,6 +13,28 @@ let theme = createMuiTheme({
       //   borderRadius: 24,
       // },
     },
+    MuiDialog: {
+      // maxWidth: 'sm',
+      // fullWidth: true,
+      style: {
+        // fill more of the screen with this dialog
+        margin: 0,
+      },
+      PaperProps: {
+        style: {
+          // fill more of the screen with this dialog
+          margin: 16,
+          // don't expand past 1000px
+          maxHeight: 1000,
+          // don't go outside window bounds
+          height: 'calc(100% - 32px)', // = 16px top + bottom margin
+          // sm is 600px, go slightly beyond that
+          maxWidth: 640,
+          // always try to maximize width (`fullWidth={true}`)
+          width: '100%',
+        },
+      },
+    },
   },
   palette: {
     primary: {

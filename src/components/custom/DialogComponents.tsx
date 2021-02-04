@@ -31,12 +31,14 @@ const dialogStyles = (theme: Theme) =>
     },
     titleText: {
       fontSize: 24,
-      marginTop: 'auto',
-      marginBottom: 'auto',
+      margin: 'auto 16px',
+      display: 'flex',
+      alignItems: 'center',
+      // alignContent: 'center',
+      justifyContent: 'center',
       flexGrow: 1,
     },
     closeButton: {
-      marginLeft: 'auto',
       color: theme.palette.grey[500],
     },
   });
@@ -44,7 +46,7 @@ const dialogStyles = (theme: Theme) =>
 export interface DialogTitleProps
   extends PropsWithChildren<WithStyles<typeof dialogStyles>> {
   onClose: () => void;
-  id: string;
+  id?: string;
 }
 
 // https://material-ui.com/guides/typescript/#usage-of-withstyles

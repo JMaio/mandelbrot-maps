@@ -1,7 +1,7 @@
 import { Button, Dialog, MobileStepper } from '@material-ui/core';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { HelpOutline, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import SwipeableViews from 'react-swipeable-views';
+import { mod } from 'react-swipeable-views-core';
 import { DialogActions, DialogContent, DialogTitle } from '../custom/DialogComponents';
 import helptext from './helptext/helptext';
 import { MarkdownFromFile } from './MarkdownOverrides';
@@ -42,86 +42,64 @@ export default function FirstTimeInfo(): JSX.Element {
 
   const handleClose = () => setOpen(false);
 
+  const helptextEntries = Object.entries(helptext);
+
   // https://material-ui.com/components/steppers/#dots
-  const steps = 5;
+  const steps = helptextEntries.length;
   const [activeStep, setActiveStep] = useState(0);
 
-  const wrapStep = (next: number) => (next + steps) % steps;
-
   const handleNext = () => {
-    setActiveStep((prev) => wrapStep(prev + 1));
+    setActiveStep((prev) => mod(prev + 1, steps));
   };
 
   const handleBack = () => {
-    setActiveStep((prev) => wrapStep(prev - 1));
+    setActiveStep((prev) => mod(prev - 1, steps));
   };
 
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  };
-
-  const helptextEntries = Object.entries(helptext);
-
-  // const BindKeyboardSwipeableViews = bindKeyboard(SwipeableViews);
-  // const VirtualizeSwipeableViews = virtualize(SwipeableViews);
+  // const handleStepChange = (step: number) => {
+  //   setActiveStep(step);
+  // };
 
   return (
-    <Dialog
-      onClose={handleClose}
-      aria-labelledby="customized-dialog-title"
-      open={open}
-      maxWidth="md"
-      PaperProps={{
-        style: {
-          // fill more of the screen with this dialog
-          margin: 16,
-          height: 960,
-          maxHeight: 'calc(100% - 32px)',
-        },
-      }}
-    >
-      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+    <Dialog onClose={handleClose} open={open}>
+      <DialogTitle onClose={handleClose}>
+        <HelpOutline style={{ marginRight: 8 }} />
         Help
       </DialogTitle>
-      <DialogContent
-        dividers
-        style={{
-          maxWidth: 700,
-          // height: '100%',
-          // display: 'flex',
-          // flexDirection: 'column',
-        }}
-      >
-        <SwipeableViews
-          enableMouseEvents
+      <DialogContent dividers>
+        <MarkdownFromFile
+          // loading the markdown every time isn't ideal
+          f={(() => {
+            // might need name in the future
+            // eslint-disable-next-line
+            const [name, md] = helptextEntries[activeStep];
+            return md;
+          })()}
+        />
+        {/* <SwipeableViews
+          // don't enable mouse events: a user may want to copy text
+          // enableMouseEvents
           resistance
           animateHeight
           hysteresis={0.2}
           index={activeStep}
           onChangeIndex={handleStepChange}
           style={{
-            // makes it possible to swipe on empty areas
+            // explicitly make all the available area swipeable:
+            // makes it possible to swipe on empty areas without content
             minHeight: '100%',
           }}
+          // the library doesn't appear to support functional components
+          // and hooks well (useRef also bugged)... this is only a partial
+          // solution for now
+          // slideRenderer={slideRenderer}
         >
           {helptextEntries.map(([name, md], k) => (
             <div key={k}>
               <MarkdownFromFile f={md} />
             </div>
           ))}
-        </SwipeableViews>
-
-        {/* <Stepper activeStep={activeStep} alternativeLabel>
-          <Step>
-            <StepLabel>hi</StepLabel>
-          </Step>
-          <Step>
-            <StepLabel>hello</StepLabel>
-          </Step>
-          <Step>
-            <StepLabel>there</StepLabel>
-          </Step>
-        </Stepper> */}
+        </SwipeableViews> */}
       </DialogContent>
 
       <DialogActions>
@@ -135,66 +113,16 @@ export default function FirstTimeInfo(): JSX.Element {
             backgroundColor: 'inherit',
           }}
           nextButton={
-            <Button
-              // size="small"
-              variant="text"
-              onClick={handleNext}
-              // disabled={activeStep === steps - 1}
-              endIcon={<KeyboardArrowRight />}
-            >
+            <Button variant="text" onClick={handleNext} endIcon={<KeyboardArrowRight />}>
               Next
             </Button>
           }
           backButton={
-            <Button
-              // size="small"
-              variant="text"
-              onClick={handleBack}
-              // disabled={activeStep === 0}
-              startIcon={<KeyboardArrowLeft />}
-            >
+            <Button variant="text" onClick={handleBack} startIcon={<KeyboardArrowLeft />}>
               Back
             </Button>
           }
         />
-        {/* <Button
-          onClick={() => {
-            writeClientDataToClipboard();
-          }}
-          color="primary"
-          variant="outlined"
-          startIcon={<FileCopyIcon />}
-        >
-          Copy info
-        </Button>
-        <Snackbar
-          open={snackBarOpen}
-          autoHideDuration={5000}
-          // clicking outside the snackbar would trigger close
-          onClose={(e, reason) => {
-            switch (reason) {
-              case 'clickaway':
-                // don't close the snackbar on clicking outside
-                break;
-              default:
-                setSnackBarOpen(false);
-            }
-          }}
-        >
-          <Alert onClose={() => setSnackBarOpen(false)} severity="info">
-            Device properties copied!
-          </Alert>
-        </Snackbar>
-        <Button
-          color="primary"
-          variant="outlined"
-          startIcon={<LaunchIcon />}
-          href={survey.link}
-          target="_blank"
-          rel="noopener"
-        >
-          Feedback
-        </Button> */}
       </DialogActions>
     </Dialog>
   );

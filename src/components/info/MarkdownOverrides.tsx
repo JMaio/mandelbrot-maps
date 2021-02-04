@@ -13,6 +13,7 @@ function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
   >): JSX.Element {
     return (
       <Typography variant={variant} paragraph>
+        {/* {variant === 'body1' ? 'hi body 1' : ''} */}
         {children}
       </Typography>
     );
