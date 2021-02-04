@@ -1,14 +1,23 @@
 import { Link, Typography } from '@material-ui/core';
+import { Variant } from '@material-ui/core/styles/createTypography';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import React, { useEffect, useState } from 'react';
 
-const MdOverrideTypography = ({
-  children,
-}: // ...props
-React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLParagraphElement>,
-  HTMLParagraphElement
->): JSX.Element => <Typography paragraph>{children}</Typography>;
+// higher-order-component for variable typography "variants"
+function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
+  return function variableMdOverrideTypographyHOC({
+    children,
+  }: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLParagraphElement>,
+    HTMLParagraphElement
+  >): JSX.Element {
+    return (
+      <Typography variant={variant} paragraph>
+        {children}
+      </Typography>
+    );
+  };
+}
 
 const MdOverrideLink = ({
   children,
@@ -27,11 +36,19 @@ React.DetailedHTMLProps<
 );
 
 const mdOverrides: MarkdownToJSX.Overrides = {
-  p: MdOverrideTypography,
   a: MdOverrideLink,
+  h1: wrapMdOverrideTypographyHOC('h1'),
+  h2: wrapMdOverrideTypographyHOC('h2'),
+  p: wrapMdOverrideTypographyHOC('body1'),
 };
 
-export const MarkdownFromFile = ({ f }: { f: string }): JSX.Element => {
+export const MarkdownFromFile = ({
+  f,
+  style,
+}: {
+  f: string;
+  style?: React.CSSProperties;
+}): JSX.Element => {
   const [infoMdText, setInfoMdText] = useState('');
 
   // https://github.com/facebook/create-react-app/issues/2961#issuecomment-322916352
@@ -48,7 +65,13 @@ export const MarkdownFromFile = ({ f }: { f: string }): JSX.Element => {
   }, [f]);
 
   return (
-    <Markdown options={{ wrapper: React.Fragment, overrides: mdOverrides }}>
+    <Markdown
+      options={{ wrapper: React.Fragment, overrides: mdOverrides }}
+      {...style}
+      // style={{
+      //   height: 'auto',
+      // }}
+    >
       {infoMdText}
     </Markdown>
   );
