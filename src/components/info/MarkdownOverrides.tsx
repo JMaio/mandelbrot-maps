@@ -1,7 +1,6 @@
 import { Link, Typography } from '@material-ui/core';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import React, { useEffect, useState } from 'react';
-import infoTextMarkdown from './info.md';
 
 const MdOverrideTypography = ({
   children,
@@ -32,12 +31,13 @@ const mdOverrides: MarkdownToJSX.Overrides = {
   a: MdOverrideLink,
 };
 
-export const DialogInfoMarkdown = (): JSX.Element => {
+export const MarkdownFromFile = ({ f }: { f: string }): JSX.Element => {
   const [infoMdText, setInfoMdText] = useState('');
 
   // https://github.com/facebook/create-react-app/issues/2961#issuecomment-322916352
   useEffect(() => {
-    fetch(infoTextMarkdown)
+    console.log(`loaded md: ${f}`);
+    fetch(f)
       .then((response) => response.text())
       .then((text) => {
         // Logs a string of Markdown content.
@@ -45,7 +45,7 @@ export const DialogInfoMarkdown = (): JSX.Element => {
         // console.log(text);
         setInfoMdText(text);
       });
-  }, []);
+  }, [f]);
 
   return (
     <Markdown options={{ wrapper: React.Fragment, overrides: mdOverrides }}>

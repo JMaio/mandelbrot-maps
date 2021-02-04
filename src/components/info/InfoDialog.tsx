@@ -30,7 +30,8 @@ import {
   DialogTitle,
 } from '../custom/DialogComponents';
 import survey from '../surveyLink.json';
-import { DialogInfoMarkdown } from './MarkdownOverrides';
+import infoTextMarkdown from './info.md';
+import { MarkdownFromFile } from './MarkdownOverrides';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
@@ -93,7 +94,7 @@ export default function InfoDialog({
           </Grid>
         </Grid>
 
-        <DialogInfoMarkdown />
+        <MarkdownFromFile f={infoTextMarkdown} />
 
         <DialogDivider />
 
