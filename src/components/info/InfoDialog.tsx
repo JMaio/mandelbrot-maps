@@ -66,6 +66,7 @@ export default function InfoDialog({
         style: {
           // fill more of the screen with this dialog
           margin: 16,
+          height: 960,
           maxHeight: 'calc(100% - 32px)',
         },
       }}

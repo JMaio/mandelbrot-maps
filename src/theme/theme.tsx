@@ -1,6 +1,6 @@
-import { colors, createMuiTheme } from '@material-ui/core';
+import { colors, createMuiTheme, responsiveFontSizes } from '@material-ui/core';
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   props: {
     // Name of the component ⚛️
     MuiSwitch: {
@@ -28,7 +28,17 @@ const theme = createMuiTheme({
   shape: {
     borderRadius: 12,
   },
+  typography: {
+    h1: {
+      fontSize: '3rem',
+    },
+    h2: {
+      fontSize: '2rem',
+    },
+  },
 });
+
+theme = responsiveFontSizes(theme);
 
 export const simpleBoxShadow = '0px 2px 10px 1px rgba(0, 0, 0, 0.4)';
 export const lightBoxShadow = '0px 0px 10px 2px rgba(255, 255, 255, 0.8)';
