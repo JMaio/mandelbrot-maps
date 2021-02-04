@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Grid,
   Paper,
   Snackbar,
@@ -13,109 +12,30 @@ import {
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LaunchIcon from '@material-ui/icons/Launch';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 // for evaluating build time
 import preval from 'preval.macro';
-import React, { PropsWithChildren, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { InfoDialogProps } from '../../common/info';
 import clientDetect from '../../dist/clientDetect';
-import MandelbrotMapsLogo from '../../img/logo-192.png';
+import { CodeBlock } from '../custom/CodeBlock';
+import {
+  Alert,
+  DialogActions,
+  DialogContent,
+  DialogDivider,
+  DialogTitle,
+} from '../custom/DialogComponents';
 import survey from '../surveyLink.json';
 import { DialogInfoMarkdown } from './MarkdownOverrides';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
 
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      margin: 0,
-      padding: theme.spacing(2),
-      display: 'flex',
-      flexDirection: 'row',
-      // align: "middle",
-    },
-    image: {
-      marginTop: 'auto',
-      marginBottom: 'auto',
-      marginRight: 8,
-      height: 48,
-    },
-    closeButton: {
-      // position: 'absolute',
-      // right: theme.spacing(1),
-      // top: theme.spacing(1),
-      marginLeft: 'auto',
-      color: theme.palette.grey[500],
-    },
-  });
-
-export interface DialogTitleProps extends PropsWithChildren<WithStyles<typeof styles>> {
-  onClose: () => void;
-  id: string;
-}
-
-// https://material-ui.com/guides/typescript/#usage-of-withstyles
-const DialogTitle = withStyles(styles)(
-  ({ children, classes, onClose, ...other }: DialogTitleProps) => {
-    return (
-      <MuiDialogTitle disableTypography className={classes.root} {...other}>
-        <img
-          src={MandelbrotMapsLogo}
-          alt="Mandelbrot Maps logo"
-          className={classes.image}
-        />
-        <Typography
-          variant="h1"
-          style={{ fontSize: 24, marginTop: 'auto', marginBottom: 'auto' }}
-        >
-          {children}
-        </Typography>
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </MuiDialogTitle>
-    );
-  },
-);
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(3),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
-
-const Alert = (props: AlertProps) => (
-  <MuiAlert elevation={6} variant="filled" {...props} />
-);
-
-const DialogDivider = () => <Divider style={{ marginTop: 20, marginBottom: 20 }} />;
-
 export default function InfoDialog({
   ctrl: [open, setOpen],
-  ...props
 }: InfoDialogProps): JSX.Element {
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
@@ -217,10 +137,9 @@ export default function InfoDialog({
           <Typography align="center" style={{ margin: 'auto' }}>
             Build
           </Typography>
-          <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography>
-          <Typography style={{ fontFamily: 'monospace' }}>
-            {process.env.REACT_APP_GIT_SHA}
-          </Typography>
+          {/* <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography> */}
+          <CodeBlock>{process.env.REACT_APP_GIT_SHA}</CodeBlock>
+          <code>{dateTimeStamp}</code>
         </Box>
       </DialogContent>
 
