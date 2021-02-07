@@ -1,26 +1,27 @@
 {
   "files": {
     "main.css": "/mandelbrot-maps/static/css/main.57a2f528.chunk.css",
-    "main.js": "/mandelbrot-maps/static/js/main.39d4c1c9.chunk.js",
-    "main.js.map": "/mandelbrot-maps/static/js/main.39d4c1c9.chunk.js.map",
+    "main.js": "/mandelbrot-maps/static/js/main.58b3e12f.chunk.js",
+    "main.js.map": "/mandelbrot-maps/static/js/main.58b3e12f.chunk.js.map",
     "runtime-main.js": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js",
     "runtime-main.js.map": "/mandelbrot-maps/static/js/runtime-main.b9c7d549.js.map",
-    "static/js/2.cf32fdf2.chunk.js": "/mandelbrot-maps/static/js/2.cf32fdf2.chunk.js",
-    "static/js/2.cf32fdf2.chunk.js.map": "/mandelbrot-maps/static/js/2.cf32fdf2.chunk.js.map",
+    "static/js/2.60ba21f7.chunk.js": "/mandelbrot-maps/static/js/2.60ba21f7.chunk.js",
+    "static/js/2.60ba21f7.chunk.js.map": "/mandelbrot-maps/static/js/2.60ba21f7.chunk.js.map",
     "index.html": "/mandelbrot-maps/index.html",
     "service-worker.js": "/mandelbrot-maps/service-worker.js",
     "service-worker.js.map": "/mandelbrot-maps/service-worker.js.map",
     "static/css/main.57a2f528.chunk.css.map": "/mandelbrot-maps/static/css/main.57a2f528.chunk.css.map",
-    "static/js/2.cf32fdf2.chunk.js.LICENSE.txt": "/mandelbrot-maps/static/js/2.cf32fdf2.chunk.js.LICENSE.txt",
-    "static/media/basics.52c24be5.md": "/mandelbrot-maps/static/media/basics.52c24be5.md",
+    "static/js/2.60ba21f7.chunk.js.LICENSE.txt": "/mandelbrot-maps/static/js/2.60ba21f7.chunk.js.LICENSE.txt",
+    "static/media/basics.ca9bc736.md": "/mandelbrot-maps/static/media/basics.ca9bc736.md",
     "static/media/info.5e092896.md": "/mandelbrot-maps/static/media/info.5e092896.md",
     "static/media/layout-diagram.5c92978a.svg": "/mandelbrot-maps/static/media/layout-diagram.5c92978a.svg",
-    "static/media/logo-192.6d04f0d3.png": "/mandelbrot-maps/static/media/logo-192.6d04f0d3.png"
+    "static/media/logo-192.6d04f0d3.png": "/mandelbrot-maps/static/media/logo-192.6d04f0d3.png",
+    "static/media/settings.2b874cb7.md": "/mandelbrot-maps/static/media/settings.2b874cb7.md"
   },
   "entrypoints": [
     "static/js/runtime-main.b9c7d549.js",
-    "static/js/2.cf32fdf2.chunk.js",
+    "static/js/2.60ba21f7.chunk.js",
     "static/css/main.57a2f528.chunk.css",
-    "static/js/main.39d4c1c9.chunk.js"
+    "static/js/main.58b3e12f.chunk.js"
   ]
 }

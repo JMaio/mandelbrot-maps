@@ -1,6 +1,10 @@
-<!-- show both images? for orientation -->
-
 # What the Fractal?
+
+<Alert severity="info">
+This help menu can be accessed at any time by clicking the Settings button at the bottom-right of the screen, then clicking <SettingsHelpButton />
+</Alert>
+
+<!-- <SettingsMenuButton /> > <SettingsHelpButton /> -->
 
 This application showcases two fractals: the **_Mandelbrot set_**, and the **_Julia set_**.
 Fractals are structures which exhibit some kind of self-similarity at different scales.
@@ -10,6 +14,10 @@ There are two possible layouts depending on the orientation of your screen:
 
 - _Portrait_ is most common on mobile phones
 
-- _Landscape_ is most common on regular computers
+- _Landscape_ is most common on computers
 
 <ViewerLayoutDiagram />
+
+To maximize either viewer, use the arrow buttons in the middle of the viewers:
+
+<ViewChangerDisplay />
