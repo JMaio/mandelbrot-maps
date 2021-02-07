@@ -51,8 +51,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GroupDivider = () => <Divider style={{ marginTop: 8, marginBottom: 12 }} />;
-const GroupTitle = (props: { title: string; icon: SvgIconComponent }) => (
+export const GroupDivider = (): JSX.Element => (
+  <Divider style={{ marginTop: 8, marginBottom: 12 }} />
+);
+export const GroupTitle = (props: {
+  title: string;
+  icon: SvgIconComponent;
+}): JSX.Element => (
   <Grid container alignItems="center" justify="center" spacing={1}>
     {/* remove margin to center based only on text and not icon (not ideal) */}
     <Grid item style={{ marginLeft: -24 }}>
@@ -65,6 +70,31 @@ const GroupTitle = (props: { title: string; icon: SvgIconComponent }) => (
     </Grid>
   </Grid>
 );
+
+export const SettingsMenuButton = ({
+  onClick,
+  displayOnly = false,
+}: {
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  displayOnly?: boolean;
+}): JSX.Element => {
+  const classes = useStyles();
+
+  return (
+    <Fab
+      aria-controls="menu"
+      aria-haspopup="true"
+      aria-label="settings"
+      size="small"
+      onClick={onClick}
+      className={classes.settingsButton}
+      // className={displayOnly ? '' : classes.settingsButton}
+      style={displayOnly ? { marginBottom: 12 } : {}}
+    >
+      <SettingsIcon />
+    </Fab>
+  );
+};
 
 export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
   const classes = useStyles();
@@ -97,19 +127,8 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
 
   return (
     <div className={classes.root}>
-      <Fab
-        aria-controls="menu"
-        aria-haspopup="true"
-        aria-label="settings"
-        size="small"
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        // style={{
-        //   boxShadow: heavyBoxShadow,
-        // }}
-        className={classes.settingsButton}
-      >
-        <SettingsIcon />
-      </Fab>
+      <SettingsMenuButton onClick={(e) => setAnchorEl(e.currentTarget)} />
+
       <Backdrop open={Boolean(anchorEl)}>
         <Popover
           id="menu"

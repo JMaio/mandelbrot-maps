@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 export default function ViewChanger({
   vertical,
   changeFunc,
+  displayOnly = false,
 }: ViewChangerProps): JSX.Element {
   // const { vertical, changeFunc, debug, percentFlex } = props;
   const classes = useStyles();
@@ -55,13 +56,17 @@ export default function ViewChanger({
     <ButtonGroup
       orientation={vertical ? 'vertical' : 'horizontal'}
       variant="contained"
-      style={{
-        transform: vertical ? `translate(-100%, -50%)` : `translate(-50%, 0%)`, // original
-        // top margin must be large to clear FPS widget
-        marginTop: vertical ? 0 : 48,
-        // left margin must be large (and negative) to clear the settings button
-        marginLeft: vertical ? -72 : 0,
-      }}
+      style={
+        displayOnly
+          ? { margin: '8px 16px' }
+          : {
+              transform: vertical ? `translate(-100%, -50%)` : `translate(-50%, 0%)`, // original
+              // top margin must be large to clear FPS widget
+              marginTop: vertical ? 0 : 48,
+              // left margin must be large (and negative) to clear the settings button
+              marginLeft: vertical ? -72 : 0,
+            }
+      }
     >
       {vertical ? mButton : jButton}
       {vertical ? jButton : mButton}
