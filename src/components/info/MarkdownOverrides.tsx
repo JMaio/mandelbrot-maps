@@ -1,23 +1,31 @@
 import {
+  darken,
   FormControlLabel,
-  FormControlLabelProps,
   FormGroup,
   Grid,
+  lighten,
   Link,
   Typography,
   useTheme,
 } from '@material-ui/core';
 import { Variant } from '@material-ui/core/styles/createTypography';
+import Alert from '@material-ui/lab/Alert';
 import { noop } from 'lodash';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import React, { useEffect, useState } from 'react';
+import { settingsWidgetType } from '../../common/settings';
 //
 // imports for markdown
 import { ReactComponent as ViewerLayoutDiagramSVG } from '../../img/layout-diagram.svg';
 import ViewChanger from '../render/ViewChanger';
 import { SettingsContext } from '../settings/SettingsContext';
 import { getSettingsWidgetsGrouping } from '../settings/SettingsDefinitions';
-import { GroupDivider, GroupTitle, SettingsMenuButton } from '../settings/SettingsMenu';
+import {
+  GroupDivider,
+  GroupTitle,
+  SettingsHelpButton,
+  SettingsMenuButton,
+} from '../settings/SettingsMenu';
 
 // higher-order-component for variable typography "variants"
 function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
@@ -48,6 +56,32 @@ React.DetailedHTMLProps<
     {children}
   </Link>
 );
+
+function SettingsInstructionBlock({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLParagraphElement>,
+  HTMLParagraphElement
+>): JSX.Element {
+  const theme = useTheme();
+
+  return (
+    <Typography
+      variant="body2"
+      paragraph
+      style={{
+        // https://github.com/mui-org/material-ui/blob/master/packages/material-ui-lab/src/Alert/Alert.js#L16
+        backgroundColor: lighten(theme.palette.info.main, 0.9),
+        color: darken(theme.palette.info.main, 0.6),
+        padding: '6px 10px',
+        margin: '4px 0',
+        borderRadius: theme.shape.borderRadius,
+      }}
+    >
+      {children}
+    </Typography>
+  );
+}
 
 const mdOverrides: MarkdownToJSX.Overrides = {
   a: MdOverrideLink,
@@ -98,8 +132,10 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
+  SettingsHelpButton: function SettingsHelpButtonDisplay() {
+    return <SettingsHelpButton onClick={noop} />;
+  },
   SettingsInstructions: function SettingsInstructions() {
-    const theme = useTheme();
     return (
       <SettingsContext.Consumer>
         {({ setSettings, settingsWidgets }) =>
@@ -112,16 +148,15 @@ const mdOverrides: MarkdownToJSX.Overrides = {
               </Grid>
               <Grid item xs={5} container>
                 <Grid item xs>
-                  {/* <GroupDivider /> */}
                   <GroupTitle icon={g.icon} title={g.name} />
                 </Grid>
               </Grid>
-              {Object.entries(g.widgets).map(([k, widget], i) => {
+              {Object.entries(g.widgets).map(([k, widgetUnchecked], i) => {
+                const { helptext, ...widget } = widgetUnchecked as settingsWidgetType;
                 // widget will contain
                 // label, control, (checked or value)
-                // const {
+                // helptext
                 return (
-                  // <Grid item xs={5} key={k} style={{ display: 'flex' }}>
                   <Grid
                     item
                     xs
@@ -131,23 +166,26 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                     alignItems="center"
                     key={k}
                   >
-                    <Grid
-                      item
-                      xs={6}
-                      style={{
-                        // hacky way to colour alternating rows
-                        backgroundColor: i % 2 ? 'inherit' : theme.palette.grey[200],
-                        padding: '8px 12px',
-                      }}
-                    >
-                      <Typography>hello theer</Typography>
+                    <Grid item xs={7} style={{ paddingRight: 12 }}>
+                      <Markdown
+                        options={{
+                          wrapper: React.Fragment,
+                          forceBlock: true,
+                          overrides: {
+                            p: SettingsInstructionBlock,
+                          },
+                        }}
+                      >
+                        {/* default if no description is provided */}
+                        {helptext?.trim() || '(no description)'}
+                      </Markdown>
                     </Grid>
                     <Grid item xs={5}>
                       <FormGroup>
                         <FormControlLabel
                           key={`${k}-control`}
                           style={{ userSelect: 'none' }}
-                          {...(widget as FormControlLabelProps)}
+                          {...widget}
                           onChange={(...e) => {
                             // the value is the last element of the "e" array
                             // https://stackoverflow.com/a/12099341/9184658
@@ -176,6 +214,9 @@ const mdOverrides: MarkdownToJSX.Overrides = {
         }
       </SettingsContext.Consumer>
     );
+  },
+  Alert: function AlertMd(props) {
+    return <Alert {...props} style={{ marginBottom: 16 }} />;
   },
 };
 

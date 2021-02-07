@@ -96,6 +96,16 @@ export const SettingsMenuButton = ({
   );
 };
 
+export const SettingsHelpButton = ({
+  onClick,
+}: {
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}): JSX.Element => (
+  <Button size="small" color="primary" startIcon={<HelpOutline />} onClick={onClick}>
+    Help
+  </Button>
+);
+
 export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
   const [helpOpen, setHelpOpen] = props.helpState;
   const classes = useStyles();
@@ -170,14 +180,15 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                 </Grid>
               </Grid>
               <Grid item>
-                <Button
+                <SettingsHelpButton onClick={setHelpOpen} />
+                {/* <Button
                   size="small"
                   color="primary"
                   startIcon={<HelpOutline />}
                   onClick={setHelpOpen}
                 >
                   Help
-                </Button>
+                </Button> */}
               </Grid>
             </Grid>
             <SettingsContext.Consumer>
