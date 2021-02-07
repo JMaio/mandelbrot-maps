@@ -97,6 +97,7 @@ export const SettingsMenuButton = ({
 };
 
 export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
+  const [helpOpen, setHelpOpen] = props.helpState;
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<EventTarget & HTMLButtonElement>();
@@ -173,7 +174,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                   size="small"
                   color="primary"
                   startIcon={<HelpOutline />}
-                  onClick={props.showHelp}
+                  onClick={setHelpOpen}
                 >
                   Help
                 </Button>
@@ -192,21 +193,30 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                           style={{ userSelect: 'none' }}
                           {...(widget as FormControlLabelProps)}
                           // ...e catches all event arguments
-                          onChange={(...e) => {
-                            // the value is the last element of the "e" array
-                            // https://stackoverflow.com/a/12099341/9184658
-                            // > using destructuring is nice too:
-                            // > const [lastItem] = arr.slice(-1)
-                            // > – diachedelic Mar 11 '19 at 6:30
-                            const [val] = e.slice(-1);
-                            console.debug(`${k} ->`, val);
-                            // TODO: updating state like this seems to be very slow
-                            // either have individual useState pairs, or use a Map?
-                            setSettings((prevState) => ({
-                              ...prevState,
-                              [k]: val,
-                            }));
-                          }}
+                          onChange={
+                            helpOpen
+                              ? (...e) => {
+                                  /** help is open - do nothing, otherwise there may
+                                   * be an infinite update loop in the iteration or
+                                   * colour selectors
+                                   */
+                                }
+                              : (...e) => {
+                                  // the value is the last element of the "e" array
+                                  // https://stackoverflow.com/a/12099341/9184658
+                                  // > using destructuring is nice too:
+                                  // > const [lastItem] = arr.slice(-1)
+                                  // > – diachedelic Mar 11 '19 at 6:30
+                                  const [val] = e.slice(-1);
+                                  console.debug(`${k} ->`, val);
+                                  // TODO: updating state like this seems to be very slow
+                                  // either have individual useState pairs, or use a Map?
+                                  setSettings((prevState) => ({
+                                    ...prevState,
+                                    [k]: val,
+                                  }));
+                                }
+                          }
                         />
                       ))}
                     </FormGroup>

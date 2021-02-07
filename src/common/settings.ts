@@ -60,7 +60,7 @@ export type SettingsContextType = {
 export interface SettingsMenuProps {
   reset: () => void;
   toggleInfo: () => void;
-  showHelp: () => void;
+  helpState: [boolean, () => void];
 }
 
 export interface FirstTimeInfoProps {

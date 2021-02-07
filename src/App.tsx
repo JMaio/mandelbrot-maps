@@ -125,7 +125,7 @@ function App(): JSX.Element {
   const toggleInfo = () => setShowInfo((i) => !i);
 
   const [openHelp, setOpenHelp] = useState(false);
-  const showHelp = () => setOpenHelp((i) => !i);
+  const toggleHelp = () => setOpenHelp((i) => !i);
 
   // [showMandelbrot, showJulia]
   const [[showMandelbrot, showJulia], setViewerState] = useState<[boolean, boolean]>([
@@ -208,18 +208,18 @@ function App(): JSX.Element {
                   <SettingsMenu
                     reset={reset}
                     toggleInfo={toggleInfo}
-                    showHelp={showHelp}
+                    helpState={[openHelp, toggleHelp]}
                   />
                 </Grid>
               );
             }}
           </SettingsContext.Consumer>
         </Grid>
+        <InfoDialog ctrl={[showInfo, setShowInfo]} />
+
+        {/* FirstTimeInfo requires access to settings */}
+        <FirstTimeInfo ctrl={[openHelp, toggleHelp]} />
       </SettingsProvider>
-
-      <InfoDialog ctrl={[showInfo, setShowInfo]} />
-
-      <FirstTimeInfo ctrl={[openHelp, setOpenHelp]} />
     </ThemeProvider>
   );
 }

@@ -1,4 +1,12 @@
-import { Grid, Link, Typography } from '@material-ui/core';
+import {
+  FormControlLabel,
+  FormControlLabelProps,
+  FormGroup,
+  Grid,
+  Link,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import { Variant } from '@material-ui/core/styles/createTypography';
 import { noop } from 'lodash';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
@@ -7,7 +15,9 @@ import React, { useEffect, useState } from 'react';
 // imports for markdown
 import { ReactComponent as ViewerLayoutDiagramSVG } from '../../img/layout-diagram.svg';
 import ViewChanger from '../render/ViewChanger';
-import { SettingsMenuButton } from '../settings/SettingsMenu';
+import { SettingsContext } from '../settings/SettingsContext';
+import { getSettingsWidgetsGrouping } from '../settings/SettingsDefinitions';
+import { GroupDivider, GroupTitle, SettingsMenuButton } from '../settings/SettingsMenu';
 
 // higher-order-component for variable typography "variants"
 function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
@@ -89,40 +99,82 @@ const mdOverrides: MarkdownToJSX.Overrides = {
     );
   },
   SettingsInstructions: function SettingsInstructions() {
+    const theme = useTheme();
     return (
-      <Grid container justify="center" direction="column">
-        {/* <SettingsContext.Consumer>
-          {({ setSettings, settingsWidgets }) =>
-            getSettingsWidgetsGrouping(settingsWidgets).map((g) => (
-              <Grid item xs container key={g.name} direction="column">
-                <Grid item xs={5}>
+      <SettingsContext.Consumer>
+        {({ setSettings, settingsWidgets }) =>
+          getSettingsWidgetsGrouping(settingsWidgets).map((g) => (
+            <Grid container direction="column" alignItems="flex-end" key={g.name}>
+              <Grid item container>
+                <Grid item xs>
                   <GroupDivider />
+                </Grid>
+              </Grid>
+              <Grid item xs={5} container>
+                <Grid item xs>
+                  {/* <GroupDivider /> */}
                   <GroupTitle icon={g.icon} title={g.name} />
                 </Grid>
-                <Grid item xs container direction="column">
-                  <FormGroup>
-                    {Object.entries(g.widgets).map(([k, widget]) => {
-                      // widget will contain
-                      // label, control, (checked or value)
-                      // const {
-                      return (
-                        // <Grid item xs={5} key={k} style={{ display: 'flex' }}>
+              </Grid>
+              {Object.entries(g.widgets).map(([k, widget], i) => {
+                // widget will contain
+                // label, control, (checked or value)
+                // const {
+                return (
+                  // <Grid item xs={5} key={k} style={{ display: 'flex' }}>
+                  <Grid
+                    item
+                    xs
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                    key={k}
+                  >
+                    <Grid
+                      item
+                      xs={6}
+                      style={{
+                        // hacky way to colour alternating rows
+                        backgroundColor: i % 2 ? 'inherit' : theme.palette.grey[200],
+                        padding: '8px 12px',
+                      }}
+                    >
+                      <Typography>hello theer</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <FormGroup>
                         <FormControlLabel
                           key={`${k}-control`}
                           style={{ userSelect: 'none' }}
                           {...(widget as FormControlLabelProps)}
+                          onChange={(...e) => {
+                            // the value is the last element of the "e" array
+                            // https://stackoverflow.com/a/12099341/9184658
+                            // > using destructuring is nice too:
+                            // > const [lastItem] = arr.slice(-1)
+                            // > – diachedelic Mar 11 '19 at 6:30
+                            const [val] = e.slice(-1);
+                            console.debug(`${k} ->`, val);
+                            // TODO: updating state like this seems to be very slow
+                            // either have individual useState pairs, or use a Map?
+                            setSettings((prevState) => ({
+                              ...prevState,
+                              [k]: val,
+                            }));
+                          }}
                         />
-                        // <Typography>hello theer</Typography>
-                        // </Grid>
-                      );
-                    })}
-                  </FormGroup>
-                </Grid>
-              </Grid>
-            ))
-          }
-        </SettingsContext.Consumer> */}
-      </Grid>
+                      </FormGroup>
+                    </Grid>
+                  </Grid>
+                );
+              })}
+              {/* </FormGroup> */}
+              {/* </Grid> */}
+            </Grid>
+          ))
+        }
+      </SettingsContext.Consumer>
     );
   },
 };
