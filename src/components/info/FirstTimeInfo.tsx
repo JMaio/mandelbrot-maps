@@ -1,6 +1,6 @@
-import { Dialog, IconButton, MobileStepper } from '@material-ui/core';
+import { Dialog, Fade, IconButton, MobileStepper } from '@material-ui/core';
 import { HelpOutline, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { mod } from 'react-swipeable-views-core';
 import { FirstTimeInfoProps } from '../../common/settings';
 import { DialogActions, DialogContent, DialogTitle } from '../custom/DialogComponents';
@@ -59,9 +59,11 @@ export default function FirstTimeInfo({
     setActiveStep((prev) => mod(prev - 1, steps));
   };
 
-  // const handleStepChange = (step: number) => {
-  //   setActiveStep(step);
-  // };
+  const contentRef = useRef<HTMLElement>();
+  // scroll to top of Markdown if page changes
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 });
+  }, [activeStep]);
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -69,16 +71,21 @@ export default function FirstTimeInfo({
         <HelpOutline style={{ marginRight: 8 }} />
         Help
       </DialogTitle>
-      <DialogContent dividers>
-        <MarkdownFromFile
-          // loading the markdown every time isn't ideal
-          f={(() => {
-            // might need name in the future
-            // eslint-disable-next-line
-            const [name, md] = helptextEntries[activeStep];
-            return md;
-          })()}
-        />
+      <DialogContent dividers ref={contentRef}>
+        {helptextEntries.map(([name, md], i) => (
+          <Fade
+            in={i === activeStep}
+            // hide this element if it's not being show,
+            // otherwise it will take up vertical space
+            style={i === activeStep ? {} : { display: 'none' }}
+            key={name}
+          >
+            <div>
+              <MarkdownFromFile f={md} />
+            </div>
+          </Fade>
+        ))}
+
         {/* <SwipeableViews
           // don't enable mouse events: a user may want to copy text
           // enableMouseEvents

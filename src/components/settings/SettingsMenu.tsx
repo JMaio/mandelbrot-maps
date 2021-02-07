@@ -242,13 +242,13 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
               container
               direction="row"
               justify="space-between"
-              alignItems="stretch"
+              // alignItems="stretch"
               spacing={1}
             >
-              <Grid item>
+              <Grid item style={{ margin: 'auto' }}>
                 <ResetButton />
               </Grid>
-              <Grid item>
+              <Grid item style={{ margin: 'auto' }}>
                 <AboutButton />
               </Grid>
             </Grid>
