@@ -1,7 +1,8 @@
-import { Button, Dialog, MobileStepper } from '@material-ui/core';
+import { Dialog, IconButton, MobileStepper } from '@material-ui/core';
 import { HelpOutline, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { mod } from 'react-swipeable-views-core';
+import { FirstTimeInfoProps } from '../../common/settings';
 import { DialogActions, DialogContent, DialogTitle } from '../custom/DialogComponents';
 import helptext from './helptext/helptext';
 import { MarkdownFromFile } from './MarkdownOverrides';
@@ -19,7 +20,9 @@ import { MarkdownFromFile } from './MarkdownOverrides';
  * A component shown to users when they first visit the application.
  * Uses Local Storage to track repeat visits.
  */
-export default function FirstTimeInfo(): JSX.Element {
+export default function FirstTimeInfo({
+  ctrl: [open, setOpen],
+}: FirstTimeInfoProps): JSX.Element {
   // const classes = useStyles();
   const returningUserKey = 'returningUser';
 
@@ -27,18 +30,18 @@ export default function FirstTimeInfo(): JSX.Element {
   //   return true;
   // };
   // assume this is a new user
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = ctrl;
 
   // https://programmingwithmosh.com/react/localstorage-react/
   useEffect(() => {
     const returningUser = localStorage.getItem(returningUserKey);
     console.info(`Returning user? => ${returningUser}`);
     if (!returningUser) {
-      setOpen(true);
+      // setOpen(true);
       // then they are no longer a new user
       // localStorage.setItem(returningUserKey)
     }
-  }, []);
+  }, [setOpen]);
 
   const handleClose = () => setOpen(false);
 
@@ -102,25 +105,35 @@ export default function FirstTimeInfo(): JSX.Element {
         </SwipeableViews> */}
       </DialogContent>
 
-      <DialogActions>
+      <DialogActions style={{ padding: 4 }}>
         <MobileStepper
           variant="dots"
           steps={steps}
           position="static"
           activeStep={activeStep}
           style={{
-            flexGrow: 1,
             backgroundColor: 'inherit',
+            flexGrow: 1,
+            // width: '100%',
+            maxWidth: 240,
+            margin: 'auto',
+            padding: 0,
           }}
           nextButton={
-            <Button variant="text" onClick={handleNext} endIcon={<KeyboardArrowRight />}>
-              Next
-            </Button>
+            // <Button variant="text" onClick={handleNext} endIcon={<KeyboardArrowRight />}>
+            //   Next
+            // </Button>
+            <IconButton color="primary" onClick={handleNext}>
+              <KeyboardArrowRight />
+            </IconButton>
           }
           backButton={
-            <Button variant="text" onClick={handleBack} startIcon={<KeyboardArrowLeft />}>
-              Back
-            </Button>
+            // <Button variant="text" onClick={handleBack} startIcon={<KeyboardArrowLeft />}>
+            //   Back
+            // </Button>
+            <IconButton color="primary" onClick={handleBack}>
+              <KeyboardArrowLeft />
+            </IconButton>
           }
         />
       </DialogActions>

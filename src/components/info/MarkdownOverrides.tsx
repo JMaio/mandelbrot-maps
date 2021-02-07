@@ -1,7 +1,10 @@
-import { Link, Typography } from '@material-ui/core';
+import { Grid, Link, Typography } from '@material-ui/core';
 import { Variant } from '@material-ui/core/styles/createTypography';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import React, { useEffect, useState } from 'react';
+//
+// imports for markdown
+import { ReactComponent as ViewerLayoutDiagram } from '../../img/layout-diagram.svg';
 
 // higher-order-component for variable typography "variants"
 function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
@@ -13,7 +16,6 @@ function wrapMdOverrideTypographyHOC(variant?: Variant | 'inherit') {
   >): JSX.Element {
     return (
       <Typography variant={variant} paragraph>
-        {/* {variant === 'body1' ? 'hi body 1' : ''} */}
         {children}
       </Typography>
     );
@@ -28,9 +30,7 @@ const MdOverrideLink = ({
 React.DetailedHTMLProps<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
   HTMLAnchorElement
-  // JSX.IntrinsicElements.a
 >): JSX.Element => (
-  // <a></a>
   <Link title={title} href={href} target="_blank">
     {children}
   </Link>
@@ -41,6 +41,16 @@ const mdOverrides: MarkdownToJSX.Overrides = {
   h1: wrapMdOverrideTypographyHOC('h1'),
   h2: wrapMdOverrideTypographyHOC('h2'),
   p: wrapMdOverrideTypographyHOC('body1'),
+  ViewerLayoutDiagram: {
+    // eslint-disable-next-line react/display-name
+    component: () => (
+      <Grid container justify="center">
+        <Grid item xs={12} sm={10}>
+          <ViewerLayoutDiagram style={{ width: '100%' }} />
+        </Grid>
+      </Grid>
+    ),
+  },
 };
 
 export const MarkdownFromFile = ({
@@ -66,13 +76,7 @@ export const MarkdownFromFile = ({
   }, [f]);
 
   return (
-    <Markdown
-      options={{ wrapper: React.Fragment, overrides: mdOverrides }}
-      {...style}
-      // style={{
-      //   height: 'auto',
-      // }}
-    >
+    <Markdown options={{ wrapper: React.Fragment, overrides: mdOverrides }} {...style}>
       {infoMdText}
     </Markdown>
   );

@@ -18,6 +18,7 @@ import {
 import { useWindowSize, warpToPoint } from './common/utils';
 import { springsConfigs, viewerOrigin } from './common/values';
 import CoordinateInterface from './components/info/CoordinateInterface';
+import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
@@ -121,8 +122,10 @@ function App(): JSX.Element {
   };
 
   const [showInfo, setShowInfo] = useState(false);
-
   const toggleInfo = () => setShowInfo((i) => !i);
+
+  const [openHelp, setOpenHelp] = useState(false);
+  const showHelp = () => setOpenHelp((i) => !i);
 
   // [showMandelbrot, showJulia]
   const [[showMandelbrot, showJulia], setViewerState] = useState<[boolean, boolean]>([
@@ -200,16 +203,23 @@ function App(): JSX.Element {
                       {...settings}
                     />
                   </Grid>
+
+                  {/* Settings menu uses SettingsContext so must be within provider */}
+                  <SettingsMenu
+                    reset={reset}
+                    toggleInfo={toggleInfo}
+                    showHelp={showHelp}
+                  />
                 </Grid>
               );
             }}
           </SettingsContext.Consumer>
-
-          <SettingsMenu reset={() => reset()} toggleInfo={() => toggleInfo()} />
-
-          <InfoDialog ctrl={[showInfo, setShowInfo]} />
         </Grid>
       </SettingsProvider>
+
+      <InfoDialog ctrl={[showInfo, setShowInfo]} />
+
+      <FirstTimeInfo ctrl={[openHelp, setOpenHelp]} />
     </ThemeProvider>
   );
 }

@@ -11,9 +11,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { SvgIconComponent } from '@material-ui/icons';
-import InfoIcon from '@material-ui/icons/Info';
-import MyLocationIcon from '@material-ui/icons/MyLocation';
+import {
+  HelpOutline,
+  InfoOutlined,
+  MyLocationOutlined,
+  SettingsOutlined,
+  SvgIconComponent,
+} from '@material-ui/icons';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useState } from 'react';
 import { SettingsMenuProps } from '../../common/settings';
@@ -37,10 +41,10 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: contrastBoxShadow,
   },
   popoverCardGrid: {
-    paddingTop: 24,
-    paddingBottom: 16,
-    paddingRight: 24,
-    paddingLeft: 24,
+    paddingTop: 18,
+    paddingBottom: 18,
+    paddingRight: 22,
+    paddingLeft: 22,
   },
   sliderControl: {
     width: 30,
@@ -69,19 +73,17 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
 
   const ResetButton = () => (
     <Button
-      startIcon={<MyLocationIcon />}
+      startIcon={<MyLocationOutlined />}
       color="secondary"
       aria-controls="reset"
-      onClick={() => {
-        props.reset();
-      }}
+      onClick={props.reset}
     >
       Reset
     </Button>
   );
   const AboutButton = () => (
     <Button
-      startIcon={<InfoIcon />}
+      startIcon={<InfoOutlined />}
       color="primary"
       aria-controls="about"
       onClick={() => {
@@ -125,11 +127,37 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
           }}
         >
           <Grid container direction="column" className={classes.popoverCardGrid}>
-            <Grid item container alignItems="center" justify="space-around">
+            <Grid
+              item
+              container
+              direction="row"
+              alignItems="center"
+              justify="space-between"
+              style={{ padding: '4px 0' }}
+            >
+              {/* https://stackoverflow.com/a/51970114/9184658 */}
+              <Grid item xs container direction="row" alignItems="center">
+                <Grid item>
+                  <SettingsOutlined
+                    className="rotate-center"
+                    style={{ marginRight: 4 }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography variant="h1" style={{ fontSize: 20 }}>
+                    Settings
+                  </Typography>
+                </Grid>
+              </Grid>
               <Grid item>
-                <Typography variant="h1" style={{ fontSize: 20 }}>
-                  Configuration
-                </Typography>
+                <Button
+                  size="small"
+                  color="primary"
+                  startIcon={<HelpOutline />}
+                  onClick={props.showHelp}
+                >
+                  Help
+                </Button>
               </Grid>
             </Grid>
             <SettingsContext.Consumer>

@@ -19,7 +19,8 @@ const dialogStyles = (theme: Theme) =>
   createStyles({
     root: {
       margin: 0,
-      padding: theme.spacing(2),
+      // padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+      padding: theme.spacing(1.5),
       display: 'flex',
       flexDirection: 'row',
       // align: "middle",
@@ -38,9 +39,9 @@ const dialogStyles = (theme: Theme) =>
       justifyContent: 'center',
       flexGrow: 1,
     },
-    closeButton: {
-      color: theme.palette.grey[500],
-    },
+    // closeButton: {
+    //   color: theme.palette.grey[500],
+    // },
   });
 
 export interface DialogTitleProps
@@ -63,11 +64,7 @@ export const DialogTitle = withStyles(dialogStyles)(
           {children}
         </Typography>
         {onClose ? (
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-          >
+          <IconButton aria-label="close" color="secondary" onClick={onClose}>
             <CloseIcon />
           </IconButton>
         ) : null}

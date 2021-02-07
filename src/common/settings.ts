@@ -60,4 +60,9 @@ export type SettingsContextType = {
 export interface SettingsMenuProps {
   reset: () => void;
   toggleInfo: () => void;
+  showHelp: () => void;
+}
+
+export interface FirstTimeInfoProps {
+  ctrl: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 }

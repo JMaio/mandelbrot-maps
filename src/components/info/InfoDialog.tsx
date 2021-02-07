@@ -22,7 +22,6 @@ import preval from 'preval.macro';
 import React, { useMemo, useState } from 'react';
 import { InfoDialogProps } from '../../common/info';
 import clientDetect from '../../dist/clientDetect';
-import { CodeBlock } from '../custom/CodeBlock';
 import {
   Alert,
   DialogActions,
@@ -35,6 +34,7 @@ import infoTextMarkdown from './info.md';
 import { MarkdownFromFile } from './MarkdownOverrides';
 
 const dateTimeStamp = preval`module.exports = new Date();`;
+const GITSHA = process.env.REACT_APP_GIT_SHA;
 
 export default function InfoDialog({
   ctrl: [open, setOpen],
@@ -73,6 +73,7 @@ export default function InfoDialog({
         >
           <Grid item>
             <Button
+              color="primary"
               endIcon={<GitHubIcon />}
               startIcon={<LaunchIcon />}
               href="https://github.com/JMaio/mandelbrot-maps"
@@ -128,8 +129,18 @@ export default function InfoDialog({
           <Typography align="center" style={{ margin: 'auto' }}>
             Build
           </Typography>
-          {/* <Typography style={{ fontFamily: 'monospace' }}>{dateTimeStamp}</Typography> */}
-          <CodeBlock>{process.env.REACT_APP_GIT_SHA}</CodeBlock>
+          <Button
+            color="primary"
+            variant="outlined"
+            startIcon={<LaunchIcon />}
+            href={`https://github.com/JMaio/mandelbrot-maps/tree/${GITSHA}`}
+            // href={`https://${process.env.REPOSITORY}/tree/${GITSHA}`}
+            target="_blank"
+            rel="noopener"
+            style={{ margin: '8px 0' }}
+          >
+            {GITSHA}
+          </Button>
           <code>{dateTimeStamp}</code>
         </Box>
       </DialogContent>

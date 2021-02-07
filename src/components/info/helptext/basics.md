@@ -2,37 +2,14 @@
 
 # What the Fractal?
 
-## yes hello
+This application showcases two fractals: the **_Mandelbrot set_**, and the **_Julia set_**.
+Fractals are structures which exhibit some kind of self-similarity at different scales.
 
-the plan is for this text to scroll
+Each half of the screen contains a "**_viewer_**" for one of the fractals.
+There are two possible layouts depending on the orientation of your screen:
 
-scrolling should happen without affecting the top or bottom of the card
+- P - _Portrait_ is most common on mobile phones
 
-to add some vertical space, have some bullet points:
+- L - _Landscape_ is most common on regular computers
 
-- a
-- b
-- c
-
-then break, then some more
-
-- d
-- e
-- f
-
-and again.
-
-- g
-- h
-- i
-- j
-
-then there should be enough content to scroll
-
-if everything has gone according to plan, both the top title and the bottom controls should be visible
-
-if everything has gone according to plan, both the top title and the bottom controls should be visible
-
-- a
-- b
-- c
+<ViewerLayoutDiagram />
