@@ -30,6 +30,7 @@ type OrbitMarkerProps = {
   point: XYType;
   mandelbrotControl: ViewerControlSprings;
   color: string;
+  show: boolean;
 };
 
 const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
@@ -41,6 +42,7 @@ const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
   return (
     <FiberManualRecordIcon
       style={{
+        visibility: props.show ? 'visible' : 'hidden',
         zIndex: 100,
         position: 'absolute',
         left:

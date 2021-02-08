@@ -47,7 +47,7 @@ const withinBoundBox = (
   return horizontalDistance < boxWidth && verticalDistance < boxHeight;
 };
 
-export const MAX_ORBIT_LENGTH = 20;
+export const MAX_ORBIT_LENGTH = 70;
 const ORBIT_REFRESH_TIME = 50;
 
 const COLOUR_PERIODIC = '#EE0000';
@@ -73,27 +73,25 @@ export class OrbitPlotter extends Component<OrbitPlotterProps, OrbitManagerState
     );
 
     const aspect_ratio = this.props.rendererWidth / this.props.rendererHeight;
-    const visiblePoints: XYType[] = orbit.filter((x) =>
-      withinBoundBox(
-        x,
-        this.props.mandelbrot.xyCtrl[0].xy.getValue(),
-        aspect_ratio / this.props.mandelbrot.zoomCtrl[0].z.getValue(),
-        1 / this.props.mandelbrot.zoomCtrl[0].z.getValue(),
-        -this.props.mandelbrot.rotCtrl[0].theta.getValue(),
-      ),
-    );
 
     const orbitMarkers: JSX.Element[] = [];
-    for (let i = 0; i < visiblePoints.length; i++) {
+    for (let i = 0; i < orbit.length; i++) {
       const color = i + 1 > orbit.length - period ? COLOUR_PERIODIC : COLOUR_PREPERIODIC;
       orbitMarkers.push(
         <OrbitMarker
-          key={visiblePoints[i].toString()}
-          point={visiblePoints[i]}
+          key={orbit[i].toString()}
+          point={orbit[i]}
           rendererWidth={this.props.rendererWidth}
           rendererHeight={this.props.rendererHeight}
           mandelbrotControl={this.props.mandelbrot}
           color={color}
+          show={withinBoundBox(
+            orbit[i],
+            this.props.mandelbrot.xyCtrl[0].xy.getValue(),
+            aspect_ratio / this.props.mandelbrot.zoomCtrl[0].z.getValue(),
+            1 / this.props.mandelbrot.zoomCtrl[0].z.getValue(),
+            -this.props.mandelbrot.rotCtrl[0].theta.getValue(),
+          )}
         />,
       );
     }
