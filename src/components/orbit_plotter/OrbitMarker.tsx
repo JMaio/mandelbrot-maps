@@ -1,11 +1,9 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import { ViewerControlSprings } from '../../common/types';
-import { animated } from 'react-spring';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { XYType } from '../../common/types';
 
-const MARKER_SIZE = 25;
+const MARKER_SIZE = 20;
 
 const complexToScreenCoordinate = (
   x: number,
@@ -41,48 +39,37 @@ const OrbitMarker = (props: OrbitMarkerProps): JSX.Element => {
   const ASPECT_RATIO = props.rendererWidth / props.rendererHeight;
 
   return (
-    <animated.div
+    <FiberManualRecordIcon
       style={{
         zIndex: 100,
         position: 'absolute',
-        left: props.mandelbrotControl.xyCtrl[0].xy.interpolate(
-          // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-          (x, y) => {
-            return (
-              complexToScreenCoordinate(
-                x,
-                y,
-                -theta.getValue(),
-                z.getValue(),
-                ASPECT_RATIO,
-                props.rendererHeight,
-                props.point,
-              )[0] - MARKER_SIZE
-            );
-          },
-        ),
-        bottom: props.mandelbrotControl.xyCtrl[0].xy.interpolate(
-          // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-          (x, y) => {
-            return (
-              complexToScreenCoordinate(
-                x,
-                y,
-                -theta.getValue(),
-                z.getValue(),
-                ASPECT_RATIO,
-                props.rendererHeight,
-                props.point,
-              )[1] - MARKER_SIZE
-            );
-          },
-        ),
+        left:
+          complexToScreenCoordinate(
+            props.mandelbrotControl.xyCtrl[0].xy.getValue()[0],
+            props.mandelbrotControl.xyCtrl[0].xy.getValue()[1],
+            -theta.getValue(),
+            z.getValue(),
+            ASPECT_RATIO,
+            props.rendererHeight,
+            props.point,
+          )[0] -
+          MARKER_SIZE / 2,
+        bottom:
+          complexToScreenCoordinate(
+            props.mandelbrotControl.xyCtrl[0].xy.getValue()[0],
+            props.mandelbrotControl.xyCtrl[0].xy.getValue()[1],
+            -theta.getValue(),
+            z.getValue(),
+            ASPECT_RATIO,
+            props.rendererHeight,
+            props.point,
+          )[1] -
+          (5 * MARKER_SIZE) / 8,
+        color: props.color,
+        width: MARKER_SIZE,
+        height: MARKER_SIZE,
       }}
-    >
-      <IconButton style={{ color: props.color }}>
-        <FiberManualRecordIcon style={{ width: MARKER_SIZE, height: MARKER_SIZE }} />
-      </IconButton>
-    </animated.div>
+    />
   );
 };
 
