@@ -147,20 +147,22 @@ function App(): JSX.Element {
                   show={settings.showCoordinates}
                   mandelbrot={mandelbrotControls}
                 />
-                <OrbitPlotter
-                  show={settings.showOrbit}
-                  mandelbrot={mandelbrotControls}
-                  rendererWidth={
-                    (size.width || 1) < (size.height || 0)
-                      ? size.width || 1
-                      : (size.width || 1) / 2
-                  }
-                  rendererHeight={
-                    (size.width || 1) < (size.height || 0)
-                      ? (size.height || 0) / 2
-                      : size.height || 0
-                  }
-                />
+                {settings.showOrbit ? (
+                  <OrbitPlotter
+                    show={settings.showOrbit}
+                    mandelbrot={mandelbrotControls}
+                    rendererWidth={
+                      (size.width || 1) < (size.height || 0)
+                        ? size.width || 1
+                        : (size.width || 1) / 2
+                    }
+                    rendererHeight={
+                      (size.width || 1) < (size.height || 0)
+                        ? (size.height || 0) / 2
+                        : size.height || 0
+                    }
+                  />
+                ) : null}
                 <Grid item xs className="renderer">
                   <MandelbrotRenderer controls={mandelbrotControls} {...settings} />
                 </Grid>
