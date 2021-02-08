@@ -25,6 +25,7 @@ export const forwardOrbit = function (
 ): [orbit: XYType[], prePeriod: number, period: number] {
   const orbit = [];
   for (let i = 0; i < maxIterations; i++) {
+    // eslint-disable-next-line no-loop-func
     const similar = orbit.findIndex((elem) => approximatelyEqual(elem, z));
     if (similar !== -1) {
       return [orbit, similar, i - similar];
