@@ -9,6 +9,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import { Variant } from '@material-ui/core/styles/createTypography';
+import { ChevronRightSharp } from '@material-ui/icons';
 import Alert from '@material-ui/lab/Alert';
 import { noop } from 'lodash';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
@@ -123,18 +124,46 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
-  SettingsMenuButton: function SettingsMenuButtonDisplay() {
+  HelpBreadcrumbs: function HelpBreadcrumbs() {
     return (
-      <Grid container justify="center">
+      <Grid
+        container
+        justify="center"
+        alignItems="center"
+        alignContent="center"
+        style={{ marginTop: 8 }}
+      >
         <Grid item>
           <SettingsMenuButton onClick={noop} displayOnly />
+        </Grid>
+        <Grid item style={{ lineHeight: 1, textAlign: 'center' }}>
+          {/* line height messes up alignment otherwise */}
+          <ChevronRightSharp />
+        </Grid>
+        <Grid item>
+          <SettingsHelpButton onClick={noop} />
         </Grid>
       </Grid>
     );
   },
-  SettingsHelpButton: function SettingsHelpButtonDisplay() {
-    return <SettingsHelpButton onClick={noop} />;
+  SettingsMenuButton: function SettingsMenuButtonDisplay() {
+    return (
+      <Grid container justify="center">
+        <Grid item style={{ marginBottom: 12 }}>
+          <SettingsMenuButton onClick={noop} />
+        </Grid>
+      </Grid>
+    );
   },
+  // SettingsHelpButton: function SettingsHelpButtonDisplay() {
+  //   return (
+  //     <Grid container justify="center">
+  //       <Grid item style={{ margin: 'auto' }}>
+  //         <SettingsHelpButton onClick={noop} />
+  //       </Grid>
+  //     </Grid>
+  //   );
+  // },
   SettingsInstructions: function SettingsInstructions() {
     return (
       <SettingsContext.Consumer>

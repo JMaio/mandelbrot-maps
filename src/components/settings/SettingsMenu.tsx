@@ -88,10 +88,8 @@ export const SettingsMenuButton = ({
       size="small"
       onClick={onClick}
       className={classes.settingsButton}
-      // className={displayOnly ? '' : classes.settingsButton}
-      style={displayOnly ? { marginBottom: 12 } : {}}
     >
-      <SettingsIcon />
+      <SettingsIcon className="rotate-center" />
     </Fab>
   );
 };
