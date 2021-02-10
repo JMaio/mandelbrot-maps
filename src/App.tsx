@@ -203,12 +203,12 @@ function App(): JSX.Element {
                       style={!showDeep ? { display: 'hidden', height: 0 } : {}}
                       {...settings}
                     />
-                    {/* <MandelbrotRenderer
+                    <MandelbrotRenderer
                       controls={mandelbrotControls}
                       DPR={currentDPR}
                       style={showDeep ? { display: 'inherit', height: 0 } : {}}
                       {...settings}
-                    /> */}
+                    />
                   </Grid>
 
                   <Grid item style={{ width: 0, height: 0, zIndex: 1 }}>

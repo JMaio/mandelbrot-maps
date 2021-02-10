@@ -4,7 +4,7 @@ import { animated } from 'react-spring';
 import * as twgl from 'twgl.js';
 import { vScale } from 'vec-la-fp';
 import { WebGLCanvasProps } from '../../common/render';
-import { fullscreenVertexArray, fullVertexShader } from '../../shaders/fullVertexShader';
+import { fullscreenVertexArray } from '../../shaders/fullVertexShader';
 import { mandelbrotDeepVert } from '../../shaders/mandelbrotShaderDeep';
 
 // https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
@@ -106,104 +106,112 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
      * For Mandelbrot c0=undefined, for julia set c0 it is initial c.
      * If you want only iteration count, you need to pass returnIteration = true
      */
-    function calcOrbit(
-      c: { x: Double; y: Double },
-      c0?: { x: Double; y: Double },
-      returnTexture = false,
-    ): [orbit: number[], iterations: number] {
-      // this happens in double.js, with high precision
-      let x = c0 ? c0.x : c.x,
-        y = c0 ? c0.y : c.y;
-      let xx = x.sqr(),
-        yy = y.sqr(),
-        xy = x.mul(y);
-      let dx = Double.One,
-        dy = Double.Zero;
-      let temp: Double, i: number;
+    const calcOrbit = useCallback(
+      (
+        c: { x: Double; y: Double },
+        c0?: { x: Double; y: Double },
+        returnTexture = true,
+      ): [orbit: number[], iterations: number] => {
+        // this happens in double.js, with high precision
+        let x = c0 ? c0.x : c.x,
+          y = c0 ? c0.y : c.y;
+        let xx = x.sqr(),
+          yy = y.sqr(),
+          xy = x.mul(y);
+        let dx = Double.One,
+          dy = Double.Zero;
+        let temp: Double, i: number;
 
-      const orbit = [x.toNumber(), y.toNumber(), dx.toNumber(), dy.toNumber()];
-      for (i = 1; i < maxI && xx.add(yy).lt(squareRadius); i++) {
-        temp = x.mul(dx).sub(y.mul(dy)).mul(2).add(1);
-        dy = x.mul(dy).add(y.mul(dx)).mul(2);
-        dx = temp;
-        x = xx.sub(yy).add(c.x);
-        y = xy.add(xy).add(c.y);
-        xx = x.sqr();
-        yy = y.sqr();
-        xy = x.mul(y);
-        // don't do extra computation if only the iteration count matters
-        if (returnTexture) {
-          orbit.push(x.toNumber());
-          orbit.push(y.toNumber());
-          orbit.push(dx.toNumber());
-          orbit.push(dy.toNumber());
+        // save the orbit params
+        const orbit = [x.toNumber(), y.toNumber(), dx.toNumber(), dy.toNumber()];
+        // normal iteration until maxI and within radius
+        for (i = 1; i < maxI && xx.add(yy).lt(squareRadius); i++) {
+          // dx = 2(x * dx - y * dy) + 1
+          temp = x.mul(dx).sub(y.mul(dy)).mul(2).add(1);
+          // dy = 2(x * dy + y * dx)
+          dy = x.mul(dy).add(y.mul(dx)).mul(2);
+          dx = temp;
+          // x = x^2 - y^2 + c.x
+          x = xx.sub(yy).add(c.x);
+          // y = xy + xy + c.y
+          y = xy.add(xy).add(c.y);
+
+          xx = x.sqr();
+          yy = y.sqr();
+          xy = x.mul(y);
+          // don't do extra computation if only the iteration count matters
+          if (returnTexture) {
+            orbit.push(x.toNumber());
+            orbit.push(y.toNumber());
+            orbit.push(dx.toNumber());
+            orbit.push(dy.toNumber());
+          }
         }
-      }
-      // this becomes a "texture" as a way to pass data to webgl
-      return [orbit, i];
+        // this becomes a "texture" as a way to pass data to webgl
+        return [orbit, i];
+      },
+      [maxI],
+    );
+
+    interface deepfractalBaseAimType {
+      x: Double;
+      y: Double;
+    }
+    interface deepfractalAimType extends deepfractalBaseAimType {
+      hx: Double;
+      hy: Double;
+      phi: number;
     }
 
     /**
      * Logarithmic search of new reference point.
-     * aim: the object representing bounding box? or current view?
+     * aim: the object representing ~bounding box? or current view?~ current view!
      *   - x, y, width, height, angle
      * aim = { x: Double, y: Double, hx: Double, hy: Double, phi: number };
      */
-    type deepfractalAimType = {
-      x: Double;
-      y: Double;
-      hx: Double;
-      hy: Double;
-      phi: number;
-    };
+    const searchOrigin = useCallback(
+      (
+        aim: deepfractalAimType,
+        // julia: { x: Double; y: Double }
+      ): deepfractalBaseAimType => {
+        const defaultBaseAimType: deepfractalBaseAimType = {
+          x: Double.Zero,
+          y: Double.Zero,
+        };
+        const repeat = 15,
+          n = 12,
+          m = 3;
+        const z = defaultBaseAimType;
+        const zbest: deepfractalBaseAimType = { x: new Double(0), y: new Double(0) };
+        const newAim = Object.assign({}, aim);
 
-    const defaultAimType: deepfractalAimType = {
-      x: Double.Zero,
-      y: Double.Zero,
-      hx: Double.Zero,
-      hy: Double.Zero,
-      phi: 0,
-    };
+        let fbest = -Infinity;
 
-    function searchOrigin(
-      aim: deepfractalAimType,
-      // julia: { x: Double; y: Double }
-    ): deepfractalAimType {
-      const repeat = 15,
-        n = 12,
-        m = 3;
-      const z = defaultAimType,
-        zbest = defaultAimType;
-      const newAim = Object.assign({}, aim);
-
-      let fbest = -Infinity;
-
-      // dummy = [];
-      // let f: number;
-
-      for (let k = 0; k < repeat; k++) {
-        for (let i = 0; i <= n; i++) {
-          for (let j = 0; j <= n; j++) {
-            z.x = newAim.x.add(newAim.hx.mul((2 * i) / n - 1));
-            z.y = newAim.y.add(newAim.hy.mul((2 * j) / n - 1));
-            // f = julia ? calcOrbit(julia, z, true) : calcOrbit(z, null, true);
-            // invert the "return iterations" logic
-            // const [, f] = julia ? calcOrbit(julia, z) : calcOrbit(z, undefined);
-            const [, f] = calcOrbit(z, undefined);
-            if (f === maxI) {
-              return z;
-            } else if (f > fbest) {
-              Object.assign(zbest, z);
-              fbest = f;
+        for (let k = 0; k < repeat; k++) {
+          for (let i = 0; i <= n; i++) {
+            for (let j = 0; j <= n; j++) {
+              z.x = newAim.x.add(newAim.hx.mul((2 * i) / n - 1));
+              z.y = newAim.y.add(newAim.hy.mul((2 * j) / n - 1));
+              // f = julia ? calcOrbit(julia, z, true) : calcOrbit(z, null, true);
+              // invert the "return iterations" logic
+              // const [, f] = julia ? calcOrbit(julia, z) : calcOrbit(z, undefined);
+              const [, f] = calcOrbit(z, undefined);
+              if (f === maxI) {
+                return z;
+              } else if (f > fbest) {
+                Object.assign(zbest, z);
+                fbest = f;
+              }
             }
           }
+          Object.assign(newAim, zbest);
+          newAim.hx = newAim.hx.div(m / n);
+          newAim.hy = newAim.hy.div(m / n);
         }
-        Object.assign(newAim, zbest);
-        newAim.hx = newAim.hx.div(m / n);
-        newAim.hy = newAim.hy.div(m / n);
-      }
-      return zbest;
-    }
+        return zbest;
+      },
+      [calcOrbit, maxI],
+    );
 
     // the main render function for WebGL
     const render = useCallback(
@@ -217,12 +225,20 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         const [x, y] = u.xy.getValue();
-        const ratio = ctx.canvas.width / ctx.canvas.height;
+        // const ratio = ctx.canvas.width / ctx.canvas.height;
 
-        const size = vScale(1 / zoom(), [ratio, 1]);
+        // console.log(ratio);
+
+        // "size", meaning the number of units from the centre to the edge of the canvas
+        const size = vScale(
+          // use the height as the dominant dimension
+          1 / (zoom() * ctx.canvas.height),
+          [ctx.canvas.width, ctx.canvas.height],
+        );
+        const [hx, hy] = size;
+
         // console.log('x, y:', [x, y]);
         // console.log('hx, hy:', size);
-        const [hx, hy] = size;
 
         // console.log(ratio);
         // deep-fractal
@@ -238,12 +254,13 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           hy: new Double(hy),
           phi: u.theta,
         };
+
         const origin = searchOrigin(aim);
         // console.log(origin);
         const [orbit] = calcOrbit(origin);
         // console.debug(orbit);
-
         const texsize = Math.ceil(Math.sqrt(orbit.length / 4));
+
         // pass orbit data to webgl through a large array
         const orbittex = twgl.createTexture(ctx, {
           format: ctx.RGBA,
@@ -253,13 +270,16 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           src: orbit,
         });
 
-        // console.log("'size':", vScale(1 / zoom(), [ratio, 1]));
+        const center = [aim.x.sub(origin.x).toNumber(), aim.y.sub(origin.y).toNumber()];
+
+        // console.log("'size':", size);
+        // console.log('center:', center);
 
         const uniforms = {
           resolution: [ctx.canvas.width, ctx.canvas.height],
           u_zoom: zoom(),
           u_c: u.c === undefined ? 0 : u.c.getValue(),
-          u_xy: u.xy.getValue(),
+          u_xy: [x, y],
           u_maxI: u.maxI,
           u_theta: u.theta.getValue(),
           u_colour: u.colour,
@@ -267,6 +287,9 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           orbittex: orbittex,
           texsize: texsize,
           size: size,
+          // perturbation centre point?
+          // center: [aim.x.sub(origin.x).toNumber(), aim.y.sub(origin.y).toNumber()],
+          center: center,
         };
 
         ctx.useProgram(prog.program);
@@ -294,7 +317,7 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         // The 'state' will always be the initial value here
         renderRequestRef.current = requestAnimationFrame(render);
       },
-      [gl, u, zoom, DPR, setFPS, interval, canvasRef],
+      [gl, u, zoom, DPR, setFPS, interval, canvasRef, calcOrbit, searchOrigin],
     );
 
     useEffect(() => {

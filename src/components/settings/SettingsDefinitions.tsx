@@ -4,6 +4,7 @@ import PhotoIcon from '@material-ui/icons/Photo';
 import React from 'react';
 import { RgbColorPicker } from 'react-colorful';
 import {
+  perturbationIterationLevels,
   settingsDefinitionsType,
   settingsGroupType,
   settingsWidgetsList,
@@ -50,17 +51,12 @@ and allows warping to specific coordinates
     },
     control: (
       <Slider
-        min={10}
-        max={1000}
-        step={10}
+        min={16}
+        max={1024}
+        // step={16}
+        step={null}
         valueLabelDisplay="auto"
-        marks={[
-          { value: 10, label: 10 },
-          { value: 250, label: 250 },
-          { value: 500, label: 500 },
-          { value: 750, label: 750 },
-          { value: 1000, label: 1000 },
-        ]}
+        marks={perturbationIterationLevels}
       />
     ),
     helptext: `

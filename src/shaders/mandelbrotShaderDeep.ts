@@ -22,22 +22,30 @@ export const mandelbrotDeepVert = `
 precision highp float;
 
 attribute vec2 position;
+
 // [sin, cos] of angle phi
 // uniform vec2 rotator;
 uniform float u_theta;
+vec2 sincosT = vec2(sin(u_theta), cos(u_theta));
+
 uniform vec2 center;
 uniform vec2 size;
 varying vec2 delta;
 
+uniform vec2 u_xy;
+uniform float u_zoom;
+
 void main() {
-  vec2 sincosT = vec2(sin(u_theta), cos(u_theta));
 
   /*  window coordinates with new origin in complex space  */
   vec2 z = size * position;
-  // something to do with rotation
+
+  // delta is the array of pixels?
   delta = center + vec2(z.x * sincosT.y - z.y * sincosT.x, dot(z, sincosT));
 
-  gl_Position = vec4(position, 0.0, 1.0);
+  // delta = center + vec2(z.x * sincosT.y - z.y * sincosT.x, dot(z, sincosT));
+
+  gl_Position = vec4(position, 0., 1.0);
 
 }`;
 
@@ -49,13 +57,9 @@ const mandelbrotShaderDeep = (
     stroke: 2,
     radius: 100,
   },
-): string => {
-  return `
-// Adapted by Joao Maio/2019, based on work by inigo quilez - iq/2013
-// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
-// See here for more information on smooth iteration count:
-// http://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
+): string => `
+// Adapted by Joao Maio/2021, based on work by @munrocket/deep-fractal
+// GNU GPL 3.0
 
 #define false 0
 #define true 1
@@ -82,27 +86,17 @@ const mandelbrotShaderDeep = (
 uniform vec2  resolution;
 
 // properties should be passed as uniforms
-uniform int   u_maxI;
+// uniform int   u_maxI;
 uniform vec2  u_xy;
 uniform float u_zoom;
+uniform vec3  u_colour;
 uniform float u_theta;
 vec2 sincosT = vec2(sin(u_theta), cos(u_theta));
-uniform vec3  u_colour;
 
-bool crosshair( float x, float y ) {
-  float abs_x = abs(2.0*x - resolution.x);
-  float abs_y = abs(2.0*y - resolution.y);
-
-  return
-  // crosshair in centre of screen
-  (abs_x <= cross_stroke || abs_y <= cross_stroke) &&
-  // crosshair size / "radius"
-  (abs_x <= cross_radius && abs_y <= cross_radius);
-}
 
 // ----- shader adapted from "deep-fractal" (@munrocket)
 
-#define imax ${1024}
+// #define imax ${1024}
 #define square_radius ${3e5}.
 #define super_sampling ${0}
 #define color_scheme ${0}
@@ -119,6 +113,7 @@ uniform float texsize;
 uniform sampler2D orbittex;
 uniform sampler2D exteriortex;
 
+// this is a way to index into the "texture" matrix containing iteration data
 vec4 unpackOrbit(int i) {
   float fi = float(i);
   vec2 texcoord = vec2(mod(fi, texsize), floor(fi / texsize)) / texsize;
@@ -141,13 +136,17 @@ struct result {
 
 /*  fractal calculator with perturbation theory for mandelbrot & julia set */
 result calculator(vec2 AAfloat) {
-  // float u = delta.x + AAfloat.x, v = delta.y + AAfloat.y;
+  // delta is calculated from the "centre" point
   float u = delta.x + AAfloat.x, v = delta.y + AAfloat.y;
+  // float u = delta.x - u_xy.x + AAfloat.x, v = delta.y - u_xy.y + AAfloat.y;
+  // float u = u_xy.x + AAfloat.x, v = u_xy.y + AAfloat.y;
+  
+  // float u = 0., v = 0.;
   float zz, time, temp, du = 0., dv = 0.;
   float stripe, s1, s2, s3;
   vec2 z, dz, O, dO;
 
-  for (int i = 0; i < imax; i++) {
+  for (int i = 0; i < MAXI; i++) {
     /*  Recall global coordinates: Z = O + W, Z' = O' + W'  */
     vec4 values = unpackOrbit(i);
     O = values.xy;
@@ -194,32 +193,32 @@ void main() {
 
   /*  DEM (Distance Estimation) = 2 * |Z / Z'| * ln(|Z|)  */
   float dem = sqrt(R.zz / R.dzdz) * log2(R.zz);
-  float dem_weight = 800. / min(size.x, size.y);
+  // float dem_weight = 800. / min(size.x, size.y);
 
   /*  Adaptive supersampling with additional 4 points in SSAAx4 pattern */
-  #if (super_sampling == 1 && color_scheme != 1)
-    if (-log2(dem * dem_weight) > 0.5) {
-      R.time /= 5.;
-      R.zz /= 5.;
-      R.dzdz /= 5.;
-      R.stripe /= 5.;
-      for (int i = 0; i < 4; i++) {
-        vec2 offset = pixelsize * vec2(vec4(-1., 3., 3., 1.)[i], vec4(-3., -1., 1., 3.)[i]) / 4.;
-        offset = vec2(offset.x * sincosT.y - offset.y * sincosT.x, dot(offset, sincosT));
-        result RI = calculator(offset);
-        R.time += RI.time / 5.;
-        R.zz += RI.zz / 5.;
-        R.dzdz += RI.dzdz / 5.;
-        R.stripe += RI.stripe / 5.;
-      }
-    }
-  #endif
+  // #if (super_sampling == 1 && color_scheme != 1)
+  //   if (-log2(dem * dem_weight) > 0.5) {
+  //     R.time /= 5.;
+  //     R.zz /= 5.;
+  //     R.dzdz /= 5.;
+  //     R.stripe /= 5.;
+  //     for (int i = 0; i < 4; i++) {
+  //       vec2 offset = pixelsize * vec2(vec4(-1., 3., 3., 1.)[i], vec4(-3., -1., 1., 3.)[i]) / 4.;
+  //       offset = vec2(offset.x * sincosT.y - offset.y * sincosT.x, dot(offset, sincosT));
+  //       result RI = calculator(offset);
+  //       R.time += RI.time / 5.;
+  //       R.zz += RI.zz / 5.;
+  //       R.dzdz += RI.dzdz / 5.;
+  //       R.stripe += RI.stripe / 5.;
+  //     }
+  //   }
+  // #endif
 
   /*  Final coloring  */
   vec3 color;
   #if (color_scheme == 0)
-    color += 0.7 + 2.5 * (R.stripe / clamp(R.time, 0., 200.)) * (1. - 0.6 * step(float(imax), 1. + R.time));
-    color = 0.5 + 0.5 * sin(color + vec3(4.0, 4.6, 5.2) + 50.0 * R.time / float(imax));
+    color += 0.7 + 2.5 * (R.stripe / clamp(R.time, 0., 200.)) * (1. - 0.6 * step(float(MAXI), 1. + R.time));
+    color = 0.5 + 0.5 * sin(color + vec3(4.0, 4.6, 5.2) + 50.0 * R.time / float(MAXI));
   #else
     vec2 texcoord = vec2(R.argZ / 2. / 3.14159265, log2(R.zz) / log2(square_radius) - 1.0);
     color = texture2D(exteriortex, texcoord).xyz;
@@ -227,6 +226,5 @@ void main() {
 
   gl_FragColor = vec4(color, 1.);
 }`;
-};
 
 export default mandelbrotShaderDeep;
