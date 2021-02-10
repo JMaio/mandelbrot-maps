@@ -27,7 +27,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
     const programInfo = useRef<twgl.ProgramInfo>();
 
     const u = props.u;
-    const setFps = props.fps;
+    const setFps = props.setFPS;
 
     // have a zoom callback
     // keeps minimaps at a fixed zoom level

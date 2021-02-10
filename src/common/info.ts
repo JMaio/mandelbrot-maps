@@ -3,7 +3,7 @@ import { OpaqueInterpolation } from 'react-spring';
 import { ThetaType, ViewerControlSprings, XYType, ZoomType } from './types';
 
 export interface FPSCardProps {
-  fps: string;
+  FPS: string;
   show: boolean;
 }
 

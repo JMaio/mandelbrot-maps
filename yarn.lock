@@ -6884,6 +6884,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"double.js@npm:^1.0.15":
+  version: 1.0.15
+  resolution: "double.js@npm:1.0.15"
+  checksum: 74e774fc192f75f66b53bd8b8f8073943906ba758aadaf7fc94e750d596525a2a66f3de230d57033c6fb1e98bac34485d45eaa6ea5d4ce7ba615f575f5f6f0ed
+  languageName: node
+  linkType: hard
+
 "duplexer@npm:^0.1.1":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -11399,6 +11406,7 @@ fsevents@~2.1.2:
     "@typescript-eslint/eslint-plugin": 4.9.0
     "@typescript-eslint/parser": 4.9.0
     cross-env: ^7.0.3
+    double.js: ^1.0.15
     eslint-config-prettier: ^6.11.0
     eslint-config-react-app: ^6.0.0
     eslint-plugin-prettier: ^3.2.0

@@ -11,7 +11,7 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   /** The fragment shader to be used */
   fragShader: string;
   /** The fps setter, provided by React useState, optional in Julia */
-  fps?: React.Dispatch<React.SetStateAction<string>>;
+  setFPS?: React.Dispatch<React.SetStateAction<string>>;
   /** The device pixel ratio to be used can be overwritten with this value? */
   DPR: number;
   /** Should the DPR value be used? */
@@ -24,7 +24,7 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   mini?: boolean;
 }
 
-export interface RendererProps {
+export interface RendererProps extends React.StyleHTMLAttributes<HTMLDivElement> {
   controls: ViewerControlSprings;
   maxI: number;
   useDPR: boolean;
