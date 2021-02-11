@@ -13,6 +13,7 @@
   user-select: none;
   /* cursor: default; */
   cursor: grab;
+  margin: auto;
 }
 
 .react-colorful__saturation {
@@ -26,7 +27,7 @@
 
 .react-colorful__pointer-fill,
 .react-colorful__alpha-gradient {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 0;

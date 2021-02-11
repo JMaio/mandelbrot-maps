@@ -22,7 +22,6 @@ import ViewChanger from '../render/ViewChanger';
 import { SettingsContext } from '../settings/SettingsContext';
 import { getSettingsWidgetsGrouping } from '../settings/SettingsDefinitions';
 import {
-  GroupDivider,
   GroupTitle,
   SettingsHelpButton,
   SettingsMenuButton,
@@ -64,19 +63,15 @@ function SettingsInstructionBlock({
   React.HTMLAttributes<HTMLParagraphElement>,
   HTMLParagraphElement
 >): JSX.Element {
-  const theme = useTheme();
-
   return (
     <Typography
       variant="body2"
-      paragraph
+      // paragraph
       style={{
-        // https://github.com/mui-org/material-ui/blob/master/packages/material-ui-lab/src/Alert/Alert.js#L16
-        backgroundColor: lighten(theme.palette.info.main, 0.9),
-        color: darken(theme.palette.info.main, 0.6),
-        padding: '6px 10px',
-        margin: '4px 0',
-        borderRadius: theme.shape.borderRadius,
+        padding: '8px 12px',
+        // centre help text vertically
+        marginTop: 'auto',
+        marginBottom: 'auto',
       }}
     >
       {children}
@@ -84,11 +79,15 @@ function SettingsInstructionBlock({
   );
 }
 
-const mdOverrides: MarkdownToJSX.Overrides = {
+const baseMdOverrides = {
   a: MdOverrideLink,
   h1: wrapMdOverrideTypographyHOC('h1'),
   h2: wrapMdOverrideTypographyHOC('h2'),
   p: wrapMdOverrideTypographyHOC('body1'),
+};
+
+const mdOverrides: MarkdownToJSX.Overrides = {
+  ...baseMdOverrides,
   ViewerLayoutDiagram: function ViewerLayoutDiagram() {
     return (
       <Grid container justify="center" style={{ padding: '12px 0' }}>
@@ -98,6 +97,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
+
   ViewChangerDisplay: function ViewChangerDisplay() {
     return (
       <Grid container justify="center" alignItems="stretch">
@@ -124,6 +124,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
+
   HelpBreadcrumbs: function HelpBreadcrumbs() {
     return (
       <Grid
@@ -146,6 +147,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
+
   SettingsMenuButton: function SettingsMenuButtonDisplay() {
     return (
       <Grid container justify="center">
@@ -155,66 +157,96 @@ const mdOverrides: MarkdownToJSX.Overrides = {
       </Grid>
     );
   },
-  // SettingsHelpButton: function SettingsHelpButtonDisplay() {
-  //   return (
-  //     <Grid container justify="center">
-  //       <Grid item style={{ margin: 'auto' }}>
-  //         <SettingsHelpButton onClick={noop} />
-  //       </Grid>
-  //     </Grid>
-  //   );
-  // },
+
   SettingsInstructions: function SettingsInstructions() {
+    const theme = useTheme();
+
     return (
       <SettingsContext.Consumer>
         {({ setSettings, settingsWidgets }) =>
-          getSettingsWidgetsGrouping(settingsWidgets).map((g) => (
+          getSettingsWidgetsGrouping(settingsWidgets).map((g, i) => (
             <Grid container direction="column" alignItems="flex-end" key={g.name}>
-              <Grid item container>
-                <Grid item xs>
-                  <GroupDivider />
-                </Grid>
-              </Grid>
-              <Grid item xs={5} container>
+              <Grid item xs={5} container style={{ userSelect: 'none', marginTop: 12 }}>
                 <Grid item xs>
                   <GroupTitle icon={g.icon} title={g.name} />
                 </Grid>
               </Grid>
-              {Object.entries(g.widgets).map(([k, widgetUnchecked], i) => {
-                const { helptext, ...widget } = widgetUnchecked as settingsWidgetType;
+              {Object.entries(g.widgets).map(([k, widgetUnchecked], j) => {
                 // widget will contain
-                // label, control, (checked or value)
+                // label, control, (checked or value), ...
                 // helptext
+                const { helptext, ...widget } = widgetUnchecked as settingsWidgetType;
                 return (
                   <Grid
-                    item
-                    xs
                     container
                     direction="row"
                     justify="space-between"
-                    alignItems="center"
+                    // align center shrinks to content
+                    // alignItems="center"
                     key={k}
+                    style={{
+                      marginTop: 6,
+                      marginBottom: 6,
+                      borderRadius: theme.shape.borderRadius,
+                      backgroundColor: theme.palette.grey[50],
+                    }}
                   >
-                    <Grid item xs={7} style={{ paddingRight: 12 }}>
-                      <Markdown
-                        options={{
-                          wrapper: React.Fragment,
-                          forceBlock: true,
-                          overrides: {
-                            p: SettingsInstructionBlock,
-                          },
+                    <Grid item xs={7}>
+                      <div
+                        style={{
+                          // fill the available vertical space
+                          height: '100%',
+                          borderTopLeftRadius: theme.shape.borderRadius,
+                          borderBottomLeftRadius: theme.shape.borderRadius,
+                          // https://github.com/mui-org/material-ui/blob/master/packages/material-ui-lab/src/Alert/Alert.js#L16
+                          backgroundColor: lighten(theme.palette.info.main, 0.9),
+                          color: darken(theme.palette.info.main, 0.6),
+                          display: 'flex',
+                          flexDirection: 'column',
                         }}
                       >
-                        {/* default if no description is provided */}
-                        {helptext?.trim() || '(no description)'}
-                      </Markdown>
+                        <Markdown
+                          options={{
+                            wrapper: React.Fragment,
+                            forceBlock: true,
+                            overrides: {
+                              ...baseMdOverrides,
+                              p: SettingsInstructionBlock,
+                            },
+                          }}
+                        >
+                          {
+                            // default if no description is provided
+                            helptext?.trim() || '(no description)'
+                          }
+                        </Markdown>
+                      </div>
                     </Grid>
-                    <Grid item xs={5}>
-                      <FormGroup>
+                    <Grid
+                      item
+                      xs={5}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        userSelect: 'none',
+                      }}
+                    >
+                      <FormGroup
+                        style={{
+                          height: '100%',
+                          marginTop: 'auto',
+                          marginBottom: 'auto',
+                        }}
+                      >
                         <FormControlLabel
                           key={`${k}-control`}
-                          style={{ userSelect: 'none' }}
                           {...widget}
+                          style={{
+                            // make the entire area selectable
+                            height: '100%',
+                            padding: '12px 16px',
+                            margin: 0,
+                          }}
                           onChange={(...e) => {
                             // the value is the last element of the "e" array
                             // https://stackoverflow.com/a/12099341/9184658
@@ -236,14 +268,13 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                   </Grid>
                 );
               })}
-              {/* </FormGroup> */}
-              {/* </Grid> */}
             </Grid>
           ))
         }
       </SettingsContext.Consumer>
     );
   },
+
   Alert: function AlertMd(props) {
     return <Alert {...props} style={{ marginBottom: 16 }} />;
   },

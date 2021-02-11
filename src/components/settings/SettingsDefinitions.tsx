@@ -17,9 +17,10 @@ export const settingsWidgets = (
     checked: settings.showMinimap,
     control: <Switch />,
     helptext: `
-      Minimaps are shown on the bottom-left of each viewer.
-      A minimap shows the current position in the viewer at a zoom scale of 1x;
-      clicking on a minimap will reset the current zoom level to 1x.
+Minimaps are shown on the bottom-left of each viewer.
+A minimap shows the current position in the viewer at a zoom scale of 1x.
+
+Clicking on a minimap will reset the current zoom level to 1x.
     `,
   },
   showCrosshair: {
@@ -27,8 +28,7 @@ export const settingsWidgets = (
     checked: settings.showCrosshair,
     control: <Switch />,
     helptext: `
-      Pinpoints the central point of the Mandelbrot viewer with 
-      a plus-shaped indicator.
+Pinpoints the centre point of the Mandelbrot viewer with a plus-shaped indicator.
     `,
   },
   showCoordinates: {
@@ -36,9 +36,9 @@ export const settingsWidgets = (
     checked: settings.showCoordinates,
     control: <Switch />,
     helptext: `
-      Displays the current viewer coordinates on the top-right corner,
-      and allows warping to specific coordinates 
-      (Mandelbrot viewer only).
+Displays the current viewer coordinates on the top-right corner,
+and allows warping to specific coordinates 
+(Mandelbrot viewer only).
     `,
   },
   maxI: {
@@ -46,8 +46,8 @@ export const settingsWidgets = (
     value: settings.maxI,
     labelPlacement: 'top',
     style: {
-      marginLeft: 0,
-      marginRight: 0,
+      marginLeft: 4,
+      marginRight: 4,
     },
     control: (
       <Slider
@@ -65,9 +65,9 @@ export const settingsWidgets = (
       />
     ),
     helptext: `
-      Sets the maximum times to iterate the fractal:
-      lower values reduce image accuracy, 
-      higher values may reduce performance.
+Sets the maximum times to iterate the fractal:
+lower values reduce image accuracy, 
+**higher values may reduce performance**.
     `,
   },
   useDPR: {
@@ -82,9 +82,9 @@ export const settingsWidgets = (
     checked: settings.useDPR,
     control: <Switch />,
     helptext: `
-      If your device's screen has a high pixel density (ratio > 1.0), using 
-      DPR (Device Pixel Ratio) will increase the sharpness of the image,
-      but may reduce performance.
+If your device's screen has a high pixel density (ratio > 1.0), using 
+DPR (Device Pixel Ratio) will increase the sharpness of the image,
+but **may reduce performance**.
     `,
   },
   useAA: {
@@ -92,9 +92,8 @@ export const settingsWidgets = (
     checked: settings.useAA,
     control: <Switch />,
     helptext: `
-      Anti-aliasing provides a smoothing effect which increases the
-      quality of the image, but may **severely** reduce performance and 
-      can crash the application.
+Anti-aliasing provides a smoothing effect which increases the quality of the image, 
+but can **severely reduce performance and crash the application**.
     `,
   },
   showFPS: {
@@ -102,19 +101,26 @@ export const settingsWidgets = (
     checked: settings.showFPS,
     control: <Switch />,
     helptext: `
-      Measures performance by displaying the current 
-      "Frames Per Second" on the top-left corner.
-      Higher values indicate better performance, while lower values mean 
-      that your device is slowing down significantly.
-      Browsers ususally set an upper bound on FPS that is equal 
-      to the refresh rate of your display (most commonly 60 FPS).
+Measures performance by displaying the current 
+"Frames Per Second" on the top-left corner.
+
+Higher values indicate better performance, while lower values 
+mean that your device is slowing down significantly.
+
+Browsers ususally set an upper bound on FPS that is equal 
+to the refresh rate of your display (most commonly 60 FPS).
     `,
   },
   colour: {
     label: null,
+    // fixes horizontal alignment
+    labelPlacement: 'top',
     style: {
-      marginTop: 14,
-      marginBottom: 10,
+      // padding top higher because of saturation/value selector extending
+      paddingTop: 12,
+      paddingBottom: 8,
+      paddingLeft: 0,
+      paddingRight: 0,
       marginLeft: 0,
       marginRight: 0,
     },
@@ -125,9 +131,10 @@ export const settingsWidgets = (
       />
     ),
     helptext: `
-      Changes the primary colour of the viewers in HSV (Hue / Saturation / Value).
-      The lower part changes Hue, while the upper part 
-      changes Saturation (horizontally) and Value (vertically).
+Changes the primary colour of the viewers in HSV (Hue / Saturation / Value).
+
+The top picker changes *Saturation* (horizontally) and *Value* (vertically).
+The bottom picker changes *Hue*.
     `,
   },
 });
