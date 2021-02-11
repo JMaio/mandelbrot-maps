@@ -1,0 +1,45 @@
+# GitHub Pages Deploy Action
+# https://github.com/marketplace/actions/deploy-to-github-pages
+# Automatically runs when new tags are created
+
+name: Auto-deploy new tag 🚀
+
+# https://github.community/t/how-to-run-github-actions-workflow-only-for-new-tags/16075/10
+on:
+  create:
+    tags:
+      - '*'
+
+jobs:
+  build-and-deploy:
+    name: Build + Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        # If you're using actions/checkout@v2 you must set persist-credentials
+        # to false in most cases for the deployment to work correctly.
+        with:
+          persist-credentials: false
+
+      # https://github.com/actions/setup-node/#v2
+      - name: Use Node.js ✏️
+        uses: actions/setup-node@v2
+        with:
+          # It will first check the local cache for a semver match
+          node-version: '14'
+
+      # GitHub-hosted runners have npm and Yarn dependency managers installed.
+      - name: Install 💿
+        run: yarn
+
+      - name: Build 📐
+        run: yarn build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: build # The folder the action should deploy.
+          CLEAN: true # Automatically remove deleted files from the deploy branch
