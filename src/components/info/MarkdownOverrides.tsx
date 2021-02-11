@@ -100,14 +100,16 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   ViewChangerDisplay: function ViewChangerDisplay() {
     return (
-      <Grid container justify="center" alignItems="stretch">
+      <Grid container justify="center" spacing={2}>
         <Grid item>
           <Grid container direction="column">
             <Grid item>
               <ViewChanger vertical={true} changeFunc={noop} displayOnly />
             </Grid>
             <Grid item>
-              <Typography align="center">Portrait</Typography>
+              <Typography variant="body2" align="center">
+                Portrait
+              </Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -116,8 +118,10 @@ const mdOverrides: MarkdownToJSX.Overrides = {
             <Grid item style={{ margin: 'auto' }}>
               <ViewChanger vertical={false} changeFunc={noop} displayOnly />
             </Grid>
-            <Grid item>
-              <Typography align="center">Landscape</Typography>
+            <Grid item style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+              <Typography variant="body2" align="center">
+                Landscape
+              </Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -127,13 +131,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   HelpBreadcrumbs: function HelpBreadcrumbs() {
     return (
-      <Grid
-        container
-        justify="center"
-        alignItems="center"
-        alignContent="center"
-        style={{ marginTop: 8 }}
-      >
+      <Grid container justify="center" alignItems="center">
         <Grid item>
           <SettingsMenuButton onClick={noop} displayOnly />
         </Grid>

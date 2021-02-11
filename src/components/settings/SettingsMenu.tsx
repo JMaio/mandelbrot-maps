@@ -3,7 +3,6 @@ import {
   Divider,
   Fab,
   FormControlLabel,
-  FormControlLabelProps,
   FormGroup,
   Grid,
   makeStyles,
