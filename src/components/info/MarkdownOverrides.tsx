@@ -100,7 +100,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   ViewChangerDisplay: function ViewChangerDisplay() {
     return (
-      <Grid container justify="center" spacing={2}>
+      <Grid container justify="space-evenly">
         <Grid item>
           <Grid container direction="column">
             <Grid item>
@@ -189,7 +189,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                       backgroundColor: theme.palette.grey[50],
                     }}
                   >
-                    <Grid item xs={7}>
+                    <Grid item xs={6} sm={7}>
                       <div
                         style={{
                           // fill the available vertical space
@@ -222,7 +222,8 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                     </Grid>
                     <Grid
                       item
-                      xs={5}
+                      xs={6}
+                      sm={5}
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -232,8 +233,6 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                       <FormGroup
                         style={{
                           height: '100%',
-                          marginTop: 'auto',
-                          marginBottom: 'auto',
                         }}
                       >
                         <FormControlLabel
@@ -242,8 +241,15 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                           style={{
                             // make the entire area selectable
                             height: '100%',
-                            padding: '12px 16px',
-                            margin: 0,
+                            padding: '10px 12px',
+                            // if this is a "top" label, tweak the margins
+                            ...(widget.labelPlacement === 'top'
+                              ? {
+                                  margin: 8,
+                                  // correctly centres iteration slider
+                                  justifyContent: 'center',
+                                }
+                              : {}),
                           }}
                           onChange={(...e) => {
                             // the value is the last element of the "e" array

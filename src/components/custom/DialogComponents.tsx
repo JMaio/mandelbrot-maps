@@ -20,7 +20,11 @@ const dialogStyles = (theme: Theme) =>
     root: {
       margin: 0,
       // padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-      padding: theme.spacing(1.5),
+      padding: theme.spacing(1),
+      // https://material-ui.com/customization/breakpoints/#css-media-queries
+      // [theme.breakpoints.up('sm')]: {
+      //   padding: theme.spacing(1),
+      // },
       display: 'flex',
       flexDirection: 'row',
       // align: "middle",
@@ -75,7 +79,11 @@ export const DialogTitle = withStyles(dialogStyles)(
 
 export const DialogContent = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(1.5),
+    // https://material-ui.com/customization/breakpoints/#css-media-queries
+    [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing(3),
+    },
   },
 }))(MuiDialogContent);
 
@@ -83,6 +91,10 @@ export const DialogActions = withStyles((theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(1),
+    // https://material-ui.com/customization/breakpoints/#css-media-queries
+    // [theme.breakpoints.up('sm')]: {
+    //   padding: theme.spacing(1.5),
+    // },
   },
 }))(MuiDialogActions);
 

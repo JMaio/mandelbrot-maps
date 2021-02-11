@@ -112,7 +112,7 @@ export default function FirstTimeInfo({
         </SwipeableViews> */}
       </DialogContent>
 
-      <DialogActions style={{ padding: 4 }}>
+      <DialogActions style={{ padding: 2 }}>
         <MobileStepper
           variant="dots"
           steps={steps}

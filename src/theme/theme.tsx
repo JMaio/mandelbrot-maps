@@ -23,11 +23,11 @@ let theme = createMuiTheme({
       PaperProps: {
         style: {
           // fill more of the screen with this dialog
-          margin: 16,
+          margin: 12,
           // don't expand past 1000px
           maxHeight: 1000,
           // don't go outside window bounds
-          height: 'calc(100% - 32px)', // = 16px top + bottom margin
+          height: 'calc(100% - 24px)', // = 16px top + bottom margin
           // sm is 600px, go slightly beyond that
           maxWidth: 680,
           // always try to maximize width (`fullWidth={true}`)

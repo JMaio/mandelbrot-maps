@@ -46,8 +46,7 @@ and allows warping to specific coordinates
     value: settings.maxI,
     labelPlacement: 'top',
     style: {
-      marginLeft: 4,
-      marginRight: 4,
+      margin: 0,
     },
     control: (
       <Slider
@@ -121,8 +120,7 @@ to the refresh rate of your display (most commonly 60 FPS).
       paddingBottom: 8,
       paddingLeft: 0,
       paddingRight: 0,
-      marginLeft: 0,
-      marginRight: 0,
+      margin: 0,
     },
     control: (
       <RgbColorPicker
