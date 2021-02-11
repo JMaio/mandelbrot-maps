@@ -13,9 +13,10 @@ export type settingsDefinitionsType = {
   useDPR: boolean;
   useAA: boolean;
   colour: RgbColor;
+  deepZoom: boolean;
 };
 
-export const defaultSettings = {
+export const defaultSettings: settingsDefinitionsType = {
   showMinimap: true,
   showCrosshair: true,
   showCoordinates: false,
@@ -24,9 +25,10 @@ export const defaultSettings = {
   useDPR: false,
   useAA: false,
   colour: defaultShadingColour,
+  deepZoom: false,
 };
 
-export const defaultIterationLevels = [10, 250, 500, 750, 1000].map((i) => ({
+export const defaultIterationLevels = [16, 250, 500, 750, 1000].map((i) => ({
   value: i,
   label: i,
 }));
@@ -39,6 +41,7 @@ export const defaultIterationLevels = [10, 250, 500, 750, 1000].map((i) => ({
 // }
 // squares: 6^2, 20^2, 32^2...
 // bad iteration levels: 6, 7, 12, 13, 14, 15, 24, 26, 28, 30
+// 19 iteration levels:
 export const perturbationIterationLevels = [
   4,
   5,
@@ -59,9 +62,14 @@ export const perturbationIterationLevels = [
   29,
   31,
   32,
-].map((i) => ({
-  value: i * i,
-}));
+]
+  .map((l) => l * l)
+  .map((l, i) => ({
+    value: l,
+    // only show the labels of the higher levels
+    // i+n to ensure that 18 is mod n
+    label: (i + 2) % 4 ? null : l,
+  }));
 
 // export const perturbationIterationLevels = _.range(2, 33, 2)
 //   .map((i) => i * i)

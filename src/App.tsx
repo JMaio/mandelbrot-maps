@@ -1,4 +1,4 @@
-import { Grid, Switch, ThemeProvider } from '@material-ui/core';
+import { Grid, ThemeProvider } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSpring } from 'react-spring';
 import './App.css';
@@ -142,8 +142,8 @@ function App(): JSX.Element {
   // <AnimatedTypography></AnimatedTypography>
   // const AnimatedGrid = animated(Grid);
 
-  const [showDeep, setDeep] = useState(false);
-  const toggleDeep = () => setDeep((p) => !p);
+  // const [showDeep, setDeep] = useState(false);
+  // const toggleDeep = () => setDeep((p) => !p);
 
   return (
     <ThemeProvider theme={theme}>
@@ -167,10 +167,6 @@ function App(): JSX.Element {
                     position: 'absolute',
                   }}
                 >
-                  <div style={{ position: 'absolute', zIndex: 10 }}>
-                    <Switch onChange={toggleDeep} />
-                  </div>
-
                   <CoordinateInterface
                     show={settings.showCoordinates}
                     mandelbrot={mandelbrotControls}
@@ -184,7 +180,7 @@ function App(): JSX.Element {
                       flexGrow: showMandelbrot ? 1 : 0, // percentFlex.m.interpolate((x) => x),
                     }}
                   >
-                    {showDeep ? (
+                    {settings.deepZoom ? (
                       <MandelbrotRendererDeep
                         controls={mandelbrotControls}
                         DPR={currentDPR}
