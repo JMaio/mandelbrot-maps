@@ -184,7 +184,7 @@ function App(): JSX.Element {
                       flexGrow: showMandelbrot ? 1 : 0, // percentFlex.m.interpolate((x) => x),
                     }}
                   >
-                    {/* {showDeep ? (
+                    {showDeep ? (
                       <MandelbrotRendererDeep
                         controls={mandelbrotControls}
                         DPR={currentDPR}
@@ -196,19 +196,7 @@ function App(): JSX.Element {
                         DPR={currentDPR}
                         {...settings}
                       />
-                    )} */}
-                    <MandelbrotRendererDeep
-                      controls={mandelbrotControls}
-                      DPR={currentDPR}
-                      style={!showDeep ? { display: 'hidden', height: 0 } : {}}
-                      {...settings}
-                    />
-                    <MandelbrotRenderer
-                      controls={mandelbrotControls}
-                      DPR={currentDPR}
-                      style={showDeep ? { display: 'inherit', height: 0 } : {}}
-                      {...settings}
-                    />
+                    )}
                   </Grid>
 
                   <Grid item style={{ width: 0, height: 0, zIndex: 1 }}>
