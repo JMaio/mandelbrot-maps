@@ -287,10 +287,14 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           orbittex: orbittex,
           texsize: texsize,
           size: size,
+          // size of a pixel in fractal space?
+          pixelsize: [hy, hy].map((i) => i / ctx.canvas.width),
           // perturbation centre point?
           // center: [aim.x.sub(origin.x).toNumber(), aim.y.sub(origin.y).toNumber()],
           center: center,
         };
+
+        // console.log([hx, hx].map((i) => i / ctx.canvas.width));
 
         ctx.useProgram(prog.program);
         twgl.setBuffersAndAttributes(ctx, prog, buff);

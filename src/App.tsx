@@ -70,7 +70,7 @@ function App(): JSX.Element {
     zoomCtrl: useSpring<ViewerZoomControl>(() => ({
       z: viewerOrigin.z,
       minZoom: 0.5,
-      maxZoom: 100000,
+      maxZoom: 100000000000,
       config: springsConfigs.default.zoom,
       onRest: updateM,
     })),

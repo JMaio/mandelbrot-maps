@@ -12,7 +12,9 @@ void main() {
 // full canvas space to allow the fragment shader to act on the full canvas.
 export const fullscreenVertexArray = {
   position: {
-    numComponents: 3,
     data: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    numComponents: 3,
   },
+  // this array can only be used with "gl.TRIANGLE_FAN"
+  // position: { data: [1, 1, 1, -1, -1, -1, -1, 1], numComponents: 2 }
 };

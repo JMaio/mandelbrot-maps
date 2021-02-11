@@ -93,12 +93,22 @@ uniform vec3  u_colour;
 uniform float u_theta;
 vec2 sincosT = vec2(sin(u_theta), cos(u_theta));
 
+bool crosshair( float x, float y ) {
+  float abs_x = abs(2.0*x - resolution.x);
+  float abs_y = abs(2.0*y - resolution.y);
+
+  return 
+  // crosshair in centre of screen
+  (abs_x <= cross_stroke || abs_y <= cross_stroke) &&
+  // crosshair size / "radius"
+  (abs_x <= cross_radius && abs_y <= cross_radius);
+}
 
 // ----- shader adapted from "deep-fractal" (@munrocket)
 
 // #define imax ${1024}
 #define square_radius ${3e5}.
-#define super_sampling ${0}
+// #define super_sampling ${0}
 #define color_scheme ${0}
 #define is_julia ${0}
 const float logLogRR = log2(log2(square_radius));
@@ -193,37 +203,50 @@ void main() {
 
   /*  DEM (Distance Estimation) = 2 * |Z / Z'| * ln(|Z|)  */
   float dem = sqrt(R.zz / R.dzdz) * log2(R.zz);
-  // float dem_weight = 800. / min(size.x, size.y);
+  float dem_weight = 800. / min(size.x, size.y);
 
   /*  Adaptive supersampling with additional 4 points in SSAAx4 pattern */
   // #if (super_sampling == 1 && color_scheme != 1)
-  //   if (-log2(dem * dem_weight) > 0.5) {
-  //     R.time /= 5.;
-  //     R.zz /= 5.;
-  //     R.dzdz /= 5.;
-  //     R.stripe /= 5.;
-  //     for (int i = 0; i < 4; i++) {
-  //       vec2 offset = pixelsize * vec2(vec4(-1., 3., 3., 1.)[i], vec4(-3., -1., 1., 3.)[i]) / 4.;
-  //       offset = vec2(offset.x * sincosT.y - offset.y * sincosT.x, dot(offset, sincosT));
-  //       result RI = calculator(offset);
-  //       R.time += RI.time / 5.;
-  //       R.zz += RI.zz / 5.;
-  //       R.dzdz += RI.dzdz / 5.;
-  //       R.stripe += RI.stripe / 5.;
-  //     }
-  //   }
-  // #endif
+  #if (AA == 2 && color_scheme != 1)
+    if (-log2(dem * dem_weight) > 0.5) {
+      R.time /= 5.;
+      R.zz /= 5.;
+      R.dzdz /= 5.;
+      R.stripe /= 5.;
+      for (int i = 0; i < 4; i++) {
+        vec2 offset = pixelsize * vec2(vec4(-1., 3., 3., 1.)[i], vec4(-3., -1., 1., 3.)[i]) / 4.;
+        offset = vec2(offset.x * sincosT.y - offset.y * sincosT.x, dot(offset, sincosT));
+        result RI = calculator(offset);
+        R.time += RI.time / 5.;
+        R.zz += RI.zz / 5.;
+        R.dzdz += RI.dzdz / 5.;
+        R.stripe += RI.stripe / 5.;
+      }
+    }
+  #endif
 
   /*  Final coloring  */
   vec3 color;
   #if (color_scheme == 0)
-    color += 0.7 + 2.5 * (R.stripe / clamp(R.time, 0., 200.)) * (1. - 0.6 * step(float(MAXI), 1. + R.time));
-    color = 0.5 + 0.5 * sin(color + vec3(4.0, 4.6, 5.2) + 50.0 * R.time / float(MAXI));
+    // // original colour scheme
+    // col += 0.5 + 0.5*cos( 3.0 + l*0.15 + u_colour);
+
+    // "wisps" / stripes
+    // color += 0.7 + 2.5 * (R.stripe / clamp(R.time, 0., 200.)) * (1. - 0.6 * step(float(MAXI), 1. + R.time));
+
+    // color = 0.5 + 0.5 * sin(color + vec3(4.0, 4.6, 5.2) + 50.0 * R.time / float(MAXI));
+    color = 0.5 + 0.5 * cos(3.0 + u_colour + 50.0 * R.time / float(MAXI));
   #else
     vec2 texcoord = vec2(R.argZ / 2. / 3.14159265, log2(R.zz) / log2(square_radius) - 1.0);
     color = texture2D(exteriortex, texcoord).xyz;
   #endif
 
+  #if show_crosshair
+    if (crosshair(gl_FragCoord.x, gl_FragCoord.y)) {
+      color = 1. - color;
+    }
+  #endif
+  
   gl_FragColor = vec4(color, 1.);
 }`;
 
