@@ -62,4 +62,6 @@ export interface MinimapViewerProps extends WebGLCanvasProps {
 export interface ViewChangerProps {
   vertical: boolean;
   changeFunc: React.Dispatch<React.SetStateAction<[boolean, boolean]>>;
+  /** use this toggle to make the component display nicely for showcase purposes */
+  displayOnly?: boolean;
 }
