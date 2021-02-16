@@ -4,7 +4,10 @@ import { ChangeCoordinatesCardProps } from '../../common/info';
 import { warpToPoint } from '../../common/utils';
 import { defaultMandelbrotStart } from '../../common/values';
 
-const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element => {
+const ChangeCoordinatesCard = ({
+  precision,
+  ...props
+}: ChangeCoordinatesCardProps): JSX.Element => {
   const [xy, setXY] = useState(defaultMandelbrotStart.xy);
   const [x, y] = xy;
   const [zoom, setZoom] = useState(defaultMandelbrotStart.z);
@@ -64,7 +67,9 @@ const ChangeCoordinatesCard = (props: ChangeCoordinatesCardProps): JSX.Element =
         </Grid>
         <Button
           style={{ marginTop: 12 }}
-          onClick={() => warpToPoint(props.mandelbrot, { xy: xy, z: zoom, theta: theta })}
+          onClick={() =>
+            warpToPoint(props.mandelbrot, { xy: xy, z: zoom, theta: theta }, precision)
+          }
         >
           Go
         </Button>

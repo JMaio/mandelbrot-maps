@@ -1,16 +1,26 @@
 import { Grow } from '@material-ui/core';
 import React from 'react';
-import { ViewerControlSprings } from '../../common/types';
+import { CoordinateInterfaceProps } from '../../common/info';
 import ChangeCoordinatesCard from './ChangeCoordinatesCard';
 import CoordinatesCard from './CoordinatesCard';
 
-export const CoordinateInterface = (props: {
-  mandelbrot: ViewerControlSprings;
-  show: boolean;
-}): JSX.Element => {
+export const CoordinateInterface = ({
+  mandelbrot,
+  precision,
+  precisionFormatter,
+  show,
+}: CoordinateInterfaceProps): JSX.Element => {
+  const {
+    // props.mandelbrot.xyCtrl[0].xy,
+    xyCtrl: [{ xy }],
+    // props.mandelbrot.zoomCtrl[0].z,
+    zoomCtrl: [{ z }],
+    // props.mandelbrot.rotCtrl[0].theta,
+    rotCtrl: [{ theta }],
+  } = mandelbrot;
   return (
     <Grow
-      in={props.show}
+      in={show}
       style={{
         position: 'absolute',
         right: 0,
@@ -23,12 +33,13 @@ export const CoordinateInterface = (props: {
       <div>
         <CoordinatesCard
           mandelbrot={{
-            xy: props.mandelbrot.xyCtrl[0].xy,
-            zoom: props.mandelbrot.zoomCtrl[0].z,
-            theta: props.mandelbrot.rotCtrl[0].theta,
+            xy: xy,
+            zoom: z,
+            theta: theta,
           }}
+          precisionFormatter={precisionFormatter}
         />
-        <ChangeCoordinatesCard mandelbrot={props.mandelbrot} />
+        <ChangeCoordinatesCard mandelbrot={mandelbrot} precision={precision} />
       </div>
     </Grow>
   );

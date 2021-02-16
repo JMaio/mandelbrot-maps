@@ -12,7 +12,10 @@ import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 
-export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.Element {
+export default function MandelbrotRenderer({
+  precision,
+  ...props
+}: MandelbrotRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -72,6 +75,7 @@ export default function MandelbrotRenderer(props: MandelbrotRendererProps): JSX.
     // gl: gl,
     setDragging: setDragging,
     DPR: props.DPR,
+    precision: precision,
   });
 
   // https://use-gesture.netlify.app/docs/changelog/#breaking

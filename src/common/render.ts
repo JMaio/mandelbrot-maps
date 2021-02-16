@@ -1,7 +1,12 @@
 import { CanvasHTMLAttributes } from 'react';
 import { RgbColor } from 'react-colorful';
 import { OpaqueInterpolation } from 'react-spring';
-import { MandelbrotMapsWebGLUniforms, ViewerControlSprings, XYType } from './types';
+import {
+  MandelbrotMapsWebGLUniforms,
+  precisionSpecifier,
+  ViewerControlSprings,
+  XYType,
+} from './types';
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
@@ -31,6 +36,7 @@ export interface RendererProps extends React.StyleHTMLAttributes<HTMLDivElement>
   DPR: number;
   useAA: boolean;
   colour: RgbColor;
+  precision: precisionSpecifier;
 }
 
 export interface RendererRenderValues {

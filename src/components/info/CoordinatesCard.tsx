@@ -2,12 +2,12 @@ import { Card, Typography } from '@material-ui/core';
 import React from 'react';
 import { animated } from 'react-spring';
 import { CoordinatesCardProps } from '../../common/info';
-import {
-  defaultFloatFixedPrecision,
-  shortFloatFixedPrecision,
-} from '../../common/values';
+import {} from '../../common/values';
 
-const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
+const CoordinatesCard = ({
+  mandelbrot,
+  precisionFormatter,
+}: CoordinatesCardProps): JSX.Element => {
   return (
     <Card
       style={{
@@ -23,28 +23,28 @@ const CoordinatesCard = (props: CoordinatesCardProps): JSX.Element => {
         {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
         {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
         <animated.span>
-          {props.mandelbrot.xy.interpolate(
+          {mandelbrot.xy.interpolate(
             // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${x.toFixed(defaultFloatFixedPrecision)} : x`,
+            (x, y) => `${precisionFormatter.toFloatDisplayFixed(x)} : x`,
           )}
         </animated.span>
         <br />
         <animated.span>
-          {props.mandelbrot.xy.interpolate(
+          {mandelbrot.xy.interpolate(
             // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${y.toFixed(defaultFloatFixedPrecision)} : y`,
+            (x, y) => `${precisionFormatter.toFloatDisplayFixed(y)} : y`,
           )}
         </animated.span>
         <br />
         <animated.span>
-          {props.mandelbrot.zoom.interpolate(
-            (z) => `${z.toFixed(shortFloatFixedPrecision)} : z`,
+          {mandelbrot.zoom.interpolate(
+            (z) => `${precisionFormatter.toFloatDisplayShort(z)} : z`,
           )}
         </animated.span>
         <br />
         <animated.span>
-          {props.mandelbrot.theta.interpolate(
-            (t) => `${t.toFixed(shortFloatFixedPrecision)} : t`,
+          {mandelbrot.theta.interpolate(
+            (t) => `${precisionFormatter.toFloatDisplayShort(t)} : t`,
           )}
         </animated.span>
       </Typography>

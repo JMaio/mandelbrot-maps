@@ -10,7 +10,12 @@ import {
   Vector2,
 } from 'react-use-gesture/dist/types';
 import { Vector, vRotate, vScale } from 'vec-la-fp';
-import { RgbFloatColour, ViewerControlSprings, ViewerLocation } from './types';
+import {
+  precisionSpecifier,
+  RgbFloatColour,
+  ViewerControlSprings,
+  ViewerLocation,
+} from './types';
 import { springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
@@ -55,6 +60,7 @@ export interface GenericTouchBindParams {
   // gl: any,
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   DPR: number;
+  precision: precisionSpecifier;
 }
 
 export interface GenericTouchBindReturn {
@@ -80,10 +86,13 @@ export function genericTouchBind({
   controls,
   setDragging,
   DPR,
+  precision,
 }: GenericTouchBindParams): GenericTouchBindReturn {
   const [{ xy }, setControlXY] = controls.xyCtrl;
   const [{ z, minZoom, maxZoom }, setControlZoom] = controls.zoomCtrl;
   const [{ theta }, setControlRot] = controls.rotCtrl;
+
+  const conf = springsConfigs(precision);
 
   const zoomMult = { in: 3e-3, out: 1e-3 };
 
@@ -102,33 +111,35 @@ export function genericTouchBind({
     theta: number;
     relMove: Vector2;
     down: boolean;
-  }) =>
+  }) => {
     setControlXY({
       // add to the current position the relative displacement (relMove), rotated by theta,
       // to maintain the correct displacement direction (without this it would move as if theta=0)
       xy: addV(xy, vScale(DPR, vRotate(theta, relMove))),
-      config: down ? springsConfigs.user.xy : springsConfigs.default.xy,
+      config: down ? conf.user.xyCtrl : conf.default.xyCtrl,
       // reset immediate value from warp function
       immediate: false,
     });
-
+  };
   /** Re-usable logic for zooming */
-  const updateZ = ({ z, down }: { z: number; down: boolean }) =>
+  const updateZ = ({ z, down }: { z: number; down: boolean }) => {
     setControlZoom({
       z: z,
-      config: down ? springsConfigs.user.zoom : springsConfigs.default.zoom,
+      config: down ? conf.user.zoomCtrl : conf.default.zoomCtrl,
       // reset immediate value from warp function
       immediate: false,
     });
+  };
 
   /** Re-usable logic for rotating */
-  const updateT = ({ t, down }: { t: number; down: boolean }) =>
+  const updateT = ({ t, down }: { t: number; down: boolean }) => {
     setControlRot({
       theta: t,
       // reset immediate value from warp function
       immediate: false,
-      config: down ? springsConfigs.user.rot : springsConfigs.default.rot,
+      config: down ? conf.user.rotCtrl : conf.default.rotCtrl,
     });
+  };
 
   return {
     handlers: {
@@ -345,30 +356,33 @@ export function genericTouchBind({
  * @param immediate Should the update happen immediately? (Useful for testing)
  */
 export const warpToPoint = (
-  controls: ViewerControlSprings,
+  { xyCtrl: [, setXY], zoomCtrl: [, setZ], rotCtrl: [, setR] }: ViewerControlSprings,
+  // warp destination
   { xy, z, theta }: Partial<ViewerLocation>,
+  precision: precisionSpecifier,
   immediate = false,
 ): void => {
+  const conf = springsConfigs(precision);
   // can't do a simple "if (x)" check since values could be zero (evaluates to "false")
   if (xy !== undefined) {
-    controls.xyCtrl[1]({
+    setXY({
       // use screen scale multiplier for a simpler API
       xy: xy,
-      config: springsConfigs.default.xy,
+      config: conf.default.xyCtrl,
       immediate: immediate,
     });
   }
   if (z !== undefined) {
-    controls.zoomCtrl[1]({
+    setZ({
       z: z,
-      config: springsConfigs.default.zoom,
+      config: conf.default.zoomCtrl,
       immediate: immediate,
     });
   }
   if (theta !== undefined) {
-    controls.rotCtrl[1]({
+    setR({
       theta: theta,
-      config: springsConfigs.default.rot,
+      config: conf.default.rotCtrl,
       immediate: immediate,
     });
   }

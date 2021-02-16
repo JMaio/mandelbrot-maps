@@ -7,7 +7,11 @@ import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
-export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
+
+export default function JuliaRenderer({
+  precision,
+  ...props
+}: JuliaRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,6 +48,7 @@ export default function JuliaRenderer(props: JuliaRendererProps): JSX.Element {
     controls: props.controls,
     setDragging: setDragging,
     DPR: props.DPR,
+    precision: precision,
   });
 
   useGesture(gtb.handlers, gtb.config);

@@ -21,6 +21,7 @@ export default function MandelbrotRendererDeep({
   showCrosshair,
   colour,
   style,
+  precision,
 }: MandelbrotRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,6 +91,7 @@ export default function MandelbrotRendererDeep({
     // gl: gl,
     setDragging: setDragging,
     DPR: DPR,
+    precision: precision,
   });
 
   // https://use-gesture.netlify.app/docs/changelog/#breaking
