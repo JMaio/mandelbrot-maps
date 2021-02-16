@@ -18,6 +18,7 @@ import { settingsWidgetType } from '../../common/settings';
 //
 // imports for markdown
 import { ReactComponent as ViewerLayoutDiagramSVG } from '../../img/layout-diagram.svg';
+import { verylightBoxShadow } from '../../theme/theme';
 import ViewChanger from '../render/ViewChanger';
 import { SettingsContext } from '../settings/SettingsContext';
 import { getSettingsWidgetsGrouping } from '../settings/SettingsDefinitions';
@@ -187,6 +188,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                       marginBottom: 6,
                       borderRadius: theme.shape.borderRadius,
                       backgroundColor: theme.palette.grey[50],
+                      boxShadow: verylightBoxShadow,
                     }}
                   >
                     <Grid item xs={6} sm={7}>
