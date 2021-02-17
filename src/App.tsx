@@ -263,7 +263,6 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
             helpState={[openHelp, toggleHelp]}
           />
         </Grid>
-        );
       </Grid>
       <InfoDialog ctrl={[showInfo, setShowInfo]} />
 

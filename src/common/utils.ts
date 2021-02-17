@@ -187,7 +187,8 @@ export function genericTouchBind({
         // const em = 1.33;
         // const newZ =
         //   memo.z * (1 + Math.sign(md) * 1e-2 * Math.abs(md) ** (md <= 0 ? 1 / em : em)); //(1 - zdelta * Math.abs(zdelta));
-        const newZ = _.clamp(memo.z + md * 1e-2, 0.5, 100_000) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
+        const newZ =
+          _.clamp(memo.z + md * 1e-2, 0.5, maxZoom.getValue()) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
         // console.log(Math.abs(md * 1e-2));
         // console.log(
         //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
