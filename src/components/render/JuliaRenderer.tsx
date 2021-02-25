@@ -17,7 +17,7 @@ export default function JuliaRenderer({
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const [{ xy }] = props.controls.xyCtrl;
-  const [{ z }, setControlZoom] = props.controls.zoomCtrl;
+  const [{ z }] = props.controls.zoomCtrl;
   const [{ theta }] = props.controls.rotCtrl;
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1;
@@ -76,8 +76,8 @@ export default function JuliaRenderer({
             DPR={props.DPR}
             u={u}
             canvasRef={miniCanvasRef}
-            onClick={() => setControlZoom({ z: 1 })}
             show={settings.showMinimap}
+            controls={props.controls}
           />
         </div>
       )}

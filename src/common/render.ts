@@ -4,6 +4,7 @@ import { OpaqueInterpolation } from 'react-spring';
 import {
   MandelbrotMapsWebGLUniforms,
   precisionSpecifier,
+  ThetaType,
   ViewerControlSprings,
   XYType,
 } from './types';
@@ -55,9 +56,12 @@ export interface JuliaRendererProps extends RendererProps {
 
 export interface MinimapViewerProps extends WebGLCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  onClick: () => void;
   show: boolean;
   id?: string;
+
+  controls: ViewerControlSprings;
+  // zoomOnClick: () => void;
+  // thetaOnClick: () => void;
   //   dpr: number;
   //   u: MandelbrotMapsWebGLUniforms;
 
@@ -70,4 +74,9 @@ export interface ViewChangerProps {
   changeFunc: React.Dispatch<React.SetStateAction<[boolean, boolean]>>;
   /** use this toggle to make the component display nicely for showcase purposes */
   displayOnly?: boolean;
+}
+
+export interface RotationCompassProps {
+  theta: OpaqueInterpolation<ThetaType>;
+  onClick: () => void;
 }

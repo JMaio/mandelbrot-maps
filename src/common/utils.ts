@@ -16,7 +16,7 @@ import {
   ViewerControlSprings,
   ViewerLocation,
 } from './types';
-import { springsConfigs } from './values';
+import { defaultPrecision, springsConfigs } from './values';
 
 // https://usehooks.com/useWindowSize/
 export function useWindowSize(): { w: number; h: number } {
@@ -71,12 +71,12 @@ export interface GenericTouchBindReturn {
 // --------------------------------------------------------------------------
 // https://gist.github.com/evdokimovm/0e7163faf7c8fe24e41e6b68461e4feb
 // Convert from degrees to radians.
-const degToRad = (deg: number): number => (deg * Math.PI) / 180;
+export const degToRad = (deg: number): number => (deg * Math.PI) / 180;
 // Math.radians(90); // 1.5707963267948966
 
 // Convert from radians to degrees.
 // eslint-disable-next-line
-const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
+export const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
 // Math.degrees(3.141592653589793); // 180
 // --------------------------------------------------------------------------
 
@@ -360,7 +360,7 @@ export const warpToPoint = (
   { xyCtrl: [, setXY], zoomCtrl: [, setZ], rotCtrl: [, setR] }: ViewerControlSprings,
   // warp destination
   { xy, z, theta }: Partial<ViewerLocation>,
-  precision: precisionSpecifier,
+  precision: precisionSpecifier = defaultPrecision,
   immediate = false,
 ): void => {
   const conf = springsConfigs(precision);

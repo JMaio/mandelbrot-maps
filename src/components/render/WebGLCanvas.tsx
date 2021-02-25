@@ -7,7 +7,7 @@ import { fullscreenVertexArray, fullVertexShader } from '../../shaders/fullVerte
 // https://mariusschulz.com/blog/typing-destructured-object-parameters-in-typescript
 // https://stackoverflow.com/a/50294843/9184658
 const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
-  (props: WebGLCanvasProps, refAny) => {
+  ({ u, setFPS, mini, ...props }: WebGLCanvasProps, refAny) => {
     // const { mini = false, ...rest } = props;
     // props:
     // id
@@ -26,15 +26,9 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
     const bufferInfo = useRef<twgl.BufferInfo>();
     const programInfo = useRef<twgl.ProgramInfo>();
 
-    const u = props.u;
-    const setFps = props.setFPS;
-
     // have a zoom callback
     // keeps minimaps at a fixed zoom level
-    const zoom = useCallback(() => (props.mini ? 0.95 : props.u.zoom.getValue()), [
-      props.mini,
-      props.u.zoom,
-    ]);
+    const zoom = useCallback(() => (mini ? 0.95 : u.zoom.getValue()), [mini, u.zoom]);
 
     // const DPR = props.useDPR ? props.DPR : 1;
 
@@ -116,7 +110,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         twgl.drawBufferInfo(ctx, buff);
 
         // calculate fps
-        if (setFps !== undefined) {
+        if (setFPS !== undefined) {
           frames.current++;
           elapsedTime.current += time - then.current;
           then.current = time;
@@ -124,7 +118,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           // console.log(elapsedTime.current);
           if (elapsedTime.current >= interval) {
             //multiply with (1000 / elapsed) for accuracy
-            setFps((frames.current * (interval / elapsedTime.current)).toFixed(1));
+            setFPS((frames.current * (interval / elapsedTime.current)).toFixed(1));
             frames.current = 0;
             elapsedTime.current -= interval;
 
@@ -135,7 +129,7 @@ const WebGLCanvas = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         // The 'state' will always be the initial value here
         renderRequestRef.current = requestAnimationFrame(render);
       },
-      [gl, u, zoom, props.DPR, setFps, interval, canvasRef],
+      [gl, u, zoom, props.DPR, setFPS, interval, canvasRef],
     );
 
     useEffect(() => {

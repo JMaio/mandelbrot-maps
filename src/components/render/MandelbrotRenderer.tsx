@@ -36,7 +36,7 @@ export default function MandelbrotRenderer({
   // read incoming props
   const [{ xy }] = props.controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ z }, setControlZoom] = props.controls.zoomCtrl;
+  const [{ z }] = props.controls.zoomCtrl;
   const [{ theta }] = props.controls.rotCtrl;
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1; // -> global
@@ -119,7 +119,7 @@ export default function MandelbrotRenderer({
             canvasRef={miniCanvasRef}
             // glRef={miniGl}
             show={settings.showMinimap}
-            onClick={() => setControlZoom({ z: 1 })}
+            controls={props.controls}
           />
         </div>
       )}
