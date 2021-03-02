@@ -1,7 +1,13 @@
 import { CanvasHTMLAttributes } from 'react';
 import { RgbColor } from 'react-colorful';
 import { OpaqueInterpolation } from 'react-spring';
-import { MandelbrotMapsWebGLUniforms, ViewerControlSprings, XYType } from './types';
+import {
+  MandelbrotMapsWebGLUniforms,
+  precisionSpecifier,
+  ThetaType,
+  ViewerControlSprings,
+  XYType,
+} from './types';
 
 export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement> {
   /** The reference to the WebGL context in the root canvas element  */
@@ -11,7 +17,7 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   /** The fragment shader to be used */
   fragShader: string;
   /** The fps setter, provided by React useState, optional in Julia */
-  fps?: React.Dispatch<React.SetStateAction<string>>;
+  setFPS?: React.Dispatch<React.SetStateAction<string>>;
   /** The device pixel ratio to be used can be overwritten with this value? */
   DPR: number;
   /** Should the DPR value be used? */
@@ -24,13 +30,14 @@ export interface WebGLCanvasProps extends CanvasHTMLAttributes<HTMLCanvasElement
   mini?: boolean;
 }
 
-export interface RendererProps {
+export interface RendererProps extends React.StyleHTMLAttributes<HTMLDivElement> {
   controls: ViewerControlSprings;
   maxI: number;
   useDPR: boolean;
   DPR: number;
   useAA: boolean;
   colour: RgbColor;
+  precision: precisionSpecifier;
 }
 
 export interface RendererRenderValues {
@@ -49,9 +56,12 @@ export interface JuliaRendererProps extends RendererProps {
 
 export interface MinimapViewerProps extends WebGLCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  onClick: () => void;
   show: boolean;
   id?: string;
+
+  controls: ViewerControlSprings;
+  // zoomOnClick: () => void;
+  // thetaOnClick: () => void;
   //   dpr: number;
   //   u: MandelbrotMapsWebGLUniforms;
 
@@ -64,4 +74,9 @@ export interface ViewChangerProps {
   changeFunc: React.Dispatch<React.SetStateAction<[boolean, boolean]>>;
   /** use this toggle to make the component display nicely for showcase purposes */
   displayOnly?: boolean;
+}
+
+export interface RotationCompassProps {
+  theta: OpaqueInterpolation<ThetaType>;
+  onClick: () => void;
 }

@@ -1,5 +1,12 @@
 import { RgbColor } from 'react-colorful';
-import { ViewerLocation } from './types';
+import { SpringConfig } from 'react-spring';
+import {
+  precisionFormatterInterface,
+  precisionSpecifier,
+  springConfigKeys,
+  springControlKeys,
+  ViewerLocation,
+} from './types';
 
 // this multiplier subdivides the screen space into smaller increments
 // to allow for velocity calculations to not immediately decay, due to the
@@ -8,7 +15,35 @@ import { ViewerLocation } from './types';
 // TL;DR this was a workaround - react-spring allows for "precision"
 //       to be defined in each spring configuration, which is:
 //       > The smallest velocity before the animation is considered "not moving"
-export const defaultPrecision = 1e-7;
+// export const defaultPrecision = 1e-16;
+// // default number of numbers after the decimal point
+// export const defaultFloatFixedPrecision = 16;
+// export const shortFloatFixedPrecision = 2;
+
+export const toFloatDisplay = (n: number, p: number): number => +n.toFixed(p);
+
+export const PrecisionFormatter = (
+  p: precisionSpecifier,
+): precisionFormatterInterface => ({
+  toFloatDisplay: (n: number) => toFloatDisplay(n, p.default),
+  toFloatDisplayFixed: (n: number) => n.toFixed(p.floatFixed),
+  toFloatDisplayShort: (n: number) => n.toFixed(p.shortFloatFixed),
+});
+
+export const defaultPrecision: precisionSpecifier = {
+  // react-spring precision
+  default: 1e-7,
+  // x, y coordinates
+  floatFixed: 7,
+  // zoom, theta
+  shortFloatFixed: 2,
+};
+
+export const deepZoomPrecision: precisionSpecifier = {
+  default: 1e-15,
+  floatFixed: 18,
+  shortFloatFixed: 2,
+};
 
 export const viewerOrigin: ViewerLocation = {
   xy: [0, 0],
@@ -32,18 +67,20 @@ export const defaultViewerStart: { [k: string]: ViewerLocation } = {
   j: defaultJuliaStart,
 };
 
-export const springsConfigs = {
+export const springsConfigs = (
+  precision: precisionSpecifier,
+): { [k in springConfigKeys]: { [k in springControlKeys]: SpringConfig } } => ({
   /** used when the values are animated to a point, includes decay */
   default: {
-    xy: { mass: 1, tension: 500, friction: 75, precision: defaultPrecision },
-    zoom: { mass: 1, tension: 300, friction: 40 },
-    rot: { mass: 1, tension: 400, friction: 75 },
+    xyCtrl: { mass: 1, tension: 500, friction: 75, precision: precision.default },
+    zoomCtrl: { mass: 1, tension: 300, friction: 40 },
+    rotCtrl: { mass: 1, tension: 400, friction: 75 },
   },
   /** used when a user is interacting with the view */
   user: {
-    xy: { mass: 1, tension: 2000, friction: 75, precision: defaultPrecision },
-    zoom: { mass: 1, tension: 1200, friction: 75 },
-    rot: { mass: 1, tension: 1200, friction: 75 },
+    xyCtrl: { mass: 1, tension: 2000, friction: 75, precision: precision.default },
+    zoomCtrl: { mass: 1, tension: 1200, friction: 75 },
+    rotCtrl: { mass: 1, tension: 1200, friction: 75 },
   },
   // default and decay are merged to give them single "non-user" values
   // decay: {
@@ -52,7 +89,7 @@ export const springsConfigs = {
   //   zoom: { mass: 1, tension: 300, friction: 50 },
   //   rot: { mass: 1, tension: 400, friction: 75 },
   // },
-};
+});
 
 export const defaultShadingColour: RgbColor = { r: 0, g: 180, b: 255 };
 
@@ -61,14 +98,5 @@ export const defaultShadingColour: RgbColor = { r: 0, g: 180, b: 255 };
 // export const xyCtrlSpringConfig = { mass: 1, tension: 2000, friction: 100 };
 // export const xyCtrlSpringDecayConfig = { mass: 1, tension: 500, friction: 75 };
 
-// default number of numbers after the decimal point
-export const defaultFloatFixedPrecision = 7;
-export const shortFloatFixedPrecision = 2;
-
-export const toFloatDisplay = (n: number, p: number): number => +n.toFixed(p);
-
-export const toFloatDisplayDefault = (n: number): number =>
-  toFloatDisplay(n, defaultFloatFixedPrecision);
-
-export const toFloatDisplayShort = (n: number): number =>
-  toFloatDisplay(n, shortFloatFixedPrecision);
+// export const toFloatDisplayShort = (n: number): number =>
+//   toFloatDisplay(n, precision);

@@ -4,6 +4,8 @@ import PhotoIcon from '@material-ui/icons/Photo';
 import React from 'react';
 import { RgbColorPicker } from 'react-colorful';
 import {
+  defaultIterationLevels,
+  perturbationIterationLevels,
   settingsDefinitionsType,
   settingsGroupType,
   settingsWidgetsList,
@@ -50,17 +52,13 @@ and allows warping to specific coordinates
     },
     control: (
       <Slider
-        min={10}
-        max={1000}
-        step={10}
+        min={16}
+        max={1024}
+        // step={16}
+        // increment by 16 if not in "deep mode"
+        step={settings.deepZoom ? null : 16}
+        marks={settings.deepZoom ? perturbationIterationLevels : defaultIterationLevels}
         valueLabelDisplay="auto"
-        marks={[
-          { value: 10, label: 10 },
-          { value: 250, label: 250 },
-          { value: 500, label: 500 },
-          { value: 750, label: 750 },
-          { value: 1000, label: 1000 },
-        ]}
       />
     ),
     helptext: `
@@ -89,7 +87,7 @@ but **may reduce performance**.
   useAA: {
     label: `Anti-aliasing (slow)`,
     checked: settings.useAA,
-    control: <Switch />,
+    control: <Switch color="secondary" />,
     helptext: `
 Anti-aliasing provides a smoothing effect which increases the quality of the image, 
 but can **severely reduce performance and crash the application**.
@@ -135,6 +133,19 @@ The top picker changes *Saturation* (horizontally) and *Value* (vertically).
 The bottom picker changes *Hue*.
     `,
   },
+  deepZoom: {
+    label: `⚠️ Deep zoom`,
+    checked: settings.deepZoom,
+    control: <Switch color="secondary" />,
+    helptext: `
+(Mandelbrot viewer only)
+**This feature is experimental and could severely reduce performance, especially at high zoom levels.**
+Uses perturbation theory to provide deeper zoom capability.
+To obtain a usable result, move the "Iterations" slider so that it stops at a predefined level; changing the iteration count will slightly affect colouring.
+Zooming into some regions may give almost no improvement over the standard method.
+Regions closer to the origin will usually allow for deeper zoom without loss of quality.
+    `,
+  },
 });
 
 export const getSettingsWidgetsGrouping = (
@@ -159,6 +170,7 @@ export const getSettingsWidgetsGrouping = (
       useDPR: settingsWidgets.useDPR,
       useAA: settingsWidgets.useAA,
       showFPS: settingsWidgets.showFPS,
+      deepZoom: settingsWidgets.deepZoom,
     },
   },
 ];

@@ -3,6 +3,7 @@ import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
 import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import mandelbrotShaderDeep from '../../shaders/mandelbrotShaderDeep';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
@@ -10,11 +11,17 @@ import newSmoothMandelbrotShader, {
 import FPSCard from '../info/FPSCard';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
-import WebGLCanvas from './WebGLCanvas';
+import WebGLCanvasDeep from './WebGLCanvasDeep';
 
-export default function MandelbrotRenderer({
+export default function MandelbrotRendererDeep({
+  controls,
+  maxI,
+  useAA,
+  DPR,
+  showCrosshair,
+  colour,
+  style,
   precision,
-  ...props
 }: MandelbrotRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,19 +41,28 @@ export default function MandelbrotRenderer({
   // const relativeRadialBound = radialBound;// / -screenScaleMultiplier;
 
   // read incoming props
-  const [{ xy }] = props.controls.xyCtrl;
+  // read incoming props
+  const [{ xy }] = controls.xyCtrl;
   // const [{ theta, last_pointer_angle }, setControlRot] = props.controls.rot;
-  const [{ z }] = props.controls.zoomCtrl;
-  const [{ theta }] = props.controls.rotCtrl;
-  const maxI = props.maxI; // -> global
-  const AA = props.useAA ? 2 : 1; // -> global
+  const [{ z }] = controls.zoomCtrl;
+  const [{ theta }] = controls.rotCtrl;
+  // const maxI = props.maxI; // -> global
+  const AA = useAA ? 2 : 1; // -> global
 
-  const fragShader = newSmoothMandelbrotShader(
+  // const fragShader = newSmoothMandelbrotShader(
+  //   {
+  //     maxI: maxI,
+  //     AA: AA,
+  //   },
+  //   showCrosshair,
+  //   standardCrosshair,
+  // );
+  const fragShader = mandelbrotShaderDeep(
     {
       maxI: maxI,
       AA: AA,
     },
-    props.showCrosshair,
+    showCrosshair,
     standardCrosshair,
   );
   const miniFragShader = newSmoothMandelbrotShader(
@@ -54,7 +70,7 @@ export default function MandelbrotRenderer({
       maxI: maxI,
       AA: 2,
     },
-    props.showCrosshair,
+    showCrosshair,
     miniCrosshair,
   );
 
@@ -63,7 +79,7 @@ export default function MandelbrotRenderer({
     xy: xy,
     theta: theta,
     maxI: maxI,
-    colour: Rgb255ColourToFloat(props.colour), // vec3(0.0,0.6,1.0)
+    colour: Rgb255ColourToFloat(colour), // vec3(0.0,0.6,1.0)
     // screenScaleMultiplier: screenScaleMultiplier,
   };
 
@@ -71,10 +87,10 @@ export default function MandelbrotRenderer({
 
   const gtb = genericTouchBind({
     domTarget: canvasRef,
-    controls: props.controls,
+    controls: controls,
     // gl: gl,
     setDragging: setDragging,
-    DPR: props.DPR,
+    DPR: DPR,
     precision: precision,
   });
 
@@ -97,13 +113,14 @@ export default function MandelbrotRenderer({
           className="renderer"
           style={{
             position: 'relative',
+            ...style,
           }}
         >
           <FPSCard FPS={FPS} show={settings.showFPS} />
-          <WebGLCanvas
+          <WebGLCanvasDeep
             id="mandelbrot-canvas"
             fragShader={fragShader}
-            DPR={props.DPR}
+            DPR={DPR}
             // touchBind={touchBind}
             u={u}
             ref={canvasRef}
@@ -114,12 +131,12 @@ export default function MandelbrotRenderer({
           <MinimapViewer
             id="mandelbrot-minimap-canvas"
             fragShader={miniFragShader}
-            DPR={props.DPR}
+            DPR={DPR}
             u={u}
             canvasRef={miniCanvasRef}
             // glRef={miniGl}
             show={settings.showMinimap}
-            controls={props.controls}
+            controls={controls}
           />
         </div>
       )}

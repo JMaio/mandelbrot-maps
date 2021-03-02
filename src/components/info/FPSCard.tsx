@@ -19,7 +19,7 @@ const FPSCard = (props: FPSCardProps): JSX.Element => (
         userSelect: 'none',
       }}
     >
-      <animated.div>{props.fps}</animated.div>
+      <animated.div>{props.FPS}</animated.div>
     </Card>
   </Grow>
 );

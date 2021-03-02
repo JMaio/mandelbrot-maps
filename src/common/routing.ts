@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ReactUseStateType, ViewerLocation, XYType } from './types';
 import {
-  defaultJuliaStart,
-  defaultMandelbrotStart,
-  defaultViewerStart,
-  toFloatDisplayDefault,
-  toFloatDisplayShort,
-} from './values';
+  precisionFormatterInterface,
+  ReactUseStateType,
+  ViewerLocation,
+  XYType,
+} from './types';
+import { defaultJuliaStart, defaultMandelbrotStart, defaultViewerStart } from './values';
 
 export class NamedHashURLViewer {
   name: string;
@@ -31,6 +30,8 @@ export class ViewerURLManager {
   vs: {
     [k: string]: NamedHashURLViewer;
   };
+  // precision: precisionSpecifier;
+  // fmt: precisionFormatterInterface;
 
   constructor() {
     this.vs = {};
@@ -50,22 +51,30 @@ export class ViewerURLManager {
     this.vs['j'] = new NamedHashURLViewer('j', params['j'] || { ...defaultJuliaStart });
   }
 
-  updateViewer(name: string, v: Partial<ViewerLocation>): void {
-    // console.log('updateViewer');
+  updateViewer(
+    name: string,
+    v: Partial<ViewerLocation>,
+    fmt: precisionFormatterInterface,
+  ): void {
     const { xy, z, theta } = v;
+    // console.log('updateViewer:', fmt);
     // const [[{ xy }], [{ z }], [{ theta }]] = [xyC]
     // const [xy] = [xyCtrl?.xy];
     const newV = this.vs[name].v;
-    if (xy !== undefined) newV.xy = xy.map((n) => toFloatDisplayDefault(n)) as XYType;
-    if (z !== undefined) newV.z = toFloatDisplayShort(z);
-    if (theta !== undefined) newV.theta = toFloatDisplayShort(theta);
+    if (xy !== undefined) newV.xy = xy.map((n) => +fmt.toFloatDisplayFixed(n)) as XYType;
+    if (z !== undefined) newV.z = +fmt.toFloatDisplayShort(z);
+    if (theta !== undefined) newV.theta = +fmt.toFloatDisplayShort(theta);
 
     this.vs[name].v = newV;
   }
 
-  updateFromViewer(m: Partial<ViewerLocation>, j: Partial<ViewerLocation>): void {
-    this.updateViewer('m', m);
-    this.updateViewer('j', j);
+  updateFromViewer(
+    m: Partial<ViewerLocation>,
+    j: Partial<ViewerLocation>,
+    fmt: precisionFormatterInterface,
+  ): void {
+    this.updateViewer('m', m, fmt);
+    this.updateViewer('j', j, fmt);
   }
 }
 

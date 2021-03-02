@@ -1,12 +1,23 @@
+import { ThemeProvider } from '@material-ui/core';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
+import ServiceWorkerWrapper from './components/ServiceWorkerWrapper';
+import SettingsProvider, { SettingsContext } from './components/settings/SettingsContext';
+import './index.css';
+import theme from './theme/theme';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <ServiceWorkerWrapper />
+      <SettingsProvider>
+        <SettingsContext.Consumer>
+          {({ settings }) => <App settings={settings} />}
+        </SettingsContext.Consumer>
+      </SettingsProvider>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
