@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.1.1...v1.2.0) (2021-03-02)
+
+
+### Features
+
+* **controls:** add rotation indicator and reset to minimaps ([098d24f](https://github.com/JMaio/mandelbrot-maps/commit/098d24f8827a27f293f304a4314087dac261e80a))
+* **perturbation-theory:** add deep zoom control to settings ([c970135](https://github.com/JMaio/mandelbrot-maps/commit/c97013516480bc84b1aecd8b1446343a41313e72))
+* **perturbation-theory:** change precision dynamically ([220afa0](https://github.com/JMaio/mandelbrot-maps/commit/220afa034787cc4bd4f9f655cfcfac2fe918b641))
+* **perturbation-theory:** re-add crosshair, update colour scheme ([be2ba58](https://github.com/JMaio/mandelbrot-maps/commit/be2ba589c9f2d86881db0a1c655f8a54fea7b979))
+* **perturbation-theory:** start port from deepfractal! (kinda broken) ([2fa2b88](https://github.com/JMaio/mandelbrot-maps/commit/2fa2b88afab18b37a69cc859cc912724d9042a91))
+* **perturbation-theory:** wow, that actually worked... deep-fractal shader up and running ([2250403](https://github.com/JMaio/mandelbrot-maps/commit/22504039e60118f83689992fd30c2f7fa9b442c0))
+
+
+### Bug Fixes
+
+* **controls:** remove zoom clamping to fixed value ([11c0d7c](https://github.com/JMaio/mandelbrot-maps/commit/11c0d7cef2ccbd4617f1e5fcb69f75880c94255f))
+* **deploy:** run "git describe" with "--tags" to include tag number ([5a04712](https://github.com/JMaio/mandelbrot-maps/commit/5a047122427c8896b80da6c5b46394a379b7ee27))
+
 ### [1.1.1](https://github.com/JMaio/mandelbrot-maps/compare/v1.1.0...v1.1.1) (2021-02-11)
 
 ## [1.1.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.0.3...v1.1.0) (2021-02-11)
