@@ -2,15 +2,22 @@ import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
-import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import {
+  genericTouchBind,
+  synchronisedZoomTouchBind,
+  Rgb255ColourToFloat,
+  frozenTouchBind,
+} from '../../common/utils';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
   standardCrosshair,
 } from '../../shaders/newSmoothMandelbrotShader';
+import misiurewiczDomainsMandelbrotShader from '../../shaders/misiurewiczDomainsMandelbrotShader';
 import FPSCard from '../info/FPSCard';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
+import { AnimationStatus } from '../tans_theorem/AnimationFinalCard';
 
 export default function MandelbrotRenderer({
   precision,
@@ -41,6 +48,14 @@ export default function MandelbrotRenderer({
   const maxI = props.maxI; // -> global
   const AA = props.useAA ? 2 : 1; // -> global
 
+  const fragShaderMisiurewiczDomain = misiurewiczDomainsMandelbrotShader(
+    {
+      maxI: maxI,
+      AA: AA,
+    },
+    props.showCrosshair,
+    standardCrosshair,
+  );
   const fragShader = newSmoothMandelbrotShader(
     {
       maxI: maxI,
@@ -64,19 +79,41 @@ export default function MandelbrotRenderer({
     theta: theta,
     maxI: maxI,
     colour: Rgb255ColourToFloat(props.colour), // vec3(0.0,0.6,1.0)
-    // screenScaleMultiplier: screenScaleMultiplier,
   };
 
   const [dragging, setDragging] = useState(false);
 
-  const gtb = genericTouchBind({
-    domTarget: canvasRef,
-    controls: props.controls,
-    // gl: gl,
-    setDragging: setDragging,
-    DPR: props.DPR,
-    precision: precision,
-  });
+  const gtb = [
+    AnimationStatus.SELECT_JULIA_POINT,
+    AnimationStatus.ZOOM_M,
+    AnimationStatus.ZOOM_J,
+    AnimationStatus.ROTATE_M,
+    AnimationStatus.ROTATE_J,
+  ].includes(props.animationState)
+    ? frozenTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        precision: precision,
+      })
+    : props.animationState === AnimationStatus.PLAY
+    ? synchronisedZoomTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        align: props.align,
+        precision: precision,
+      })
+    : genericTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        // gl: gl,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        precision: precision,
+      });
 
   // https://use-gesture.netlify.app/docs/changelog/#breaking
   // When adding events directly to the dom element using `domTarget`
@@ -102,7 +139,13 @@ export default function MandelbrotRenderer({
           <FPSCard FPS={FPS} show={settings.showFPS} />
           <WebGLCanvas
             id="mandelbrot-canvas"
-            fragShader={fragShader}
+            fragShader={
+              props.showTan &&
+              settings.shadeMisiurewiczDomains &&
+              props.animationState === AnimationStatus.SELECT_MANDELBROT_POINT
+                ? fragShaderMisiurewiczDomain
+                : fragShader
+            }
             DPR={props.DPR}
             // touchBind={touchBind}
             u={u}

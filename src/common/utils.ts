@@ -63,6 +63,10 @@ export interface GenericTouchBindParams {
   precision: precisionSpecifier;
 }
 
+export interface FrozenTouchBindParams extends GenericTouchBindParams {
+  align: (z: number) => void;
+}
+
 export interface GenericTouchBindReturn {
   handlers: Handlers;
   config: UseGestureConfig;
@@ -346,6 +350,180 @@ export function genericTouchBind({
       //   bounds,
       //   rubberband: true,
       // }
+    },
+  };
+}
+
+export function synchronisedZoomTouchBind({
+  domTarget,
+  controls,
+  setDragging,
+  align,
+}: FrozenTouchBindParams): GenericTouchBindReturn {
+  const [{ xy }] = controls.xyCtrl;
+  const [{ z, minZoom, maxZoom }] = controls.zoomCtrl;
+  const [{ theta }] = controls.rotCtrl;
+
+  const zoomMult = { in: 3e-3, out: 1e-3 };
+
+  /** Re-usable logic for zooming */
+  const updateZ = ({ z }: { z: number; down: boolean }) => {
+    align(z);
+    return null;
+  };
+
+  return {
+    handlers: {
+      onPinch: ({
+        event,
+        da: [d, a],
+        vdva: [vd, va],
+        down,
+        movement: [md, ma],
+        delta: [dd, da],
+        first,
+        // initial, // initial [d, a]
+        origin,
+        memo = {
+          xy: xy.getValue(),
+          z: z.getValue(),
+          t: theta.getValue(),
+          a: 0,
+          o: [0, 0] as Vector2,
+        },
+      }: FullGestureState<StateKey<'pinch'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        // new zoom is the product of initial zoom and a function of the delta since the pinch
+        //   (initial zoom) exponentially changed by md, with linear and exponential multipliers
+        //     linear multiplier:
+        //     exponential multiplier: scale faster as pinch becomes more distant
+        //     if decreasing, scale must decrease more slowly
+        // const em = 1.33;
+        // const newZ =
+        //   memo.z * (1 + Math.sign(md) * 1e-2 * Math.abs(md) ** (md <= 0 ? 1 / em : em)); //(1 - zdelta * Math.abs(zdelta));
+        const newZ = _.clamp(memo.z + md * 1e-2, 0.5, 100_000) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
+        // console.log(Math.abs(md * 1e-2));
+        // console.log(
+        //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
+        // );
+        // console.log(newZ);
+        const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
+
+        updateZ({ z: newZclamp, down: down });
+
+        return memo;
+      },
+
+      onWheel: ({
+        event,
+        movement: [, my],
+        active,
+        shiftKey,
+        memo = { zoom: z.getValue(), t: theta.getValue() },
+      }: FullGestureState<StateKey<'wheel'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        if (!shiftKey) {
+          // set different multipliers based on zoom direction
+          // mouse movement negative = move up the page = zoom in
+          //                                   zoom        in           out
+          const newZ = memo.zoom * (1 - my * (my < 0 ? zoomMult.in : zoomMult.out));
+
+          updateZ({
+            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            down: active,
+          });
+        }
+        return memo;
+      },
+
+      onDrag: ({
+        event,
+        down,
+        movement,
+        direction: [dx, dy],
+        velocity,
+        pinching,
+        last,
+        cancel,
+        memo = { xy: xy.getValue(), theta: theta.getValue() },
+      }: FullGestureState<StateKey<'drag'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        // let pinch handle movement
+        if (pinching) cancel && cancel();
+
+        setDragging(down);
+
+        return memo;
+      },
+    },
+    config: {
+      eventOptions: { passive: false, capture: false },
+      domTarget: domTarget,
+    },
+  };
+}
+
+export function frozenTouchBind({
+  domTarget,
+  controls,
+}: GenericTouchBindParams): GenericTouchBindReturn {
+  const [{ xy }] = controls.xyCtrl;
+  const [{ z }] = controls.zoomCtrl;
+  const [{ theta }] = controls.rotCtrl;
+
+  return {
+    handlers: {
+      onPinch: ({
+        event,
+        da: [d, a],
+        vdva: [vd, va],
+        movement: [md, ma],
+        delta: [dd, da],
+        memo = {
+          xy: xy.getValue(),
+          z: z.getValue(),
+          t: theta.getValue(),
+          a: 0,
+          o: [0, 0] as Vector2,
+        },
+      }: FullGestureState<StateKey<'pinch'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        return memo;
+      },
+
+      onWheel: ({
+        event,
+        movement: [, my],
+        memo = { zoom: z.getValue(), t: theta.getValue() },
+      }: FullGestureState<StateKey<'wheel'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        return memo;
+      },
+
+      onDrag: ({
+        event,
+        direction: [dx, dy],
+        memo = { xy: xy.getValue(), theta: theta.getValue() },
+      }: FullGestureState<StateKey<'drag'>>) => {
+        // disable native browser events
+        event && event.preventDefault();
+
+        return memo;
+      },
+    },
+    config: {
+      eventOptions: { passive: false, capture: false },
+      domTarget: domTarget,
     },
   };
 }

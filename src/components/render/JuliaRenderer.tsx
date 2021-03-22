@@ -2,9 +2,15 @@ import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { JuliaRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
-import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import {
+  synchronisedZoomTouchBind,
+  frozenTouchBind,
+  genericTouchBind,
+  Rgb255ColourToFloat,
+} from '../../common/utils';
 import newSmoothJuliaShader from '../../shaders/newSmoothJuliaShader';
 import { SettingsContext } from '../settings/SettingsContext';
+import { AnimationStatus } from '../tans_theorem/AnimationFinalCard';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvas from './WebGLCanvas';
 
@@ -43,13 +49,36 @@ export default function JuliaRenderer({
 
   const [dragging, setDragging] = useState(false);
 
-  const gtb = genericTouchBind({
-    domTarget: canvasRef,
-    controls: props.controls,
-    setDragging: setDragging,
-    DPR: props.DPR,
-    precision: precision,
-  });
+  const gtb = [
+    AnimationStatus.ZOOM_M,
+    AnimationStatus.ZOOM_J,
+    AnimationStatus.ROTATE_M,
+    AnimationStatus.ROTATE_J,
+  ].includes(props.animationState)
+    ? frozenTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        precision: precision,
+      })
+    : props.animationState === AnimationStatus.PLAY
+    ? synchronisedZoomTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        align: props.align,
+        precision: precision,
+      })
+    : genericTouchBind({
+        domTarget: canvasRef,
+        controls: props.controls,
+        // gl: gl,
+        setDragging: setDragging,
+        DPR: props.DPR,
+        precision: precision,
+      });
 
   useGesture(gtb.handlers, gtb.config);
 

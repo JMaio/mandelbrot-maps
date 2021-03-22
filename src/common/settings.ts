@@ -8,6 +8,8 @@ export type settingsDefinitionsType = {
   showMinimap: boolean;
   showCrosshair: boolean;
   showCoordinates: boolean;
+  shadeMisiurewiczDomains: boolean;
+  rotateWhileZooming: boolean;
   showFPS: boolean;
   maxI: number;
   useDPR: boolean;
@@ -20,6 +22,8 @@ export const defaultSettings: settingsDefinitionsType = {
   showMinimap: true,
   showCrosshair: true,
   showCoordinates: false,
+  shadeMisiurewiczDomains: false,
+  rotateWhileZooming: false,
   maxI: 256,
   showFPS: false,
   useDPR: false,
@@ -113,6 +117,7 @@ export type SettingsContextType = {
 export interface SettingsMenuProps {
   reset: () => void;
   toggleInfo: () => void;
+  toggleTan: () => void;
   helpState: [boolean, () => void];
 }
 
