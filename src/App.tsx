@@ -40,6 +40,7 @@ import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
 import AnimationFinalCard, {
   AnimationStatus,
+  MISIUREWICZ_POINTS,
 } from './components/tans_theorem/AnimationFinalCard';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
@@ -50,6 +51,9 @@ import SettingsMenu from './components/settings/SettingsMenu';
 import {
   alignSets,
   findNearestMisiurewiczPoint,
+  generateJuliaMarkers,
+  generateMandelbrotMarkersDomains,
+  generateMandelbrotMarkersPoints,
   NearestButton,
   PreperiodicPoint,
   similarPoints,
@@ -60,8 +64,7 @@ import MisiurewiczDomainsMenu from './components/tans_theorem/MisiurewiczDomains
 import PointsInfoCard from './components/tans_theorem/MisiurewiczPointsMenu';
 import ArrowBackwardIcon from '@material-ui/icons/ArrowBack';
 import CloseIcon from '@material-ui/icons/Close';
-import MisiurewiczMarkersManager from './components/tans_theorem/MisiurewiczMarkersManager';
-import JuliaMarkersManager from './components/tans_theorem/JuliaMarkersManager';
+import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
 import ZoomMenu from './components/tans_theorem/ZoomMenu';
 import PlayCard from './components/tans_theorem/PlayCard';
 import IntroCard from './components/tans_theorem/IntroCard';
@@ -507,14 +510,18 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
             }}
             ref={rendererRef}
           >
-            <MisiurewiczMarkersManager
+            <MapMarkerManager
               show={showTan && animationState === AnimationStatus.SELECT_MANDELBROT_POINT}
               viewerControls={mandelbrotControls}
-              shadeMisiurewiczDomains={settings.shadeMisiurewiczDomains}
-              magnification={magnification}
               focusedPoint={focusedPointMandelbrot}
               setter={handleMisiurewiczPointSelection}
               aspectRatio={aspectRatio}
+              points={MISIUREWICZ_POINTS}
+              generator={
+                settings.shadeMisiurewiczDomains
+                  ? generateMandelbrotMarkersDomains
+                  : generateMandelbrotMarkersPoints
+              }
             />
             {showTan &&
             settings.shadeMisiurewiczDomains &&
@@ -558,14 +565,14 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               position: 'relative',
             }}
           >
-            <JuliaMarkersManager
+            <MapMarkerManager
               show={showTan && animationState === AnimationStatus.SELECT_JULIA_POINT}
               viewerControls={juliaControls}
-              magnification={magnification}
               focusedPoint={focusedPointJulia}
               setter={handleSimilarPointSelection}
               aspectRatio={aspectRatio}
-              similarPointsJulia={similarPointsJulia}
+              points={similarPointsJulia}
+              generator={generateJuliaMarkers}
             />
             <JuliaRenderer
               animationState={animationState}

@@ -7,21 +7,20 @@ export interface AnimationFinalCardProps {
   handleReset: () => void;
 }
 
-export interface ManagerProps {
+export interface MarkerManagerProps {
   show: boolean;
-  magnification: number;
   aspectRatio: number;
   viewerControls: ViewerControlSprings;
   focusedPoint: PreperiodicPoint;
   setter: (focusedPoint: PreperiodicPoint) => void;
-}
-
-export interface MandelbrotManagerProps extends ManagerProps {
-  shadeMisiurewiczDomains: boolean;
-}
-
-export interface JuliaManagerProps extends ManagerProps {
-  similarPointsJulia: PreperiodicPoint[];
+  points: PreperiodicPoint[];
+  generator: (
+    viewerControls: ViewerControlSprings,
+    focusedPoint: PreperiodicPoint,
+    aspectRatio: number,
+    onClick: (x: PreperiodicPoint) => void,
+    points: PreperiodicPoint[],
+  ) => JSX.Element[];
 }
 
 export interface InfoCardProps {

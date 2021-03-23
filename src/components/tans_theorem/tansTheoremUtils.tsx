@@ -422,13 +422,12 @@ const filterPoints = (
   return visiblePoints;
 };
 
-export const generateMandelbrotMarkers = (
+export const generateMandelbrotMarkersPoints = (
   viewerControls: ViewerControlSprings,
   focusedPoint: PreperiodicPoint,
   aspectRatio: number,
-  onClick: (x: PreperiodicPoint, y: PreperiodicPoint) => void,
+  onClick: (x: PreperiodicPoint) => void,
   points: PreperiodicPoint[],
-  shadeDomains: boolean,
 ): JSX.Element[] => {
   const mapMarkers = [];
 
@@ -443,32 +442,58 @@ export const generateMandelbrotMarkers = (
         m={focusedPoint}
         aspectRatio={aspectRatio}
         viewerControl={viewerControls}
-        onClick={() => onClick(focusedPoint, focusedPoint)}
+        onClick={() => onClick(focusedPoint)}
         isFocused={true}
       />,
     );
   }
-  if (!shadeDomains) {
-    const visiblePoints = filterPoints(
-      points,
-      boxCentre,
-      boxWidth,
-      boxHeight,
-      boxAngle,
-      focusedPoint,
+  const visiblePoints = filterPoints(
+    points,
+    boxCentre,
+    boxWidth,
+    boxHeight,
+    boxAngle,
+    focusedPoint,
+  );
+  for (let i = 0; i < visiblePoints.length; i++) {
+    mapMarkers.push(
+      <ComplexNumberMarker
+        key={visiblePoints[i].point.toString()}
+        m={visiblePoints[i]}
+        aspectRatio={aspectRatio}
+        viewerControl={viewerControls}
+        onClick={() => onClick(visiblePoints[i])}
+        isFocused={false}
+      />,
     );
-    for (let i = 0; i < visiblePoints.length; i++) {
-      mapMarkers.push(
-        <ComplexNumberMarker
-          key={visiblePoints[i].point.toString()}
-          m={visiblePoints[i]}
-          aspectRatio={aspectRatio}
-          viewerControl={viewerControls}
-          onClick={() => onClick(visiblePoints[i], visiblePoints[i])}
-          isFocused={false}
-        />,
-      );
-    }
+  }
+  return mapMarkers;
+};
+
+export const generateMandelbrotMarkersDomains = (
+  viewerControls: ViewerControlSprings,
+  focusedPoint: PreperiodicPoint,
+  aspectRatio: number,
+  onClick: (x: PreperiodicPoint) => void,
+  points: PreperiodicPoint[],
+): JSX.Element[] => {
+  const mapMarkers = [];
+
+  const boxCentre = viewerControls.xyCtrl[0].xy.getValue();
+  const boxWidth = 1 / (aspectRatio * viewerControls.zoomCtrl[0].z.getValue());
+  const boxHeight = 1 / viewerControls.zoomCtrl[0].z.getValue();
+  const boxAngle = viewerControls.rotCtrl[0].theta.getValue();
+  if (withinBoundingBox(focusedPoint.point, boxCentre, boxWidth, boxHeight, boxAngle)) {
+    mapMarkers.push(
+      <ComplexNumberMarker
+        key={focusedPoint.point.toString()}
+        m={focusedPoint}
+        aspectRatio={aspectRatio}
+        viewerControl={viewerControls}
+        onClick={() => onClick(focusedPoint)}
+        isFocused={true}
+      />,
+    );
   }
   return mapMarkers;
 };
