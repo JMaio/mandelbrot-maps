@@ -18,6 +18,7 @@ import {
   SvgIconComponent,
 } from '@material-ui/icons';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CompareIcon from '@material-ui/icons/Compare';
 import React, { useState } from 'react';
 import { SettingsMenuProps, settingsWidgetType } from '../../common/settings';
 // react-colorful requires style imports
@@ -114,7 +115,11 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
       startIcon={<MyLocationOutlined />}
       color="secondary"
       aria-controls="reset"
-      onClick={props.reset}
+      onClick={() => {
+        // eslint-disable-next-line react/prop-types
+        props.reset();
+        setAnchorEl(undefined);
+      }}
     >
       Reset
     </Button>
@@ -125,11 +130,27 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
       color="primary"
       aria-controls="about"
       onClick={() => {
+        // eslint-disable-next-line react/prop-types
         props.toggleInfo();
         setAnchorEl(undefined);
       }}
     >
       About
+    </Button>
+  );
+
+  const TanButton = () => (
+    <Button
+      startIcon={<CompareIcon />}
+      color="primary"
+      aria-controls="tan"
+      onClick={() => {
+        // eslint-disable-next-line react/prop-types
+        props.toggleTan();
+        setAnchorEl(undefined);
+      }}
+    >
+      Explore Tan&apos;s theorem
     </Button>
   );
 
@@ -236,16 +257,35 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
 
             <Grid
               container
-              direction="row"
+              direction="column"
               justify="space-between"
               // alignItems="stretch"
               spacing={1}
             >
-              <Grid item style={{ margin: 'auto' }}>
-                <ResetButton />
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                // alignItems="stretch"
+                spacing={1}
+              >
+                <Grid item style={{ margin: 'auto' }}>
+                  <ResetButton />
+                </Grid>
+                <Grid item style={{ margin: 'auto' }}>
+                  <AboutButton />
+                </Grid>
               </Grid>
-              <Grid item style={{ margin: 'auto' }}>
-                <AboutButton />
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                // alignItems="stretch"
+                spacing={1}
+              >
+                <Grid item style={{ margin: 'auto' }}>
+                  <TanButton />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>

@@ -2,7 +2,12 @@ import React, { useRef, useState } from 'react';
 import { useGesture } from 'react-use-gesture';
 import { MandelbrotRendererProps } from '../../common/render';
 import { MandelbrotMapsWebGLUniforms } from '../../common/types';
-import { genericTouchBind, Rgb255ColourToFloat } from '../../common/utils';
+import {
+  genericTouchBind,
+  Rgb255ColourToFloat,
+  synchronisedZoomTouchBind,
+  frozenTouchBind,
+} from '../../common/utils';
 import mandelbrotShaderDeep from '../../shaders/mandelbrotShaderDeep';
 import newSmoothMandelbrotShader, {
   miniCrosshair,
@@ -12,6 +17,7 @@ import FPSCard from '../info/FPSCard';
 import { SettingsContext } from '../settings/SettingsContext';
 import MinimapViewer from './MinimapViewer';
 import WebGLCanvasDeep from './WebGLCanvasDeep';
+import { AnimationStatus } from '../tans_theorem/AnimationFinalCard';
 
 export default function MandelbrotRendererDeep({
   controls,
@@ -22,6 +28,8 @@ export default function MandelbrotRendererDeep({
   colour,
   style,
   precision,
+  animationState,
+  align,
 }: MandelbrotRendererProps): JSX.Element {
   // variables to hold canvas and webgl information
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -85,14 +93,37 @@ export default function MandelbrotRendererDeep({
 
   const [dragging, setDragging] = useState(false);
 
-  const gtb = genericTouchBind({
-    domTarget: canvasRef,
-    controls: controls,
-    // gl: gl,
-    setDragging: setDragging,
-    DPR: DPR,
-    precision: precision,
-  });
+  const gtb = [
+    AnimationStatus.SELECT_JULIA_POINT,
+    AnimationStatus.ZOOM_M,
+    AnimationStatus.ZOOM_J,
+    AnimationStatus.ROTATE_M,
+    AnimationStatus.ROTATE_J,
+  ].includes(animationState)
+    ? frozenTouchBind({
+        domTarget: canvasRef,
+        controls: controls,
+        setDragging: setDragging,
+        DPR: DPR,
+        precision: precision,
+      })
+    : animationState === AnimationStatus.PLAY
+    ? synchronisedZoomTouchBind({
+        domTarget: canvasRef,
+        controls: controls,
+        setDragging: setDragging,
+        DPR: DPR,
+        align: align,
+        precision: precision,
+      })
+    : genericTouchBind({
+        domTarget: canvasRef,
+        controls: controls,
+        // gl: gl,
+        setDragging: setDragging,
+        DPR: DPR,
+        precision: precision,
+      });
 
   // https://use-gesture.netlify.app/docs/changelog/#breaking
   // When adding events directly to the dom element using `domTarget`

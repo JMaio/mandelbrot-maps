@@ -1,6 +1,8 @@
 import { CanvasHTMLAttributes } from 'react';
 import { RgbColor } from 'react-colorful';
 import { OpaqueInterpolation } from 'react-spring';
+import { OrbitFlag } from '../components/tans_theorem/tansTheoremUtils';
+import { AnimationStatus } from '../components/tans_theorem/AnimationFinalCard';
 import {
   MandelbrotMapsWebGLUniforms,
   precisionSpecifier,
@@ -48,10 +50,15 @@ export interface RendererRenderValues {
 
 export interface MandelbrotRendererProps extends RendererProps {
   showCrosshair: boolean;
+  animationState: AnimationStatus;
+  showTan: boolean;
+  align: (z: number) => void;
 }
 
 export interface JuliaRendererProps extends RendererProps {
   c: OpaqueInterpolation<XYType>;
+  animationState: AnimationStatus;
+  align: (z: number) => void;
 }
 
 export interface MinimapViewerProps extends WebGLCanvasProps {

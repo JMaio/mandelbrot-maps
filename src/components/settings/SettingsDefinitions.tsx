@@ -1,6 +1,7 @@
 import { Slider, Switch } from '@material-ui/core';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import PhotoIcon from '@material-ui/icons/Photo';
+import CompareIcon from '@material-ui/icons/Compare';
 import React from 'react';
 import { RgbColorPicker } from 'react-colorful';
 import {
@@ -42,6 +43,26 @@ Displays the current viewer coordinates on the top-right corner,
 and allows warping to specific coordinates 
 (Mandelbrot viewer only).
     `,
+  },
+  shadeMisiurewiczDomains: {
+    label: 'Select using domains',
+    value: settings.shadeMisiurewiczDomains,
+    control: <Switch />,
+    helptext: `
+Changes the method of selecting Misiurewicz points.
+This changes the shader to colour each point based on how close they are to a Misiurewicz point.
+Instead of choosing from a preset list, click anywhere on the Mandelbrot set to find the nearest Misiurewicz point.
+`,
+  },
+  rotateWhileZooming: {
+    label: '⚠️Rotate to show self-similarity',
+    value: settings.rotateWhileZooming,
+    control: <Switch />,
+    helptext: `
+Adds an additional rotation at the final stage of the Tan's theorem animation to show how both sets are self-similar.
+As you increase the magnification, you should notice that the same pattern repeats at regular intervals on both sets.
+WARNING: for particular points, this setting can cause excessive rotation which may be off-putting to some.
+`,
   },
   maxI: {
     label: 'Iterations',
@@ -159,7 +180,6 @@ export const getSettingsWidgetsGrouping = (
       showCrosshair: settingsWidgets.showCrosshair,
       showCoordinates: settingsWidgets.showCoordinates,
     },
-    // ],
   },
   {
     icon: PhotoIcon,
@@ -171,6 +191,14 @@ export const getSettingsWidgetsGrouping = (
       useAA: settingsWidgets.useAA,
       showFPS: settingsWidgets.showFPS,
       deepZoom: settingsWidgets.deepZoom,
+    },
+  },
+  {
+    icon: CompareIcon,
+    name: "Tan's Theorem",
+    widgets: {
+      shadeMisiurewiczDomains: settingsWidgets.shadeMisiurewiczDomains,
+      rotateWhileZooming: settingsWidgets.rotateWhileZooming,
     },
   },
 ];
