@@ -36,11 +36,11 @@ export interface InfoCardProps {
   quitButton: () => JSX.Element;
 }
 
-export interface MisiurewiczPointsListProps {
-  show: boolean;
-  mandelbrot: ViewerControlSprings;
+export interface PointsListProps {
   focusedPoint: PreperiodicPoint;
-  handleMandelbrotSelection: (focusedPointMandelbrot: PreperiodicPoint) => void;
+  points: PreperiodicPoint[];
+  displayText: (c: PreperiodicPoint) => string;
+  handleSelection: (point: PreperiodicPoint) => void;
 }
 
 export interface MisiurewiczDomainsMenuProps {
@@ -62,13 +62,6 @@ export interface ZoomCardProps {
   focusedPointMandelbrot: PreperiodicPoint;
   focusedPointJulia: PreperiodicPoint;
   backButton: () => JSX.Element;
-}
-
-export interface SimilarPointsListProps {
-  focusedPointMandelbrot: PreperiodicPoint;
-  focusedPointJulia: PreperiodicPoint;
-  similarPointsJulia: PreperiodicPoint[];
-  handleSimilarPointSelection: (focusedPointJulia: PreperiodicPoint) => void;
 }
 
 export interface PlayCardProps {

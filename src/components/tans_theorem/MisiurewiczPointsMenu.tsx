@@ -1,9 +1,10 @@
 import { Button, Card, Grow, Typography, Grid } from '@material-ui/core';
 import React from 'react';
 import { InfoCardProps } from '../../common/tans';
-import { AnimationStatus } from './AnimationFinalCard';
-import MisiurewiczPointsList from './MisiurewiczPointsList';
+import { AnimationStatus, MISIUREWICZ_POINTS } from './AnimationFinalCard';
+import PointsList from './PointsList';
 import { warpToPoint } from '../../common/utils';
+import { PreperiodicPoint, formatComplexNumber } from './tansTheoremUtils';
 
 const PointsInfoCard = (props: InfoCardProps): JSX.Element => {
   const goButton = (
@@ -34,6 +35,15 @@ const PointsInfoCard = (props: InfoCardProps): JSX.Element => {
     );
   };
 
+  const handleSelection = (c: PreperiodicPoint) => {
+    props.handleMandelbrotSelection(c);
+    warpToPoint(props.mandelbrot, {
+      xy: c.point,
+      z: c.factorMagnitude,
+      theta: 0,
+    });
+  };
+
   return (
     <Grow in={props.show}>
       <Card
@@ -59,11 +69,11 @@ const PointsInfoCard = (props: InfoCardProps): JSX.Element => {
             </Typography>
           </Grid>
         </Grid>
-        <MisiurewiczPointsList
-          show={props.show}
-          mandelbrot={props.mandelbrot}
+        <PointsList
           focusedPoint={props.focusedPointMandelbrot}
-          handleMandelbrotSelection={props.handleMandelbrotSelection}
+          points={MISIUREWICZ_POINTS}
+          displayText={(c) => `${c.toString()} = ${formatComplexNumber(c.point)}`}
+          handleSelection={handleSelection}
         />
         {goButton(props.setAnimationState)}
       </Card>

@@ -2,8 +2,9 @@ import { Button, Card, Grid, Typography } from '@material-ui/core';
 import React from 'react';
 import { SimilarityMenuProps } from '../../common/tans';
 import { AnimationStatus } from './AnimationFinalCard';
-import SimilarPointsList from './SimilarPointsList';
+import PointsList from './PointsList';
 import { warpToPoint } from '../../common/utils';
+import { formatComplexNumber } from './tansTheoremUtils';
 
 const SimilarityMenu = (props: SimilarityMenuProps): JSX.Element => {
   const goButton = (
@@ -54,11 +55,11 @@ const SimilarityMenu = (props: SimilarityMenuProps): JSX.Element => {
           </Typography>
         </Grid>
       </Grid>
-      <SimilarPointsList
-        focusedPointMandelbrot={props.focusedPointMandelbrot}
-        focusedPointJulia={props.focusedPointJulia}
-        similarPointsJulia={props.similarPointsJulia}
-        handleSimilarPointSelection={props.handleSimilarPointSelection}
+      <PointsList
+        focusedPoint={props.focusedPointJulia}
+        points={props.similarPointsJulia}
+        handleSelection={props.handleSimilarPointSelection}
+        displayText={(c) => `${formatComplexNumber(c.point)}`}
       />
       {goButton(props.setAnimationState)}
     </Card>

@@ -24,6 +24,7 @@ export const MISIUREWICZ_POINTS: PreperiodicPoint[] = misiurewiczPairs
 const AnimationFinalCard = (props: AnimationFinalCardProps): JSX.Element => {
   const BackButton = () => {
     return (
+      // eslint-disable-next-line react/prop-types
       <IconButton style={{ width: 50 }} onClick={props.handleReset}>
         <ArrowBackwardIcon />
       </IconButton>
