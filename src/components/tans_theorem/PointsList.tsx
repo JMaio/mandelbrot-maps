@@ -1,19 +1,12 @@
 import { Select } from '@material-ui/core';
 import React from 'react';
 import { PointsListProps } from '../../common/tans';
-import { PreperiodicPoint } from './tansTheoremUtils';
 
 const PointsList = (props: PointsListProps): JSX.Element => {
   const handleSimilarPointSelection = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const identifier = event.target.value as string;
+    const identifier = event.target.value as number;
 
-    let chosen: PreperiodicPoint = props.points[0];
-    for (let i = 0; i < props.points.length; i++) {
-      if (props.points[i].point.toString() === identifier) {
-        chosen = props.points[i];
-        break;
-      }
-    }
+    const chosen = props.points[identifier];
 
     props.handleSelection(chosen);
   };
@@ -21,12 +14,12 @@ const PointsList = (props: PointsListProps): JSX.Element => {
   return (
     <Select
       native
-      value={props.focusedPoint.point.toString()}
+      value={props.points.indexOf(props.focusedPoint)}
       onChange={handleSimilarPointSelection}
     >
-      {props.points.map((m) => (
-        <option key={m.point.toString()} value={m.point.toString()}>
-          {props.displayText(m)}
+      {props.points.map((currElement, i) => (
+        <option key={i} value={i}>
+          {props.displayText(currElement)}
         </option>
       ))}
     </Select>
