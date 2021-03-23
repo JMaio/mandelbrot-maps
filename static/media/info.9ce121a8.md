@@ -5,7 +5,9 @@ Developed by [Joao Maio](https://jmaio.github.io/) between 2019-2021 as part of 
 In 2019/2020, another version of the project was created by [Freddie Bawden](https://www.freddiejbawden.com/), also under the supervision of Philip Wadler.
 Freddie's version of the project is available at: [mmaps.freddiejbawden.com](http://mmaps.freddiejbawden.com/)
 
-2020/2021 TBD. With contributions from [Fraser Scott](https://github.com/fraserdscott).
+2020/2021 TBD.
+
+The Tan's Theorem Explorer was contributed by [Fraser Scott](https://github.com/fraserdscott) between 2020-2021 as part of an Honours Project at The University of Edinburgh, also under the supervision of [Philip Wadler](https://homepages.inf.ed.ac.uk/wadler/).
 
 The [original Mandelbrot Maps project](https://homepages.inf.ed.ac.uk/wadler/mandelbrot-maps/index.html) was developed by Iain Parris in 2008 as a Java Applet.
 
