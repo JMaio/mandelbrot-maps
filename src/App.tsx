@@ -51,9 +51,6 @@ import SettingsMenu from './components/settings/SettingsMenu';
 import {
   alignSets,
   findNearestMisiurewiczPoint,
-  generateJuliaMarkers,
-  generateMandelbrotMarkersDomains,
-  generateMandelbrotMarkersPoints,
   NearestButton,
   PreperiodicPoint,
   similarPoints,
@@ -273,12 +270,12 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   const [focusedPointMandelbrot, setFocusedPointMandelbrot] = useState(
     defaultMisiurewiczPoint,
   );
-  const [similarPointsJulia, setSimilarPointsJulia] = useState(
+  const [juliaPoints, setJuliaPoints] = useState(
     similarPoints(defaultMisiurewiczPoint, 4).sort(
       (a, b) => a.factorMagnitude - b.factorMagnitude,
     ),
   );
-  const [focusedPointJulia, setFocusedPointJulia] = useState(similarPointsJulia[0]);
+  const [focusedPointJulia, setFocusedPointJulia] = useState(juliaPoints[0]);
 
   const [aspectRatio, setAspectRatio] = useState(1);
   const rendererRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -312,7 +309,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
       if (similars.length > 0) {
         setFocusedPointMandelbrot(pointM);
         setFocusedPointJulia(similars[0]);
-        setSimilarPointsJulia(similars);
+        setJuliaPoints(similars);
       }
     },
     [],
@@ -449,7 +446,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                     setAnimationState={setAnimationState}
                     focusedPointMandelbrot={focusedPointMandelbrot}
                     focusedPointJulia={focusedPointJulia}
-                    similarPointsJulia={similarPointsJulia}
+                    similarPointsJulia={juliaPoints}
                     handleSimilarPointSelection={handleSimilarPointSelection}
                     backButton={BackButton}
                   />
@@ -516,11 +513,10 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               focusedPoint={focusedPointMandelbrot}
               setter={handleMisiurewiczPointSelection}
               aspectRatio={aspectRatio}
-              points={MISIUREWICZ_POINTS}
-              generator={
+              points={
                 settings.shadeMisiurewiczDomains
-                  ? generateMandelbrotMarkersDomains
-                  : generateMandelbrotMarkersPoints
+                  ? [focusedPointMandelbrot]
+                  : MISIUREWICZ_POINTS
               }
             />
             {showTan &&
@@ -571,8 +567,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               focusedPoint={focusedPointJulia}
               setter={handleSimilarPointSelection}
               aspectRatio={aspectRatio}
-              points={similarPointsJulia}
-              generator={generateJuliaMarkers}
+              points={juliaPoints}
             />
             <JuliaRenderer
               animationState={animationState}
