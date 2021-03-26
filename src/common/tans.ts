@@ -14,13 +14,6 @@ export interface MarkerManagerProps {
   focusedPoint: PreperiodicPoint;
   setter: (focusedPoint: PreperiodicPoint) => void;
   points: PreperiodicPoint[];
-  generator: (
-    viewerControls: ViewerControlSprings,
-    focusedPoint: PreperiodicPoint,
-    aspectRatio: number,
-    onClick: (x: PreperiodicPoint) => void,
-    points: PreperiodicPoint[],
-  ) => JSX.Element[];
 }
 
 export interface InfoCardProps {
