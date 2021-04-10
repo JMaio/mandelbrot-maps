@@ -2,6 +2,9 @@ import { AnimationStatus } from '../components/tans_theorem/AnimationFinalCard';
 import { PreperiodicPoint } from '../components/tans_theorem/tansTheoremUtils';
 import { ViewerControlSprings } from './types';
 
+export interface NearestMisiurewiczCardProps {
+  onClick: () => void;
+}
 export interface MarkerManagerProps {
   show: boolean;
   aspectRatio: number;

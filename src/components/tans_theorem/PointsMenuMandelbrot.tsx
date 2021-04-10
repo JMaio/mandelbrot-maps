@@ -12,7 +12,6 @@ const PointsInfoCard = (props: SelectMenuProps): JSX.Element => {
           display: 'flex',
           flexDirection: 'row',
           flexShrink: 1,
-          marginBottom: 8,
         }}
       >
         <Button color="secondary" onClick={props.handleQuit}>

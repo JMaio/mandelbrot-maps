@@ -69,25 +69,23 @@ bool crosshair( float x, float y ) {
 
 float mandelbrot( in vec2 c ) {
     float minMag = 999999999.0;
-    float l = 0.0;
     int minI=0;
     vec2 z  = vec2(0.0);
     for( int i=0; i<MAXI; i++ )
     {
         vec2 z0 = z;
         z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
-        // check that is it preperiodic
-        if (i >= 1 && distance(z0, z) < minMag){
+        float dist = distance(z0, z);
+        if (i > 0 && dist < minMag){
           minI = i;
-          minMag = distance(z0, z);
+          minMag = dist;
         }
         if( dot(z,z)>(B*B) ) {
-          l = float(minI);
-          break;
+          return float(minI);
         }
     }
     
-    return l;
+    return 0.0;
 }
 
 void main() {    
