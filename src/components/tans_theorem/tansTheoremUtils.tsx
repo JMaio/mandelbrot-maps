@@ -1,16 +1,8 @@
-import { Button } from '@material-ui/core';
 import { ViewerControlSprings, XYType } from '../../common/types';
-import React from 'react';
 
 export const MAX_DEPTH = 4;
 
-const MAX_PREPERIOD = 1000;
-
-export enum OrbitFlag {
-  Divergent,
-  Cyclic,
-  Acyclic,
-}
+const MAX_PREPERIOD = 30;
 
 const equal = (a: XYType, b: XYType, tolerance = 1e-10): boolean => {
   const d = sub(a, b);
@@ -19,53 +11,39 @@ const equal = (a: XYType, b: XYType, tolerance = 1e-10): boolean => {
   return dx < tolerance && dy < tolerance;
 };
 
-function magnitude(p: XYType): number {
-  return Math.sqrt(p[0] * p[0] + p[1] * p[1]);
-}
+const add = (a: XYType, b: XYType): XYType => [a[0] + b[0], a[1] + b[1]];
+const sub = (a: XYType, b: XYType): XYType => [a[0] - b[0], a[1] - b[1]];
+const magnitude = (c: XYType): number => Math.sqrt(c[0] * c[0] + c[1] * c[1]);
 
-const add = function (a: XYType, b: XYType): XYType {
-  return [a[0] + b[0], a[1] + b[1]];
-};
+const mult = (a: XYType, b: XYType): XYType => [
+  a[0] * b[0] - a[1] * b[1],
+  a[0] * b[1] + a[1] * b[0],
+];
 
-const sub = function (a: XYType, b: XYType): XYType {
-  return [a[0] - b[0], a[1] - b[1]];
-};
-
-const mult = function (a: XYType, b: XYType): XYType {
-  return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
-};
-
-const divide = function (x: XYType, y: XYType): XYType {
-  const d = Math.pow(y[0], 2) + Math.pow(y[1], 2);
+const divide = (x: XYType, y: XYType): XYType => {
+  const d = y[0] * y[0] + y[1] * y[1];
   return [(x[0] * y[0] + x[1] * y[1]) / d, (x[1] * y[0] - x[0] * y[1]) / d];
 };
 
-const square = (c: XYType): XYType => {
-  return [Math.pow(c[0], 2) - Math.pow(c[1], 2), 2.0 * c[0] * c[1]];
-};
+const square = (c: XYType): XYType => [
+  Math.pow(c[0], 2) - Math.pow(c[1], 2),
+  2.0 * c[0] * c[1],
+];
 
 const sqrt = (c: XYType): XYType => {
   const theta = Math.atan2(c[1], c[0]);
   const r2 = Math.sqrt(magnitude(c));
-  return [r2 * Math.cos(theta / 2), r2 * Math.sin(theta / 2)];
+  return mult([r2, 0], [Math.cos(theta / 2), Math.sin(theta / 2)]);
 };
 
-const preImagePositive = function (z: XYType, c: XYType): XYType {
-  return sqrt(sub(z, c));
-};
-
-const preImageNegative = function (z: XYType, c: XYType): XYType {
-  return mult([-1, 0], preImagePositive(z, c));
-};
-
-const orbit = function (z: XYType, c: XYType, t: number): XYType {
-  for (let i = 0; i < t; i++) {
+const orbit = (z: XYType, c: XYType, n: number): XYType => {
+  for (let i = 0; i < n; i++) {
     z = add(square(z), c);
   }
   return z;
 };
 
-const orbitEigenvalue = function (z: XYType, c: XYType, t: number): XYType {
+const recursiveDerivative = (z: XYType, c: XYType, t: number): XYType => {
   let der: XYType = [1, 0];
   for (let i = 0; i < t; i++) {
     der = mult([2, 0], mult(der, z));
@@ -73,6 +51,22 @@ const orbitEigenvalue = function (z: XYType, c: XYType, t: number): XYType {
   }
 
   return der;
+};
+
+const cycleEigenvalue = (c: XYType, l: number, p: number): XYType =>
+  recursiveDerivative(orbit(c, c, l), c, p);
+
+const magnificationRotationJulia = (c: XYType, z: XYType): XYType => {
+  const x = forwardOrbit([0, 0], c, 50);
+  const alpha = x[0][x[1]];
+  let der: XYType = [1, 0];
+  for (let i = 0; i < 100; i++) {
+    der = mult([2, 0], mult(der, z));
+    z = add(square(z), c);
+    if (equal(alpha, z, 0.0001)) return der;
+  }
+
+  return [0, 0];
 };
 
 /**
@@ -83,9 +77,16 @@ const orbitEigenvalue = function (z: XYType, c: XYType, t: number): XYType {
  * @param l - The period of c
  * @returns The derivative of W at c
  */
-const W = function (c: XYType, l: number, p: number) {
-  const endOfCycle = orbit(c, c, l + p);
+const W = (c: XYType, l: number, p: number) => {
   const startOfCycle = orbit(c, c, l);
+  const endOfCycle = orbit(startOfCycle, c, p);
+
+  return sub(endOfCycle, startOfCycle);
+};
+
+const Wderivative = (c: XYType, l: number, p: number) => {
+  const startOfCycle = recursiveDerivative(c, c, l);
+  const endOfCycle = recursiveDerivative(c, c, l + p);
 
   return sub(endOfCycle, startOfCycle);
 };
@@ -96,17 +97,12 @@ const W = function (c: XYType, l: number, p: number) {
  * @param c - The point we are taking the derivative of
  * @returns The derivative of f at c
  */
-const numericalDerivative = function (c: XYType, f: (c: XYType) => XYType): XYType {
-  const h = 1e-9;
+const numericalDerivative = (c: XYType, f: (c: XYType) => XYType): XYType => {
+  const epsilon = 1e-9;
   const withoutH = f(c);
-  const withH = f(add(c, [h, 0]));
+  const withH = f(add(c, [epsilon, 0]));
 
-  return [sub(withH, withoutH)[0] / h, sub(withH, withoutH)[1] / h];
-};
-
-const cycleEigenvalue = (c: XYType, l: number, p: number): XYType => {
-  const firstIterateInCycle: XYType = orbit(c, c, l);
-  return orbitEigenvalue(firstIterateInCycle, c, p);
+  return [sub(withH, withoutH)[0] / epsilon, sub(withH, withoutH)[1] / epsilon];
 };
 
 /**
@@ -116,13 +112,9 @@ const cycleEigenvalue = (c: XYType, l: number, p: number): XYType => {
  * @param p - The period of z
  * @returns The size of the branch
  */
-const magnificationRotationMandelbrot = function (
-  c: XYType,
-  l: number,
-  p: number,
-): XYType {
+const magnificationRotationMandelbrot = (c: XYType, l: number, p: number): XYType => {
   const firstIterateInCycle: XYType = orbit(c, c, l);
-  const cycleEigenvalue: XYType = orbitEigenvalue(firstIterateInCycle, c, p);
+  const cycleEigenvalue: XYType = recursiveDerivative(firstIterateInCycle, c, p);
 
   return divide(
     numericalDerivative(c, (x: XYType) => W(x, l, p)),
@@ -130,68 +122,46 @@ const magnificationRotationMandelbrot = function (
   );
 };
 
-const reachAlpha = function (c: XYType, z: XYType): number {
-  const alpha = getAlpha([0, 0], c);
-  for (let i = 0; i < 50; i++) {
-    if (equal(alpha, z)) return i;
-    z = add(square(z), c);
-  }
-  return -1;
-};
-
-const magnificationRotationJulia = function (c: XYType, z: XYType, q: number): XYType {
-  return orbitEigenvalue(z, c, reachAlpha(c, z));
-};
-
-export function round(value: number, precision: number): number {
-  const multiplier = Math.pow(10, precision || 0);
+export const round = (value: number, precision = 0): number => {
+  const multiplier = Math.pow(10, precision);
   return Math.round(value * multiplier) / multiplier;
-}
+};
 
-export function formatComplexNumber(c: XYType, precision = 3): string {
-  return `${round(c[0], precision)}${c[1] >= 0 ? '+' : ''}${round(c[1], precision)}i`;
-}
+export const formatComplexNumber = (c: XYType, precision = 3): string =>
+  `${round(c[0], precision)}${c[1] >= 0 ? '+' : ''}${round(c[1], precision)}i`;
 
-export function formatAngle(angle: number): string {
-  return `${round((180 / Math.PI) * angle, 0)}°`;
-}
+export const formatAngle = (angle: number): string =>
+  `${round((180 / Math.PI) * angle, 0)}°`;
 
-function findPotentialPreperiod(c: XYType): number {
-  let z: XYType = c;
-  let minDistance = 4;
-  let minPreperiod = -1;
+const findPotentialPreperiod = (c: XYType): number => {
+  let minDistance = 999999999;
+  let minPreperiod = 0;
+  let z: XYType = [0, 0];
   for (let i = 0; i < MAX_PREPERIOD; i++) {
-    const newZ: XYType = add(square(z), c);
-    const distance = magnitude(sub(newZ, z));
-    if (distance < minDistance) {
-      minDistance = distance;
+    const z0 = z;
+    z = add(square(z), c);
+
+    const a = z[0] - z0[0];
+    const b = z[1] - z0[1];
+    const distance = Math.sqrt(a * a + b * b);
+    if (i > 0 && distance < minDistance) {
       minPreperiod = i;
+      minDistance = distance;
     }
-    z = newZ;
   }
   return minPreperiod;
-}
-
-const Wfried = function (c: XYType, l: number, p: number) {
-  const endOfCycle = orbitEigenvalue(c, c, l + p);
-  const startOfCycle = orbitEigenvalue(c, c, l);
-
-  return sub(endOfCycle, startOfCycle);
 };
 
-export const findNearestMisiurewiczPoint = function (
-  c: XYType,
-  iterations: number,
-): XYType {
+export const findNearestMisiurewiczPoint = (c: XYType, iterations: number): XYType => {
   const q = findPotentialPreperiod(c);
-  if (q === -1) {
+  if (q === 0) {
     return [0, 0];
   }
   const p = 1;
   const learningRate: XYType = [0.01, 0];
   for (let i = 0; i < iterations; i++) {
     const F = W(c, q, p);
-    const Fdash = Wfried(c, q, p);
+    const Fdash = Wderivative(c, q, p);
     c = sub(c, mult(learningRate, divide(F, Fdash)));
   }
   return c;
@@ -199,9 +169,11 @@ export const findNearestMisiurewiczPoint = function (
 
 const depthFirstSearch = (z: XYType, c: XYType, zs: XYType[], depth: number) => {
   zs.push(z);
-  if (!equal(z, c) && depth > 0) {
-    depthFirstSearch(preImagePositive(z, c), c, zs, depth - 1);
-    depthFirstSearch(preImageNegative(z, c), c, zs, depth - 1);
+  if (!equal(z, c, 0.00001) && depth > 0) {
+    const positivePreimage = sqrt(sub(z, c));
+    const negativePreimage = mult([-1, 0], positivePreimage);
+    depthFirstSearch(positivePreimage, c, zs, depth - 1);
+    depthFirstSearch(negativePreimage, c, zs, depth - 1);
   }
   return zs;
 };
@@ -218,30 +190,29 @@ export const similarPoints = (c: PreperiodicPoint, depth: number): PreperiodicPo
   return zs.map((p) => new PreperiodicPoint(c.point, p, true));
 };
 
-const forwardOrbit = function (
+const forwardOrbit = (
   z: XYType,
   c: XYType,
   maxIterations: number,
-): [orbit: XYType[], prePeriod: number, period: number, flag: OrbitFlag] {
+): [orbit: XYType[], prePeriod: number, period: number] => {
   const orbit: XYType[] = [];
   for (let i = 0; i < maxIterations; i++) {
     // eslint-disable-next-line no-loop-func
     orbit.push(z);
     const newZ = add(square(z), c);
-    const similar = orbit.findIndex((elem) => equal(elem, newZ, 0.001));
+    const similar = orbit.findIndex((elem) => equal(elem, newZ, 0.00001));
     if (similar !== -1) {
-      return [orbit, similar, i - similar + 1, OrbitFlag.Cyclic];
+      return [orbit, similar, i - similar + 1];
     }
     if (magnitude(z) > 2) {
-      return [orbit, i, -1, OrbitFlag.Divergent];
+      return [orbit, i, -1];
     }
     z = newZ;
   }
 
-  return [orbit, -1, -1, OrbitFlag.Acyclic];
+  return [orbit, -1, -1];
 };
 
-const subscripts = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 export class PreperiodicPoint {
   point: XYType;
   prePeriod: number;
@@ -256,13 +227,13 @@ export class PreperiodicPoint {
   constructor(c: XYType, z: XYType, julia: boolean) {
     this.point = z;
 
-    const orbitInfo = forwardOrbit(this.point, c, 200);
+    const orbitInfo = forwardOrbit(this.point, c, 50);
 
     this.prePeriod = orbitInfo[1];
     this.period = orbitInfo[2];
 
     julia
-      ? (this.factor = magnificationRotationJulia(c, this.point, this.prePeriod))
+      ? (this.factor = magnificationRotationJulia(c, this.point))
       : (this.factor = magnificationRotationMandelbrot(c, this.prePeriod, this.period));
 
     this.factorMagnitude = magnitude(this.factor);
@@ -277,58 +248,9 @@ export class PreperiodicPoint {
   }
 
   toString(): string {
-    let pre = `M${this.prePeriod},${this.period}`;
-    for (let i = 0; i < 10; i++) {
-      pre = pre.replaceAll(i.toString(), subscripts[i]);
-    }
-    return pre;
+    return formatComplexNumber(this.point);
   }
 }
-
-/**
- * the point where zero enters a cycle
- *
- * @param c - The point
- * @returns If it's preperiodic: the preperiod, if it's periodic: nonsense, otherwise: -1.
- */
-const getAlpha = (z: XYType, c: XYType): XYType => {
-  const olds: XYType[] = [];
-  for (let i = 0; i < 50; i++) {
-    olds.push(z);
-    const newZ = add(square(z), c);
-    const similar = olds.findIndex((elem) => equal(elem, newZ));
-    if (similar !== -1) return newZ;
-
-    z = newZ;
-  }
-  return [-7, -7];
-};
-
-export const NearestButton = (
-  handleNearest: (xy: XYType) => void,
-  xy: XYType,
-): JSX.Element => (
-  <div
-    style={{
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Button
-      style={{
-        zIndex: 10,
-      }}
-      variant="contained"
-      onClick={() => handleNearest(xy)}
-    >
-      Press to find nearest Misiurewicz point
-    </Button>
-  </div>
-);
 
 export const alignSets = (
   newMagnification: number,

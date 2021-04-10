@@ -102,7 +102,7 @@ const MapMarkerManager = (props: MarkerManagerProps): JSX.Element => {
     return () => clearInterval(interval);
     // explicitly not adding viewerControls to the deps list
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.aspectRatio, props.focusedPoint, props.setter, props.show]);
+  }, [props.aspectRatio, props.focusedPoint, props.setter, props.show, props.points]);
 
   return <>{props.show ? markers : null}</>;
 };

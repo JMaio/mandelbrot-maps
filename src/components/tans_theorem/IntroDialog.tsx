@@ -3,7 +3,7 @@ import React from 'react';
 import { SelectMenuProps } from '../../common/tans';
 import { DialogContent, DialogTitle } from '../custom/DialogComponents';
 
-const IntroCard = (props: SelectMenuProps): JSX.Element => {
+const IntroDialog = (props: SelectMenuProps): JSX.Element => {
   const [open, setOpen] = React.useState(true);
 
   if (props.show) {
@@ -60,4 +60,4 @@ const IntroCard = (props: SelectMenuProps): JSX.Element => {
   );
 };
 
-export default IntroCard;
+export default IntroDialog;

@@ -1,7 +1,6 @@
 import { CanvasHTMLAttributes } from 'react';
 import { RgbColor } from 'react-colorful';
 import { OpaqueInterpolation } from 'react-spring';
-import { OrbitFlag } from '../components/tans_theorem/tansTheoremUtils';
 import { AnimationStatus } from '../components/tans_theorem/AnimationFinalCard';
 import {
   MandelbrotMapsWebGLUniforms,
