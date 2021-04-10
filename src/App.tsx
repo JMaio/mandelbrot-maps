@@ -55,7 +55,6 @@ import {
 } from './components/tans_theorem/tansTheoremUtils';
 import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
 import NearestMisiurewiczCard from './components/tans_theorem/NearestMisiurewiczCard';
-import SelfSimilaritySlider from './components/tans_theorem/SelfSimilaritySlider';
 import IntroDialog from './components/tans_theorem/IntroDialog';
 import TansTheoremProgressCard from './components/tans_theorem/TansTheoremProgressCard';
 import { misiurewiczPairs } from './components/tans_theorem/MPoints';
@@ -268,7 +267,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
 
   const [animationState, setAnimationState] = React.useState(AnimationStatus.INTRO);
   const [magnification, setMagnification] = React.useState<number>(1);
-  const [mandelbrotPoints] = useState(
+  const [mandelbrotPoints, setMandelbrotPoints] = useState(
     MISIUREWICZ_POINTS.sort((a, b) => a.factorMagnitude - b.factorMagnitude),
   );
   const [juliaPoints, setJuliaPoints] = useState(
@@ -343,7 +342,19 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
     if (showTan && rendererRef.current)
       setAspectRatio(rendererRef.current.offsetHeight / rendererRef.current.offsetWidth);
   };
+
+  const updateMandelbrotPoints = () => {
+    if (showTan && settings.shadeMisiurewiczDomains)
+      setMandelbrotPoints([focusedPointMandelbrot]);
+    else
+      setMandelbrotPoints(
+        MISIUREWICZ_POINTS.sort((a, b) => a.factorMagnitude - b.factorMagnitude),
+      );
+  };
+
   useInterval(updateAspectRatio, 1000);
+  // we can't update the list when the setting is toggled, so manually check
+  useInterval(updateMandelbrotPoints, 1000);
 
   const handleNearest = (xy: XYType) => {
     const mPoint = findNearestMisiurewiczPoint(xy, 10000);
@@ -405,11 +416,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                   setAnimationState={setAnimationState}
                   focusedPointMandelbrot={focusedPointMandelbrot}
                   focusedPointJulia={focusedPointJulia}
-                  pointsMandelbrot={
-                    settings.shadeMisiurewiczDomains
-                      ? [focusedPointMandelbrot]
-                      : mandelbrotPoints
-                  }
+                  pointsMandelbrot={mandelbrotPoints}
                   pointsJulia={juliaPoints}
                   handlePointSelectionMandelbrot={(c) => {
                     handleMisiurewiczPointSelection(c);
@@ -423,6 +430,9 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                 />
               ) : null}
               <AnimationFinalCard
+                focusedPointMandelbrot={focusedPointMandelbrot}
+                magnification={magnification}
+                rotateWhileZooming={settings.rotateWhileZooming}
                 show={animationState === AnimationStatus.PLAY}
                 handleQuit={handleReset}
                 handleGo={() => {
@@ -435,12 +445,6 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                   onClick={() =>
                     handleNearest(mandelbrotControls.xyCtrl[0].xy.getValue())
                   }
-                />
-              ) : null}
-              {settings.rotateWhileZooming && animationState === AnimationStatus.PLAY ? (
-                <SelfSimilaritySlider
-                  focusedPointMandelbrot={focusedPointMandelbrot}
-                  magnification={magnification}
                 />
               ) : null}
             </div>
@@ -462,11 +466,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               focusedPoint={focusedPointMandelbrot}
               setter={handleMisiurewiczPointSelection}
               aspectRatio={aspectRatio}
-              points={
-                settings.shadeMisiurewiczDomains
-                  ? [focusedPointMandelbrot]
-                  : mandelbrotPoints
-              }
+              points={mandelbrotPoints}
             />
             {settings.deepZoom ? (
               <MandelbrotRendererDeep

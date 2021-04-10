@@ -1,7 +1,8 @@
 import React from 'react';
-import { SelectMenuProps } from '../../common/tans';
+import { AnimationFinalCardProps } from '../../common/tans';
 import { Card, Button, Typography, Box } from '@material-ui/core';
 import { KeyboardArrowLeft } from '@material-ui/icons';
+import SelfSimilaritySlider from './SelfSimilaritySlider';
 
 export enum AnimationStatus {
   INTRO = -1,
@@ -14,7 +15,7 @@ export enum AnimationStatus {
   PLAY = 6,
 }
 
-const AnimationFinalCard = (props: SelectMenuProps): JSX.Element => {
+const AnimationFinalCard = (props: AnimationFinalCardProps): JSX.Element => {
   return (
     <>
       {props.show ? (
@@ -22,23 +23,39 @@ const AnimationFinalCard = (props: SelectMenuProps): JSX.Element => {
           style={{
             zIndex: 100,
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
             flexShrink: 1,
             fontSize: '0.8rem',
           }}
         >
-          <Button onClick={props.handleQuit}>
-            <KeyboardArrowLeft />
-            Back
-          </Button>
-          <div style={{ padding: 8, marginLeft: 12 }}>
-            <Typography gutterBottom>You are now free to continue magnifying.</Typography>
-            <Typography gutterBottom>
-              <Box fontWeight="fontWeightBold" m={0} textAlign="left">
-                higher magnification &#8594; stronger similarity
-              </Box>
-            </Typography>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexShrink: 1,
+            }}
+          >
+            <Button onClick={props.handleQuit}>
+              <KeyboardArrowLeft />
+              Back
+            </Button>
+            <div style={{ padding: 8, marginLeft: 12 }}>
+              <Typography gutterBottom>
+                You are now free to continue magnifying.
+              </Typography>
+              <Typography gutterBottom>
+                <Box fontWeight="fontWeightBold" m={0} textAlign="left">
+                  higher magnification &#8594; stronger similarity
+                </Box>
+              </Typography>
+            </div>
           </div>
+          {props.rotateWhileZooming ? (
+            <SelfSimilaritySlider
+              focusedPointMandelbrot={props.focusedPointMandelbrot}
+              magnification={props.magnification}
+            />
+          ) : null}
         </Card>
       ) : null}
     </>
