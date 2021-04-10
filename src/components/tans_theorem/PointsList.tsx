@@ -6,9 +6,7 @@ const PointsList = (props: PointsListProps): JSX.Element => {
   const handleSimilarPointSelection = (event: React.ChangeEvent<{ value: unknown }>) => {
     const identifier = event.target.value as number;
 
-    const chosen = props.points[identifier];
-
-    props.handleSelection(chosen);
+    props.handleSelection(props.points[identifier]);
   };
 
   return (

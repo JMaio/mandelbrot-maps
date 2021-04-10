@@ -1,9 +1,7 @@
 import React from 'react';
-import { AnimationFinalCardProps } from '../../common/tans';
-import { Card, Grid, IconButton, Typography, Box } from '@material-ui/core';
-import { PreperiodicPoint } from './tansTheoremUtils';
-import { misiurewiczPairs } from './MPoints';
-import ArrowBackwardIcon from '@material-ui/icons/ArrowBack';
+import { SelectMenuProps } from '../../common/tans';
+import { Card, Button, Typography, Box } from '@material-ui/core';
+import { KeyboardArrowLeft } from '@material-ui/icons';
 
 export enum AnimationStatus {
   INTRO = -1,
@@ -16,47 +14,31 @@ export enum AnimationStatus {
   PLAY = 6,
 }
 
-export const MISIUREWICZ_POINTS: PreperiodicPoint[] = misiurewiczPairs
-  .slice(0, 200)
-  .map((p) => new PreperiodicPoint(p, p, false))
-  .sort((a, b) => a.factorMagnitude - b.factorMagnitude);
-
-const AnimationFinalCard = (props: AnimationFinalCardProps): JSX.Element => {
-  const BackButton = () => {
-    return (
-      // eslint-disable-next-line react/prop-types
-      <IconButton style={{ width: 50 }} onClick={props.handleReset}>
-        <ArrowBackwardIcon />
-      </IconButton>
-    );
-  };
-
+const AnimationFinalCard = (props: SelectMenuProps): JSX.Element => {
   return (
     <>
-      {props.animationState === AnimationStatus.PLAY ? (
+      {props.show ? (
         <Card
           style={{
-            padding: 12,
             zIndex: 100,
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
             flexShrink: 1,
             fontSize: '0.8rem',
           }}
         >
-          <Grid container direction="row">
-            <Grid item>{BackButton()}</Grid>
-            <Grid item>
-              <Typography gutterBottom>
-                You are now free to continue magnifying.
-              </Typography>
-              <Typography gutterBottom>
-                <Box fontWeight="fontWeightBold" m={0} textAlign="left">
-                  higher magnification &#8594; stronger similarity
-                </Box>
-              </Typography>
-            </Grid>
-          </Grid>
+          <Button onClick={props.handleQuit}>
+            <KeyboardArrowLeft />
+            Back
+          </Button>
+          <div style={{ padding: 8, marginLeft: 12 }}>
+            <Typography gutterBottom>You are now free to continue magnifying.</Typography>
+            <Typography gutterBottom>
+              <Box fontWeight="fontWeightBold" m={0} textAlign="left">
+                higher magnification &#8594; stronger similarity
+              </Box>
+            </Typography>
+          </div>
         </Card>
       ) : null}
     </>
