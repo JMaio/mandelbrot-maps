@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/fraserdscott/mandelbrot-maps/compare/v1.3.0...v1.3.1) (2021-04-10)
+
+
+### Features
+
+* **tans-theorem:** add back yarn.lock ([86098fd](https://github.com/fraserdscott/mandelbrot-maps/commit/86098fd59cad8db272c717b11c0bd5d59cdccd67))
+* **tans-theorem:** ui overhaul ([e583548](https://github.com/fraserdscott/mandelbrot-maps/commit/e5835488d2af0d43a2ce9bfe3fa48075e0654aac))
+* **tans-theorem:** unify animation progress bar ([6ab9646](https://github.com/fraserdscott/mandelbrot-maps/commit/6ab96462f2178a94634fa9a94b1ec7e27fccb8b0))
+
+
+### Bug Fixes
+
+* **tans-theorem:** fix domains and update its ui ([74e8e3f](https://github.com/fraserdscott/mandelbrot-maps/commit/74e8e3f9c7ce8e8ea811774e9a9c495ace5a47fd))
+* **tans-theorem:** update markers on domain switch ([7e83fed](https://github.com/fraserdscott/mandelbrot-maps/commit/7e83fedff2f11d15637e3069b57dac059cb054e8))
+
 ## [1.3.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.2.0...v1.3.0) (2021-03-23)
 
 
