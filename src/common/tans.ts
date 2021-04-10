@@ -5,6 +5,7 @@ import { ViewerControlSprings } from './types';
 export interface NearestMisiurewiczCardProps {
   onClick: () => void;
 }
+
 export interface MarkerManagerProps {
   show: boolean;
   aspectRatio: number;
@@ -28,13 +29,6 @@ export interface SelectMenuProps {
   handleGo: () => void;
 }
 
-export interface TansDialogsProps {
-  show: boolean;
-  animationState: AnimationStatus;
-  setAnimationState: React.Dispatch<React.SetStateAction<AnimationStatus>>;
-  handleQuit: () => void;
-}
-
 export interface PointsListProps {
   focusedPoint: PreperiodicPoint;
   points: PreperiodicPoint[];
@@ -42,22 +36,36 @@ export interface PointsListProps {
   handleSelection: (point: PreperiodicPoint) => void;
 }
 
-export interface ZoomCardProps extends SelectMenuProps {
-  mandelbrotControls: ViewerControlSprings;
-  juliaControls: ViewerControlSprings;
-  animationState: AnimationStatus;
-  setAnimationState: React.Dispatch<React.SetStateAction<AnimationStatus>>;
-  focusedPointMandelbrot: PreperiodicPoint;
-  focusedPointJulia: PreperiodicPoint;
-}
-
-export interface PlayCardProps {
+export interface SelfSimilaritySliderProps {
   focusedPointMandelbrot: PreperiodicPoint;
   magnification: number;
 }
 
+export interface TansTheoremProgressCardProps {
+  animationState: AnimationStatus;
+  focusedPointMandelbrot: PreperiodicPoint;
+  focusedPointJulia: PreperiodicPoint;
+  mandelbrotControls: ViewerControlSprings;
+  juliaControls: ViewerControlSprings;
+  setAnimationState: React.Dispatch<React.SetStateAction<AnimationStatus>>;
+  handleQuit: () => void;
+  pointsMandelbrot: PreperiodicPoint[];
+  pointsJulia: PreperiodicPoint[];
+  handlePointSelectionMandelbrot: (focusedPoint: PreperiodicPoint) => void;
+  handlePointSelectionJulia: (focusedPoint: PreperiodicPoint) => void;
+}
+
+export interface ZoomCardProps {
+  animationState: AnimationStatus;
+  focusedPointMandelbrot: PreperiodicPoint;
+  focusedPointJulia: PreperiodicPoint;
+  mandelbrotControls: ViewerControlSprings;
+  juliaControls: ViewerControlSprings;
+  setAnimationState: React.Dispatch<React.SetStateAction<AnimationStatus>>;
+  handleQuit: () => void;
+}
+
 export interface SimilarityAnimationProps {
-  show: boolean;
   animationState: AnimationStatus;
   focusedPointMandelbrot: PreperiodicPoint;
   focusedPointJulia: PreperiodicPoint;
