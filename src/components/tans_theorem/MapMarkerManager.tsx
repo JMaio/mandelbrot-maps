@@ -4,7 +4,7 @@ import { XYType, ViewerControlSprings } from '../../common/types';
 import ComplexNumberMarker from './ComplexNumberMarker';
 import { PreperiodicPoint } from './tansTheoremUtils';
 
-const MAX_MARKERS = 5;
+const MAX_MARKERS = 8;
 
 /**
  * Check if a point is within a given "bounding" box.

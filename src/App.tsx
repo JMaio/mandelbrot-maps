@@ -1,4 +1,4 @@
-import { Grid, IconButton } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import React, {
   RefObject,
   useCallback,
@@ -40,7 +40,6 @@ import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
 import AnimationFinalCard, {
   AnimationStatus,
-  MISIUREWICZ_POINTS,
 } from './components/tans_theorem/AnimationFinalCard';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
@@ -55,16 +54,18 @@ import {
   PreperiodicPoint,
   similarPoints,
 } from './components/tans_theorem/tansTheoremUtils';
-import SimilarityMenu from './components/tans_theorem/SimilarityMenu';
 import SimilarityAnimationCard from './components/tans_theorem/SimilarityAnimationCard';
-import MisiurewiczDomainsMenu from './components/tans_theorem/MisiurewiczDomainsMenu';
-import PointsInfoCard from './components/tans_theorem/MisiurewiczPointsMenu';
-import ArrowBackwardIcon from '@material-ui/icons/ArrowBack';
-import CloseIcon from '@material-ui/icons/Close';
+import PointsMenuJulia from './components/tans_theorem/PointsMenuJulia';
+import PointsMenuMandelbrot from './components/tans_theorem/PointsMenuMandelbrot';
 import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
 import ZoomMenu from './components/tans_theorem/ZoomMenu';
-import PlayCard from './components/tans_theorem/PlayCard';
-import IntroCard from './components/tans_theorem/IntroCard';
+import SelfSimilaritySlider from './components/tans_theorem/SelfSimilaritySlider';
+import IntroCard from './components/tans_theorem/IntroDialog';
+import { misiurewiczPairs } from './components/tans_theorem/MPoints';
+
+const MISIUREWICZ_POINTS: PreperiodicPoint[] = misiurewiczPairs
+  .slice(0, 200)
+  .map((p) => new PreperiodicPoint(p, p, false));
 
 const defaultP: XYType = [-0.10109636384562218, +0.9562865108091414];
 const defaultMisiurewiczPoint = new PreperiodicPoint(defaultP, defaultP, false);
@@ -191,7 +192,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
         }
       },
     );
-    // explicitly not adding mandelbrotControls to the deps list
+    // ficitly not adding mandelbrotControls to the deps list
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [precision, updateM]);
 
@@ -244,6 +245,9 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   const [showTan, setShowTan] = useState(false);
   const toggleTan = () => {
     setShowTan(true);
+    if (animationState !== AnimationStatus.INTRO)
+      setAnimationState(AnimationStatus.SELECT_MANDELBROT_POINT);
+
     warpToPoint(mandelbrotControls, {
       xy: [0, 0],
       z: 0.5,
@@ -267,13 +271,16 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
 
   const [animationState, setAnimationState] = React.useState(AnimationStatus.INTRO);
   const [magnification, setMagnification] = React.useState<number>(1);
-  const [focusedPointMandelbrot, setFocusedPointMandelbrot] = useState(
-    defaultMisiurewiczPoint,
+  const [mandelbrotPoints] = useState(
+    MISIUREWICZ_POINTS.sort((a, b) => a.factorMagnitude - b.factorMagnitude),
   );
   const [juliaPoints, setJuliaPoints] = useState(
     similarPoints(defaultMisiurewiczPoint, 4).sort(
       (a, b) => a.factorMagnitude - b.factorMagnitude,
     ),
+  );
+  const [focusedPointMandelbrot, setFocusedPointMandelbrot] = useState(
+    defaultMisiurewiczPoint,
   );
   const [focusedPointJulia, setFocusedPointJulia] = useState(juliaPoints[0]);
 
@@ -291,6 +298,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
       settings.rotateWhileZooming,
     );
   };
+
   const alignM = (z: number) => {
     const newMag = normaliseZoom(z, focusedPointJulia);
     align(newMag);
@@ -301,23 +309,20 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
     align(newMag);
   };
 
-  const handleMisiurewiczPointSelection = useCallback(
-    (pointM: PreperiodicPoint): void => {
-      const similars = similarPoints(pointM, 4).sort(
-        (a, b) => a.factorMagnitude - b.factorMagnitude,
-      );
-      if (similars.length > 0) {
-        setFocusedPointMandelbrot(pointM);
-        setFocusedPointJulia(similars[0]);
-        setJuliaPoints(similars);
-      }
-    },
-    [],
-  );
+  const handleMisiurewiczPointSelection = useCallback((point: PreperiodicPoint): void => {
+    const similars = similarPoints(point, 4).sort(
+      (a, b) => a.factorMagnitude - b.factorMagnitude,
+    );
+    if (similars.length > 0) {
+      setFocusedPointMandelbrot(point);
+      setFocusedPointJulia(similars[0]);
+      setJuliaPoints(similars);
+    }
+  }, []);
 
   const handleSimilarPointSelection = useCallback(
-    (pointJ: PreperiodicPoint): void => {
-      setFocusedPointJulia(pointJ);
+    (point: PreperiodicPoint): void => {
+      setFocusedPointJulia(point);
     },
     [setFocusedPointJulia],
   );
@@ -343,23 +348,26 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   };
   useInterval(updateAspectRatio, 1000);
 
-  const BackButton = () => (
-    <IconButton style={{ width: 50 }} onClick={handleReset}>
-      <ArrowBackwardIcon />
-    </IconButton>
-  );
-  const QuitButton = () => (
-    <IconButton style={{ width: 50 }} onClick={handleQuit}>
-      <CloseIcon />
-    </IconButton>
-  );
-
   const handleNearest = (xy: XYType) => {
     const mPoint = findNearestMisiurewiczPoint(xy, 10000);
     if (mPoint[0] !== 0 && mPoint[1] !== 0) {
       const p = new PreperiodicPoint(mPoint, mPoint, false);
       handleMisiurewiczPointSelection(p);
     }
+  };
+
+  const handleMisiurewiczGo = () => {
+    setAnimationState(AnimationStatus.SELECT_JULIA_POINT);
+    warpToPoint(mandelbrotControls, {
+      xy: focusedPointMandelbrot.point,
+      z: 1,
+      theta: 0,
+    });
+    warpToPoint(juliaControls, {
+      xy: [0, 0],
+      z: 0.5,
+      theta: 0,
+    });
   };
 
   return (
@@ -382,120 +390,119 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
             precision={precision}
             precisionFormatter={precisionFormatter}
           />
-          <div
-            style={{
-              zIndex: 1300,
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              pointerEvents: 'none',
-            }}
-          >
-            {showTan ? (
-              <div
-                style={{
-                  pointerEvents: 'all',
+          {showTan ? (
+            <div
+              style={{
+                zIndex: 2,
+                position: 'absolute',
+                left: 0,
+                top: 0,
+              }}
+            >
+              <IntroCard
+                show={animationState === AnimationStatus.INTRO}
+                handleGo={() => {
+                  setAnimationState(AnimationStatus.SELECT_MANDELBROT_POINT);
                 }}
-              >
-                {animationState === AnimationStatus.INTRO ? (
-                  <IntroCard
-                    show={true}
-                    mandelbrot={mandelbrotControls}
-                    julia={juliaControls}
-                    animationState={animationState}
-                    setAnimationState={setAnimationState}
-                    focusedPointMandelbrot={focusedPointMandelbrot}
-                    focusedPointJulia={focusedPointJulia}
-                    handleMandelbrotSelection={handleMisiurewiczPointSelection}
-                    quitButton={QuitButton}
-                  />
-                ) : null}
-                {animationState === AnimationStatus.SELECT_MANDELBROT_POINT ? (
-                  settings.shadeMisiurewiczDomains ? (
-                    <MisiurewiczDomainsMenu
-                      show={true}
-                      mandelbrot={mandelbrotControls}
-                      julia={juliaControls}
-                      setAnimationState={setAnimationState}
-                      focusedPointMandelbrot={focusedPointMandelbrot}
-                      focusedPointJulia={focusedPointJulia}
-                      quitButton={QuitButton}
-                    />
-                  ) : (
-                    <PointsInfoCard
-                      show={true}
-                      mandelbrot={mandelbrotControls}
-                      julia={juliaControls}
-                      animationState={animationState}
-                      setAnimationState={setAnimationState}
-                      focusedPointMandelbrot={focusedPointMandelbrot}
-                      focusedPointJulia={focusedPointJulia}
-                      handleMandelbrotSelection={handleMisiurewiczPointSelection}
-                      quitButton={QuitButton}
-                    />
-                  )
-                ) : null}
-                <AnimationFinalCard
-                  animationState={animationState}
-                  handleReset={handleReset}
-                />
-                {animationState === AnimationStatus.SELECT_JULIA_POINT ? (
-                  <SimilarityMenu
-                    show={showTan}
-                    julia={juliaControls}
-                    setAnimationState={setAnimationState}
-                    focusedPointMandelbrot={focusedPointMandelbrot}
-                    focusedPointJulia={focusedPointJulia}
-                    similarPointsJulia={juliaPoints}
-                    handleSimilarPointSelection={handleSimilarPointSelection}
-                    backButton={BackButton}
-                  />
-                ) : null}
-                {[
-                  AnimationStatus.ZOOM_M,
-                  AnimationStatus.ZOOM_J,
-                  AnimationStatus.ROTATE_M,
-                  AnimationStatus.ROTATE_J,
-                ].includes(animationState) ? (
-                  <ZoomMenu
-                    backButton={BackButton}
-                    show={true}
-                    mandelbrot={mandelbrotControls}
-                    julia={juliaControls}
-                    animationState={animationState}
-                    setAnimationState={setAnimationState}
-                    focusedPointMandelbrot={focusedPointMandelbrot}
-                    focusedPointJulia={focusedPointJulia}
-                  />
-                ) : null}
-              </div>
-            ) : null}
-            {showTan &&
-            settings.rotateWhileZooming &&
-            animationState === AnimationStatus.PLAY ? (
-              <PlayCard
-                focusedPointMandelbrot={focusedPointMandelbrot}
-                magnification={magnification}
+                handleQuit={handleQuit}
               />
-            ) : null}
-          </div>
-          <SimilarityAnimationCard
-            show={
-              showTan &&
-              [
-                AnimationStatus.INTRO,
+              {[
                 AnimationStatus.SELECT_MANDELBROT_POINT,
                 AnimationStatus.SELECT_JULIA_POINT,
                 AnimationStatus.ZOOM_M,
                 AnimationStatus.ZOOM_J,
                 AnimationStatus.ROTATE_M,
                 AnimationStatus.ROTATE_J,
-              ].includes(animationState)
-            }
-            animationState={animationState}
-            focusedPoint={focusedPointMandelbrot}
-            focusedPointJulia={focusedPointJulia}
-          />
+              ].includes(animationState) ? (
+                <SimilarityAnimationCard
+                  show={
+                    showTan &&
+                    [
+                      AnimationStatus.INTRO,
+                      AnimationStatus.SELECT_MANDELBROT_POINT,
+                      AnimationStatus.SELECT_JULIA_POINT,
+                      AnimationStatus.ZOOM_M,
+                      AnimationStatus.ZOOM_J,
+                      AnimationStatus.ROTATE_M,
+                      AnimationStatus.ROTATE_J,
+                    ].includes(animationState)
+                  }
+                  animationState={animationState}
+                  focusedPointMandelbrot={focusedPointMandelbrot}
+                  focusedPointJulia={focusedPointJulia}
+                  pointsMandelbrot={
+                    settings.shadeMisiurewiczDomains
+                      ? [focusedPointMandelbrot]
+                      : mandelbrotPoints
+                  }
+                  pointsJulia={juliaPoints}
+                  handlePointSelectionMandelbrot={(c) => {
+                    handleMisiurewiczPointSelection(c);
+                    warpToPoint(mandelbrotControls, {
+                      xy: c.point,
+                      z: c.factorMagnitude,
+                      theta: 0,
+                    });
+                  }}
+                  handlePointSelectionJulia={handleSimilarPointSelection}
+                />
+              ) : null}
+              {animationState === AnimationStatus.SELECT_MANDELBROT_POINT ? (
+                <PointsMenuMandelbrot
+                  show={true}
+                  handleQuit={handleQuit}
+                  handleGo={handleMisiurewiczGo}
+                />
+              ) : null}
+              {animationState === AnimationStatus.SELECT_JULIA_POINT ? (
+                <PointsMenuJulia
+                  show={true}
+                  handleQuit={handleReset}
+                  handleGo={() => {
+                    setAnimationState(AnimationStatus.ZOOM_M);
+                    warpToPoint(juliaControls, {
+                      xy: focusedPointJulia.point,
+                      z: 1,
+                      theta: 0,
+                    });
+                  }}
+                />
+              ) : null}
+              {[
+                AnimationStatus.ZOOM_M,
+                AnimationStatus.ZOOM_J,
+                AnimationStatus.ROTATE_M,
+                AnimationStatus.ROTATE_J,
+              ].includes(animationState) ? (
+                <ZoomMenu
+                  handleGo={() => {
+                    return;
+                  }}
+                  handleQuit={handleReset}
+                  show={true}
+                  mandelbrotControls={mandelbrotControls}
+                  juliaControls={juliaControls}
+                  animationState={animationState}
+                  setAnimationState={setAnimationState}
+                  focusedPointMandelbrot={focusedPointMandelbrot}
+                  focusedPointJulia={focusedPointJulia}
+                />
+              ) : null}
+              <AnimationFinalCard
+                show={animationState === AnimationStatus.PLAY}
+                handleQuit={handleReset}
+                handleGo={() => {
+                  return;
+                }}
+              />
+              {settings.rotateWhileZooming && animationState === AnimationStatus.PLAY ? (
+                <SelfSimilaritySlider
+                  focusedPointMandelbrot={focusedPointMandelbrot}
+                  magnification={magnification}
+                />
+              ) : null}
+            </div>
+          ) : null}
           <Grid
             item
             xs
@@ -516,7 +523,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               points={
                 settings.shadeMisiurewiczDomains
                   ? [focusedPointMandelbrot]
-                  : MISIUREWICZ_POINTS
+                  : mandelbrotPoints
               }
             />
             {showTan &&
@@ -547,7 +554,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
             )}
           </Grid>
 
-          <Grid item style={{ width: 0, height: 0, zIndex: 1 }}>
+          <Grid item style={{ width: 0, height: 0, zIndex: 3 }}>
             <ViewChanger vertical={vertical} changeFunc={setViewerState} />
           </Grid>
 
