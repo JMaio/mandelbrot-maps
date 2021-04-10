@@ -36,6 +36,11 @@ export interface PointsListProps {
   handleSelection: (point: PreperiodicPoint) => void;
 }
 
+export interface AnimationFinalCardProps extends SelectMenuProps {
+  focusedPointMandelbrot: PreperiodicPoint;
+  magnification: number;
+  rotateWhileZooming: boolean;
+}
 export interface SelfSimilaritySliderProps {
   focusedPointMandelbrot: PreperiodicPoint;
   magnification: number;
