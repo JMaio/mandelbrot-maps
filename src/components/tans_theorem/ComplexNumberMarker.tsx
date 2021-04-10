@@ -45,7 +45,7 @@ const ComplexNumberMarker = (props: ComplexNumberMarkerProps): JSX.Element => {
   return (
     <div
       style={{
-        zIndex: 2,
+        zIndex: 1,
         position: 'absolute',
         left: `${coord[0] * 100}%`,
         bottom: `${coord[1] * 100}%`,
