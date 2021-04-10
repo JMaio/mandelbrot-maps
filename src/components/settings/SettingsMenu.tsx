@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const GroupDivider = (): JSX.Element => (
-  <Divider style={{ marginTop: 8, marginBottom: 12 }} />
+  <Divider style={{ marginTop: 6, marginBottom: 8 }} />
 );
 export const GroupTitle = (props: {
   title: string;
@@ -182,7 +182,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
               direction="row"
               alignItems="center"
               justify="space-between"
-              style={{ padding: '4px 0' }}
+              style={{ padding: '2px 0' }}
             >
               {/* https://stackoverflow.com/a/51970114/9184658 */}
               <Grid item xs container direction="row" alignItems="center">
@@ -262,28 +262,16 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
               // alignItems="stretch"
               spacing={1}
             >
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                // alignItems="stretch"
-                spacing={1}
-              >
-                <Grid item style={{ margin: 'auto' }}>
+              <Grid item container direction="row" justify="space-around">
+                <Grid item>
                   <ResetButton />
                 </Grid>
-                <Grid item style={{ margin: 'auto' }}>
+                <Grid item>
                   <AboutButton />
                 </Grid>
               </Grid>
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                // alignItems="stretch"
-                spacing={1}
-              >
-                <Grid item style={{ margin: 'auto' }}>
+              <Grid item container direction="row" justify="space-around">
+                <Grid item>
                   <TanButton />
                 </Grid>
               </Grid>

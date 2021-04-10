@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.2.0...v1.3.0) (2021-03-23)
+
+
+### Features
+
+* **tans-theorem-explorer:** tans theorem explorer ([256e29f](https://github.com/JMaio/mandelbrot-maps/commit/256e29f07608aae525a7a859740636bc47444d63))
+
+
+### Bug Fixes
+
+* **tans-theorem:** refactor points list ([c875204](https://github.com/JMaio/mandelbrot-maps/commit/c8752044d1897f64856c747038684f898bb8ac7a))
+* **tans-theorem:** refactor points list to use index ([b5b3d05](https://github.com/JMaio/mandelbrot-maps/commit/b5b3d05f455fbbf03b06b1740b8e2e922f401c8d))
+
 ## [1.2.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.1.1...v1.2.0) (2021-03-02)
 
 
