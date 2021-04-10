@@ -1,12 +1,12 @@
 import { Card, Slider } from '@material-ui/core';
 import React from 'react';
-import { PlayCardProps } from '../../common/tans';
+import { SelfSimilaritySliderProps } from '../../common/tans';
 
 const gen = (x: number) => {
   const y = Math.abs(x) % 1;
   return x < 0 ? 1 - y : y;
 };
-const SelfSimilaritySlider = (props: PlayCardProps): JSX.Element => {
+const SelfSimilaritySlider = (props: SelfSimilaritySliderProps): JSX.Element => {
   const x =
     Math.log(props.magnification) /
     Math.log(props.focusedPointMandelbrot.selfSimilarityFactorMagnitude);

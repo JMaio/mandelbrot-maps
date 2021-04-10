@@ -1,10 +1,8 @@
 import {
   Button,
-  Card,
   Stepper,
   StepLabel,
   Step,
-  Grow,
   IconButton,
   Dialog,
   Typography,
@@ -31,7 +29,7 @@ interface SimpleDialogProps {
   onClose: (value: string) => void;
 }
 
-const SimilarityAnimationCard = (props: SimilarityAnimationProps): JSX.Element => {
+const SimilarityAnimationStepper = (props: SimilarityAnimationProps): JSX.Element => {
   function getSteps(
     c: PreperiodicPoint,
     cj: PreperiodicPoint,
@@ -48,7 +46,7 @@ const SimilarityAnimationCard = (props: SimilarityAnimationProps): JSX.Element =
           <PointsList
             focusedPoint={c}
             points={props.pointsMandelbrot}
-            displayText={(c) => `${formatComplexNumber(c.point)} `}
+            displayText={(c) => formatComplexNumber(c.point)}
             handleSelection={props.handlePointSelectionMandelbrot}
           />,
         ],
@@ -230,89 +228,87 @@ const SimilarityAnimationCard = (props: SimilarityAnimationProps): JSX.Element =
   };
 
   return (
-    <Grow in={props.show}>
-      <Card
-        style={{
-          fontSize: '0.8rem',
-        }}
+    <div
+      style={{
+        fontSize: '0.8rem',
+      }}
+    >
+      <IconButton
+        style={{ position: 'absolute', right: 0 }}
+        onClick={() => setExpanded(!expanded)}
       >
-        <IconButton
-          style={{ position: 'absolute', right: 0 }}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? <KeyboardArrowLeftIcon /> : <KeyboardArrowRightIcon />}
-        </IconButton>
-        {expanded ? (
-          <Stepper activeStep={props.animationState.valueOf()} orientation="horizontal">
-            {steps.map((label) => {
-              const stepProps: { completed?: boolean } = {};
-              const labelProps: { optional?: React.ReactNode } = {};
-              labelProps.optional = (
-                <div>
-                  {label[1]}
-                  {label[0][0] !== 'S' ? (
-                    <Button
-                      style={{
-                        fontSize: '0.5rem',
-                        marginLeft: 8,
-                      }}
-                      onClick={handleClickOpen}
-                      color="primary"
-                    >
-                      How is this calculated?
-                    </Button>
-                  ) : null}
-                </div>
-              );
-              return (
-                <Step key={label[0]} {...stepProps}>
-                  <StepLabel {...labelProps}>{label[0]}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-        ) : (
-          <Stepper activeStep={props.animationState.valueOf()} orientation="horizontal">
-            {steps.map((label) => {
-              const stepProps: { completed?: boolean } = {};
-              const labelProps: { optional?: React.ReactNode } = {};
-              labelProps.optional = (
-                <div>
-                  {label[1]}
-                  {label[0][0] !== 'S' ? (
-                    <Button
-                      style={{
-                        fontSize: '0.5rem',
-                        marginLeft: 8,
-                      }}
-                      onClick={handleClickOpen}
-                      color="primary"
-                    >
-                      How is this calculated?
-                    </Button>
-                  ) : null}
-                </div>
-              );
-              return steps[props.animationState] === label ? (
-                <Step key={label[0]} {...stepProps}>
-                  <StepLabel {...labelProps}>{label[0]}</StepLabel>
-                </Step>
-              ) : (
-                <Step key={label[0]} {...stepProps}>
-                  <StepLabel></StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-        )}
-        <SimpleDialog
-          animationState={props.animationState}
-          open={open}
-          onClose={handleClose}
-        />
-      </Card>
-    </Grow>
+        {expanded ? <KeyboardArrowLeftIcon /> : <KeyboardArrowRightIcon />}
+      </IconButton>
+      {expanded ? (
+        <Stepper activeStep={props.animationState.valueOf()} orientation="horizontal">
+          {steps.map((label) => {
+            const stepProps: { completed?: boolean } = {};
+            const labelProps: { optional?: React.ReactNode } = {};
+            labelProps.optional = (
+              <div>
+                {label[1]}
+                {label[0][0] !== 'S' ? (
+                  <Button
+                    style={{
+                      fontSize: '0.5rem',
+                      marginLeft: 8,
+                    }}
+                    onClick={handleClickOpen}
+                    color="primary"
+                  >
+                    How is this calculated?
+                  </Button>
+                ) : null}
+              </div>
+            );
+            return (
+              <Step key={label[0]} {...stepProps}>
+                <StepLabel {...labelProps}>{label[0]}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+      ) : (
+        <Stepper activeStep={props.animationState.valueOf()} orientation="horizontal">
+          {steps.map((label) => {
+            const stepProps: { completed?: boolean } = {};
+            const labelProps: { optional?: React.ReactNode } = {};
+            labelProps.optional = (
+              <div>
+                {label[1]}
+                {label[0][0] !== 'S' ? (
+                  <Button
+                    style={{
+                      fontSize: '0.5rem',
+                      marginLeft: 8,
+                    }}
+                    onClick={handleClickOpen}
+                    color="primary"
+                  >
+                    How is this calculated?
+                  </Button>
+                ) : null}
+              </div>
+            );
+            return steps[props.animationState] === label ? (
+              <Step key={label[0]} {...stepProps}>
+                <StepLabel {...labelProps}>{label[0]}</StepLabel>
+              </Step>
+            ) : (
+              <Step key={label[0]} {...stepProps}>
+                <StepLabel></StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+      )}
+      <SimpleDialog
+        animationState={props.animationState}
+        open={open}
+        onClose={handleClose}
+      />
+    </div>
   );
 };
 
-export default SimilarityAnimationCard;
+export default SimilarityAnimationStepper;
