@@ -50,7 +50,6 @@ import SettingsMenu from './components/settings/SettingsMenu';
 import {
   alignSets,
   findNearestMisiurewiczPoint,
-  NearestButton,
   PreperiodicPoint,
   similarPoints,
 } from './components/tans_theorem/tansTheoremUtils';
@@ -59,6 +58,7 @@ import PointsMenuJulia from './components/tans_theorem/PointsMenuJulia';
 import PointsMenuMandelbrot from './components/tans_theorem/PointsMenuMandelbrot';
 import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
 import ZoomMenu from './components/tans_theorem/ZoomMenu';
+import NearestMisiurewiczCard from './components/tans_theorem/NearestMisiurewiczCard';
 import SelfSimilaritySlider from './components/tans_theorem/SelfSimilaritySlider';
 import IntroCard from './components/tans_theorem/IntroDialog';
 import { misiurewiczPairs } from './components/tans_theorem/MPoints';
@@ -349,7 +349,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   useInterval(updateAspectRatio, 1000);
 
   const handleNearest = (xy: XYType) => {
-    const mPoint = findNearestMisiurewiczPoint(xy, 10000);
+    const mPoint = findNearestMisiurewiczPoint(xy, 1000);
     if (mPoint[0] !== 0 && mPoint[1] !== 0) {
       const p = new PreperiodicPoint(mPoint, mPoint, false);
       handleMisiurewiczPointSelection(p);
@@ -495,6 +495,14 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                   return;
                 }}
               />
+              {settings.shadeMisiurewiczDomains &&
+              animationState === AnimationStatus.SELECT_MANDELBROT_POINT ? (
+                <NearestMisiurewiczCard
+                  onClick={() =>
+                    handleNearest(mandelbrotControls.xyCtrl[0].xy.getValue())
+                  }
+                />
+              ) : null}
               {settings.rotateWhileZooming && animationState === AnimationStatus.PLAY ? (
                 <SelfSimilaritySlider
                   focusedPointMandelbrot={focusedPointMandelbrot}
@@ -526,11 +534,6 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
                   : mandelbrotPoints
               }
             />
-            {showTan &&
-            settings.shadeMisiurewiczDomains &&
-            animationState === AnimationStatus.SELECT_MANDELBROT_POINT
-              ? NearestButton(handleNearest, mandelbrotControls.xyCtrl[0].xy.getValue())
-              : null}
             {settings.deepZoom ? (
               <MandelbrotRendererDeep
                 animationState={animationState}

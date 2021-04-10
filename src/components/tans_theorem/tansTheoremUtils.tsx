@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Card } from '@material-ui/core';
 import { ViewerControlSprings, XYType } from '../../common/types';
 import React from 'react';
 
@@ -157,17 +157,20 @@ export function formatAngle(angle: number): string {
 }
 
 function findPotentialPreperiod(c: XYType): number {
-  let z: XYType = c;
-  let minDistance = 4;
-  let minPreperiod = -1;
+  let minDistance = 999999999;
+  let minPreperiod = 0;
+  let z: XYType = [0, 0];
   for (let i = 0; i < MAX_PREPERIOD; i++) {
-    const newZ: XYType = add(square(z), c);
-    const distance = magnitude(sub(newZ, z));
-    if (distance < minDistance) {
-      minDistance = distance;
+    const z0 = z;
+    z = add(square(z), c);
+
+    const a = z[0] - z0[0];
+    const b = z[1] - z0[1];
+    const distance = Math.sqrt(a * a + b * b);
+    if (i > 0 && distance < minDistance) {
       minPreperiod = i;
+      minDistance = distance;
     }
-    z = newZ;
   }
   return minPreperiod;
 }
@@ -184,7 +187,7 @@ export const findNearestMisiurewiczPoint = function (
   iterations: number,
 ): XYType {
   const q = findPotentialPreperiod(c);
-  if (q === -1) {
+  if (q === 0) {
     return [0, 0];
   }
   const p = 1;
@@ -303,32 +306,6 @@ const getAlpha = (z: XYType, c: XYType): XYType => {
   }
   return [-7, -7];
 };
-
-export const NearestButton = (
-  handleNearest: (xy: XYType) => void,
-  xy: XYType,
-): JSX.Element => (
-  <div
-    style={{
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Button
-      style={{
-        zIndex: 10,
-      }}
-      variant="contained"
-      onClick={() => handleNearest(xy)}
-    >
-      Press to find nearest Misiurewicz point
-    </Button>
-  </div>
-);
 
 export const alignSets = (
   newMagnification: number,

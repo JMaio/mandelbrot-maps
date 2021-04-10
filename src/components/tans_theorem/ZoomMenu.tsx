@@ -77,7 +77,6 @@ const ZoomMenu = (props: ZoomCardProps): JSX.Element => {
         display: 'flex',
         flexDirection: 'row',
         flexShrink: 1,
-        marginBottom: 8,
       }}
     >
       <Button onClick={props.handleQuit}>
