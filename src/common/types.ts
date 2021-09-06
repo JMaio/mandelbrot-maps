@@ -1,10 +1,5 @@
 import { CSSProperties } from 'react';
-import {
-  AnimatedValue,
-  OpaqueInterpolation,
-  SetUpdateFn,
-  SpringConfig,
-} from 'react-spring';
+import { SpringConfig, SpringRef, SpringValue, SpringValues } from 'react-spring';
 
 // from react-spring
 export type OverwriteKeys<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] };
@@ -74,31 +69,35 @@ export interface ViewerControls {
 
 // AnimatedValue<Pick<OverwriteKeys<ViewerXYControl, CSSProperties>, "xy">>, SetUpdateFn<OverwriteKeys<ViewerXYControl, CSSProperties>>]
 export type SpringAnimatedValueOverwrite<T> = OverwriteKeys<T, CSSProperties>;
-export type SpringAnimatedValueWithSetter<T> = [
-  AnimatedValue<Pick<SpringAnimatedValueOverwrite<T>, keyof T>>,
-  SetUpdateFn<SpringAnimatedValueOverwrite<T>>,
+export type SpringAnimatedValueWithSetter<T extends SpringControl> = [
+  SpringValues<T>,
+  SpringRef<T>,
 ];
+// [
+//   AnimatedValue<Pick<SpringAnimatedValueOverwrite<T>, keyof T>>,
+//   SetUpdateFn<SpringAnimatedValueOverwrite<T>>,
+// ];
 
-export type ViewerXYControlSpring = SpringAnimatedValueWithSetter<ViewerXYControl>;
-export type ViewerZoomControlSpring = SpringAnimatedValueWithSetter<ViewerZoomControl>;
-export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<ViewerRotationControl>;
+// export type ViewerXYControlSpring = SpringAnimatedValueWithSetter<ViewerXYControl>;
+// export type ViewerZoomControlSpring = SpringAnimatedValueWithSetter<ViewerZoomControl>;
+// export type ViewerRotationControlSpring = SpringAnimatedValueWithSetter<ViewerRotationControl>;
 
-export type GenericViewerControlSprings = {
-  [k in springControlKeys]: SpringAnimatedValueWithSetter<SpringControl>;
-};
+// export type ViewerControlSpringsKeys = {
+//   [k in springControlKeys]: SpringAnimatedValueWithSetter[k];
+// };
 
-export interface ViewerControlSprings extends GenericViewerControlSprings {
-  xyCtrl: ViewerXYControlSpring;
-  zoomCtrl: ViewerZoomControlSpring;
-  rotCtrl: ViewerRotationControlSpring;
+export interface ViewerControlSprings extends Record<springControlKeys, any> {
+  xyCtrl: SpringAnimatedValueWithSetter<ViewerXYControl>;
+  zoomCtrl: SpringAnimatedValueWithSetter<ViewerZoomControl>;
+  rotCtrl: SpringAnimatedValueWithSetter<ViewerRotationControl>;
 }
 
 export interface MandelbrotMapsWebGLUniforms {
-  xy: OpaqueInterpolation<XYType>;
-  zoom: OpaqueInterpolation<ZoomType>;
+  xy: SpringValue<XYType>;
+  zoom: SpringValue<ZoomType>;
   maxI: number;
-  c?: { getValue: () => XYType };
-  theta: OpaqueInterpolation<ThetaType>;
+  c?: { get: () => XYType };
+  theta: SpringValue<ThetaType>;
   colour: RgbFloatColour;
 }
 

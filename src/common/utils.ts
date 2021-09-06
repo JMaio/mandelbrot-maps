@@ -167,9 +167,9 @@ export function genericTouchBind({
         // initial, // initial [d, a]
         origin,
         memo = {
-          xy: xy.getValue(),
-          z: z.getValue(),
-          t: theta.getValue(),
+          xy: xy.get(),
+          z: z.get(),
+          t: theta.get(),
           a: 0,
           o: [0, 0] as Vector2,
         },
@@ -191,14 +191,13 @@ export function genericTouchBind({
         // const em = 1.33;
         // const newZ =
         //   memo.z * (1 + Math.sign(md) * 1e-2 * Math.abs(md) ** (md <= 0 ? 1 / em : em)); //(1 - zdelta * Math.abs(zdelta));
-        const newZ =
-          _.clamp(memo.z + md * 1e-2, 0.5, maxZoom.getValue()) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
+        const newZ = _.clamp(memo.z + md * 1e-2, 0.5, maxZoom.get()) ** (1 + md * 1e-3); //(1 - zdelta * Math.abs(zdelta));
         // console.log(Math.abs(md * 1e-2));
         // console.log(
         //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
         // );
         // console.log(newZ);
-        const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
+        const newZclamp = _.clamp(newZ, minZoom.get(), maxZoom.get());
 
         const realZoom = getRealZoom(newZclamp);
 
@@ -214,7 +213,7 @@ export function genericTouchBind({
         // updateZ({});
         updateXY({
           xy: memo.xy,
-          theta: theta.getValue(),
+          theta: theta.get(),
           relMove: relMove,
           down: down,
         });
@@ -239,7 +238,7 @@ export function genericTouchBind({
         movement: [, my],
         active,
         shiftKey,
-        memo = { zoom: z.getValue(), t: theta.getValue() },
+        memo = { zoom: z.get(), t: theta.get() },
       }: FullGestureState<StateKey<'wheel'>>) => {
         // disable native browser events
         event && event.preventDefault();
@@ -265,7 +264,7 @@ export function genericTouchBind({
           //   immediate: false,
           // });
           updateZ({
-            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            z: _.clamp(newZ, minZoom.get(), maxZoom.get()),
             down: active,
           });
         }
@@ -281,7 +280,7 @@ export function genericTouchBind({
         pinching,
         last,
         cancel,
-        memo = { xy: xy.getValue(), theta: theta.getValue() },
+        memo = { xy: xy.get(), theta: theta.get() },
       }: FullGestureState<StateKey<'drag'>>) => {
         // disable native browser events
         event && event.preventDefault();
@@ -293,7 +292,7 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
-        const realZoom = getRealZoom(z.getValue());
+        const realZoom = getRealZoom(z.get());
 
         const [px, py]: Vector = vScale(-2 / realZoom, movement);
         // const relMove: Vector = vScale(2 / realZoom, movement);
@@ -330,7 +329,7 @@ export function genericTouchBind({
 
         updateXY({
           xy: memo.xy,
-          theta: theta.getValue(),
+          theta: theta.get(),
           relMove: relMove,
           down: down,
         });
@@ -385,9 +384,9 @@ export function synchronisedZoomTouchBind({
         // initial, // initial [d, a]
         origin,
         memo = {
-          xy: xy.getValue(),
-          z: z.getValue(),
-          t: theta.getValue(),
+          xy: xy.get(),
+          z: z.get(),
+          t: theta.get(),
           a: 0,
           o: [0, 0] as Vector2,
         },
@@ -409,7 +408,7 @@ export function synchronisedZoomTouchBind({
         //   md.toFixed(2) + ' => ' + 1e-2 * Math.abs(md) ** (md <= 0 ? 0.8 : 1.1),
         // );
         // console.log(newZ);
-        const newZclamp = _.clamp(newZ, minZoom.getValue(), maxZoom.getValue());
+        const newZclamp = _.clamp(newZ, minZoom.get(), maxZoom.get());
 
         updateZ({ z: newZclamp, down: down });
 
@@ -421,7 +420,7 @@ export function synchronisedZoomTouchBind({
         movement: [, my],
         active,
         shiftKey,
-        memo = { zoom: z.getValue(), t: theta.getValue() },
+        memo = { zoom: z.get(), t: theta.get() },
       }: FullGestureState<StateKey<'wheel'>>) => {
         // disable native browser events
         event && event.preventDefault();
@@ -433,7 +432,7 @@ export function synchronisedZoomTouchBind({
           const newZ = memo.zoom * (1 - my * (my < 0 ? zoomMult.in : zoomMult.out));
 
           updateZ({
-            z: _.clamp(newZ, minZoom.getValue(), maxZoom.getValue()),
+            z: _.clamp(newZ, minZoom.get(), maxZoom.get()),
             down: active,
           });
         }
@@ -449,7 +448,7 @@ export function synchronisedZoomTouchBind({
         pinching,
         last,
         cancel,
-        memo = { xy: xy.getValue(), theta: theta.getValue() },
+        memo = { xy: xy.get(), theta: theta.get() },
       }: FullGestureState<StateKey<'drag'>>) => {
         // disable native browser events
         event && event.preventDefault();
@@ -486,9 +485,9 @@ export function frozenTouchBind({
         movement: [md, ma],
         delta: [dd, da],
         memo = {
-          xy: xy.getValue(),
-          z: z.getValue(),
-          t: theta.getValue(),
+          xy: xy.get(),
+          z: z.get(),
+          t: theta.get(),
           a: 0,
           o: [0, 0] as Vector2,
         },
@@ -502,7 +501,7 @@ export function frozenTouchBind({
       onWheel: ({
         event,
         movement: [, my],
-        memo = { zoom: z.getValue(), t: theta.getValue() },
+        memo = { zoom: z.get(), t: theta.get() },
       }: FullGestureState<StateKey<'wheel'>>) => {
         // disable native browser events
         event && event.preventDefault();
@@ -513,7 +512,7 @@ export function frozenTouchBind({
       onDrag: ({
         event,
         direction: [dx, dy],
-        memo = { xy: xy.getValue(), theta: theta.getValue() },
+        memo = { xy: xy.get(), theta: theta.get() },
       }: FullGestureState<StateKey<'drag'>>) => {
         // disable native browser events
         event && event.preventDefault();

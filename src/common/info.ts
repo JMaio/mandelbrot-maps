@@ -1,5 +1,5 @@
 import { CardProps } from '@material-ui/core';
-import { OpaqueInterpolation } from 'react-spring';
+import { Interpolation, SpringValue } from 'react-spring';
 import {
   precisionFormatterInterface,
   precisionSpecifier,
@@ -23,17 +23,17 @@ export interface CoordinateInterfaceProps {
 
 export interface CoordinatesCardProps extends CardProps {
   mandelbrot: {
-    xy: OpaqueInterpolation<XYType>;
-    zoom: OpaqueInterpolation<ZoomType>;
-    theta: OpaqueInterpolation<ThetaType>;
+    xy: SpringValue<XYType>;
+    zoom: SpringValue<ZoomType>;
+    theta: SpringValue<ThetaType>;
   };
-  julia?: OpaqueInterpolation<XYType>;
+  julia?: SpringValue<XYType>;
   precisionFormatter: precisionFormatterInterface;
 }
 
 export interface ChangeCoordinatesCardProps extends CardProps {
   mandelbrot: ViewerControlSprings;
-  julia?: OpaqueInterpolation<XYType>;
+  julia?: SpringValue<XYType>;
   precision: precisionSpecifier;
 }
 

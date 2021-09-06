@@ -1,6 +1,6 @@
 import { CanvasHTMLAttributes } from 'react';
 import { RgbColor } from 'react-colorful';
-import { OpaqueInterpolation } from 'react-spring';
+import { Interpolation, SpringValue } from 'react-spring';
 import { AnimationStatus } from '../components/tans_theorem/AnimationFinalCard';
 import {
   MandelbrotMapsWebGLUniforms,
@@ -55,7 +55,7 @@ export interface MandelbrotRendererProps extends RendererProps {
 }
 
 export interface JuliaRendererProps extends RendererProps {
-  c: OpaqueInterpolation<XYType>;
+  c: SpringValue<XYType>;
   animationState: AnimationStatus;
   align: (z: number) => void;
 }
@@ -83,6 +83,6 @@ export interface ViewChangerProps {
 }
 
 export interface RotationCompassProps {
-  theta: OpaqueInterpolation<ThetaType>;
+  theta: SpringValue<ThetaType>;
   onClick: () => void;
 }

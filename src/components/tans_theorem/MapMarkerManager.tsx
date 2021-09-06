@@ -44,10 +44,10 @@ export const generateMarkers = (
 ): JSX.Element[] => {
   const mapMarkers = [];
 
-  const boxCentre = viewerControls.xyCtrl[0].xy.getValue();
-  const boxWidth = 1 / (aspectRatio * viewerControls.zoomCtrl[0].z.getValue());
-  const boxHeight = 1 / viewerControls.zoomCtrl[0].z.getValue();
-  const boxAngle = viewerControls.rotCtrl[0].theta.getValue();
+  const boxCentre = viewerControls.xyCtrl[0].xy.get();
+  const boxWidth = 1 / (aspectRatio * viewerControls.zoomCtrl[0].z.get());
+  const boxHeight = 1 / viewerControls.zoomCtrl[0].z.get();
+  const boxAngle = viewerControls.rotCtrl[0].theta.get();
   if (withinBoundingBox(focusedPoint.point, boxCentre, boxWidth, boxHeight, boxAngle)) {
     mapMarkers.push(
       <ComplexNumberMarker

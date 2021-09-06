@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSpring } from 'react-spring';
+import { SpringRef, useSpring } from 'react-spring';
 import './App.css';
 import {
   currentLocation,
@@ -17,8 +17,6 @@ import {
 } from './common/routing';
 import { settingsDefinitionsType } from './common/settings';
 import {
-  SpringAnimatedValueWithSetter,
-  SpringControl,
   springControlKeys,
   ViewerControlSprings,
   ViewerLocation,
@@ -38,26 +36,26 @@ import {
 import CoordinateInterface from './components/info/CoordinateInterface';
 import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
-import AnimationFinalCard, {
-  AnimationStatus,
-} from './components/tans_theorem/AnimationFinalCard';
 import JuliaRenderer from './components/render/JuliaRenderer';
 // import 'typeface-roboto';
 import MandelbrotRenderer from './components/render/MandelbrotRenderer';
 import MandelbrotRendererDeep from './components/render/MandelbrotRendererDeep';
 import ViewChanger from './components/render/ViewChanger';
 import SettingsMenu from './components/settings/SettingsMenu';
+import AnimationFinalCard, {
+  AnimationStatus,
+} from './components/tans_theorem/AnimationFinalCard';
+import IntroDialog from './components/tans_theorem/IntroDialog';
+import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
+import { misiurewiczPairs } from './components/tans_theorem/MPoints';
+import NearestMisiurewiczCard from './components/tans_theorem/NearestMisiurewiczCard';
+import TansTheoremProgressCard from './components/tans_theorem/TansTheoremProgressCard';
 import {
   alignSets,
   findNearestMisiurewiczPoint,
   PreperiodicPoint,
   similarPoints,
 } from './components/tans_theorem/tansTheoremUtils';
-import MapMarkerManager from './components/tans_theorem/MapMarkerManager';
-import NearestMisiurewiczCard from './components/tans_theorem/NearestMisiurewiczCard';
-import IntroDialog from './components/tans_theorem/IntroDialog';
-import TansTheoremProgressCard from './components/tans_theorem/TansTheoremProgressCard';
-import { misiurewiczPairs } from './components/tans_theorem/MPoints';
 
 const MISIUREWICZ_POINTS: PreperiodicPoint[] = misiurewiczPairs
   .slice(0, 200)
@@ -176,20 +174,18 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
 
   // make sure that the spring "onRest" is updated if the precision changes
   useEffect(() => {
-    Object.entries(mandelbrotControls).forEach(
-      ([k, [, set]]: [string, SpringAnimatedValueWithSetter<SpringControl>]) => {
-        try {
-          const key = k as springControlKeys;
-          set({
-            onRest: updateM,
-            // hacky way to grab the config
-            config: springsConfigs(precision).default[key],
-          });
-        } catch (error) {
-          // guess not
-        }
-      },
-    );
+    Object.entries(mandelbrotControls).forEach(([k, api]: [string, SpringRef]) => {
+      try {
+        const key = k as springControlKeys;
+        api.set({
+          onRest: updateM,
+          // hacky way to grab the config
+          config: springsConfigs(precision).default[key],
+        });
+      } catch (error) {
+        // guess not
+      }
+    });
     // ficitly not adding mandelbrotControls to the deps list
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [precision, updateM]);
@@ -444,9 +440,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
               {settings.shadeMisiurewiczDomains &&
               animationState === AnimationStatus.SELECT_MANDELBROT_POINT ? (
                 <NearestMisiurewiczCard
-                  onClick={() =>
-                    handleNearest(mandelbrotControls.xyCtrl[0].xy.getValue())
-                  }
+                  onClick={() => handleNearest(mandelbrotControls.xyCtrl[0].xy.get())}
                 />
               ) : null}
             </div>

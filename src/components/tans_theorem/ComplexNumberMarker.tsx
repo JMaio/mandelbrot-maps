@@ -35,9 +35,9 @@ const ComplexNumberMarker = (props: ComplexNumberMarkerProps): JSX.Element => {
   const [{ theta }] = props.viewerControl.rotCtrl;
 
   const coord = complexToWindow(
-    props.viewerControl.xyCtrl[0].xy.getValue(),
-    -theta.getValue(),
-    z.getValue(),
+    props.viewerControl.xyCtrl[0].xy.get(),
+    -theta.get(),
+    z.get(),
     props.aspectRatio,
     props.m.point,
   );

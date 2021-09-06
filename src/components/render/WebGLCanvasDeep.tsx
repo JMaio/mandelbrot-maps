@@ -40,7 +40,7 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
 
     // have a zoom callback
     // keeps minimaps at a fixed zoom level
-    const zoom = useCallback(() => (mini ? 0.95 : u.zoom.getValue()), [mini, u.zoom]);
+    const zoom = useCallback(() => (mini ? 0.95 : u.zoom.get()), [mini, u.zoom]);
 
     // const DPR = props.useDPR ? props.DPR : 1;
 
@@ -224,7 +224,7 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         // scale the viewport to the canvas size
         ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        const [x, y] = u.xy.getValue();
+        const [x, y] = u.xy.get();
         // const ratio = ctx.canvas.width / ctx.canvas.height;
 
         // console.log(ratio);
@@ -252,7 +252,7 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
           // looks like a way to get the screen size ratio?
           hx: new Double(hx),
           hy: new Double(hy),
-          phi: u.theta,
+          phi: u.theta.get(),
         };
 
         const origin = searchOrigin(aim);
@@ -278,10 +278,10 @@ const WebGLCanvasDeep = React.forwardRef<HTMLCanvasElement, WebGLCanvasProps>(
         const uniforms = {
           resolution: [ctx.canvas.width, ctx.canvas.height],
           u_zoom: zoom(),
-          u_c: u.c === undefined ? 0 : u.c.getValue(),
+          u_c: u.c === undefined ? 0 : u.c.get(),
           u_xy: [x, y],
           u_maxI: u.maxI,
-          u_theta: u.theta.getValue(),
+          u_theta: u.theta.get(),
           u_colour: u.colour,
 
           orbittex: orbittex,

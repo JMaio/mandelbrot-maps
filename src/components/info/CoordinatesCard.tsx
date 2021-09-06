@@ -23,29 +23,19 @@ const CoordinatesCard = ({
         {/* https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple */}
         {/* https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types */}
         <animated.span>
-          {mandelbrot.xy.interpolate(
-            // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${precisionFormatter.toFloatDisplayFixed(x)} : x`,
-          )}
+          {mandelbrot.xy.to((x, y) => `${precisionFormatter.toFloatDisplayFixed(x)} : x`)}
         </animated.span>
         <br />
         <animated.span>
-          {mandelbrot.xy.interpolate(
-            // @ts-expect-error: Function call broken in TS, waiting till react-spring v9 to fix
-            (x, y) => `${precisionFormatter.toFloatDisplayFixed(y)} : y`,
-          )}
+          {mandelbrot.xy.to((x, y) => `${precisionFormatter.toFloatDisplayFixed(y)} : y`)}
         </animated.span>
         <br />
         <animated.span>
-          {mandelbrot.zoom.interpolate(
-            (z) => `${precisionFormatter.toFloatDisplayShort(z)} : z`,
-          )}
+          {mandelbrot.zoom.to((z) => `${precisionFormatter.toFloatDisplayShort(z)} : z`)}
         </animated.span>
         <br />
         <animated.span>
-          {mandelbrot.theta.interpolate(
-            (t) => `${precisionFormatter.toFloatDisplayShort(t)} : t`,
-          )}
+          {mandelbrot.theta.to((t) => `${precisionFormatter.toFloatDisplayShort(t)} : t`)}
         </animated.span>
       </Typography>
     </Card>
