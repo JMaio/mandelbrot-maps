@@ -61,7 +61,7 @@
     "eslint-plugin-react": "^7.25.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "gh-pages": "^3.2.3",
-    "husky": "^4.3.8",
+    "husky": "^7.0.0",
     "jest-canvas-mock": "^2.3.1",
     "jest-webgl-canvas-mock": "^0.2.3",
     "jshint": "^2.13.1",
@@ -87,7 +87,8 @@
     "lint": "eslint \"./src/**.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --fix",
     "release": "standard-version",
-    "release:patch": "yarn release --release-as patch"
+    "release:patch": "yarn release --release-as patch",
+    "postinstall": "husky install"
   },
   "eslintConfig": {
     "extends": "react-app"
