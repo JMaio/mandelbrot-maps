@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/JMaio/mandelbrot-maps/compare/v1.3.0...v1.3.1) (2021-09-06)
+
+
+### Features
+
+* **tans-theorem:** ui overhaul ([ab10890](https://github.com/JMaio/mandelbrot-maps/commit/ab1089015e14e7bd253ed44a58d1884c28000ee1))
+* **tans-theorem:** unify animation progress bar ([1612234](https://github.com/JMaio/mandelbrot-maps/commit/16122349815696fdea5e8092af59ccc80e712c30))
+
+
+### Bug Fixes
+
+* **tans-theorem:** fix domains and update its ui ([d88acd3](https://github.com/JMaio/mandelbrot-maps/commit/d88acd36b146ea0515914137663a4a5dece6af25))
+* **tans-theorem:** update markers on domain switch ([ff83ac5](https://github.com/JMaio/mandelbrot-maps/commit/ff83ac52f3879af773b217649a49aea2beaeae49))
+
 ## [1.3.0](https://github.com/JMaio/mandelbrot-maps/compare/v1.2.0...v1.3.0) (2021-03-23)
 
 
