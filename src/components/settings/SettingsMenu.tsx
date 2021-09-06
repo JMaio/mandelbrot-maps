@@ -21,9 +21,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import CompareIcon from '@material-ui/icons/Compare';
 import React, { useState } from 'react';
 import { SettingsMenuProps, settingsWidgetType } from '../../common/settings';
-// react-colorful requires style imports
-// import 'react-colorful/dist/index.css';
-import '../../css/react-colorful.css';
 import { contrastBoxShadow } from '../../theme/theme';
 import { SettingsContext } from './SettingsContext';
 import { getSettingsWidgetsGrouping } from './SettingsDefinitions';

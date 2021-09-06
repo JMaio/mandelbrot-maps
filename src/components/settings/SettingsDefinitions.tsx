@@ -1,7 +1,7 @@
 import { Slider, Switch } from '@material-ui/core';
+import CompareIcon from '@material-ui/icons/Compare';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import PhotoIcon from '@material-ui/icons/Photo';
-import CompareIcon from '@material-ui/icons/Compare';
 import React from 'react';
 import { RgbColorPicker } from 'react-colorful';
 import {
@@ -11,6 +11,9 @@ import {
   settingsGroupType,
   settingsWidgetsList,
 } from '../../common/settings';
+// react-colorful requires style imports
+// import 'react-colorful/dist/index.css';
+import '../../css/react-colorful.css';
 
 export const settingsWidgets = (
   settings: settingsDefinitionsType,

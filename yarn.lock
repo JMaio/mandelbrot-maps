@@ -12777,7 +12777,7 @@ fsevents@~2.1.2:
     pretty-quick: ^3.1.1
     preval.macro: ^5.0.0
     react: ^17.0.2
-    react-colorful: ^4.4.4
+    react-colorful: ^5.4.0
     react-dom: ^17.0.2
     react-refresh: ^0.10.0
     react-scripts: 4.0.3
@@ -15657,13 +15657,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-colorful@npm:^4.4.4":
-  version: 4.4.4
-  resolution: "react-colorful@npm:4.4.4"
+"react-colorful@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "react-colorful@npm:5.4.0"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 77fa401d3170ab57c1673a9087f7abc31e49a614d3be53819462c8265603217d6509159d27af4f6de2def9f36599195a532e51303300c2a67bbe20c96950a8a3
+  checksum: eabecd223a2984c9f35118a42f09b0283aa0a5037c1e4bbecca37002ca0789d83d9adb932123bd78e9b856451ea0784e21e08addb06a978954cb3aa82b9f5c4b
   languageName: node
   linkType: hard
 
