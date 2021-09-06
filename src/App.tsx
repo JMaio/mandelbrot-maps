@@ -140,12 +140,14 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   // The 'updateM' function makes the dependencies of useEffect Hook (at line 127) change on
   // every render. To fix this, wrap the definition of 'updateM' in its own useCallback() Hook
   // callbacks for springs to update url when animation stops
-  const updateM = useCallback((v: Partial<ViewerLocation>) => updateHash('m', v), [
-    updateHash,
-  ]);
-  const updateJ = useCallback((v: Partial<ViewerLocation>) => updateHash('j', v), [
-    updateHash,
-  ]);
+  const updateM = useCallback(
+    (v: Partial<ViewerLocation>) => updateHash('m', v),
+    [updateHash],
+  );
+  const updateJ = useCallback(
+    (v: Partial<ViewerLocation>) => updateHash('j', v),
+    [updateHash],
+  );
 
   const mandelbrotControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({

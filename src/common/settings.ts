@@ -47,7 +47,7 @@ export const defaultIterationLevels = [16, 250, 500, 750, 1000].map((i) => ({
 // bad iteration levels: 6, 7, 12, 13, 14, 15, 24, 26, 28, 30
 // 19 iteration levels:
 export const perturbationIterationLevels = [
-  4,
+  4, // prettier: keep multi-line - https://github.com/prettier/prettier-vscode/issues/352#issuecomment-417471927
   5,
   8,
   9,

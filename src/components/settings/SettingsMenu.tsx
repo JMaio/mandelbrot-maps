@@ -210,10 +210,8 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                     <GroupTitle icon={g.icon} title={g.name} />
                     <FormGroup>
                       {Object.entries(g.widgets).map(([k, widgetUnchecked], j) => {
-                        const {
-                          helptext,
-                          ...widget
-                        } = widgetUnchecked as settingsWidgetType;
+                        const { helptext, ...widget } =
+                          widgetUnchecked as settingsWidgetType;
 
                         return (
                           <FormControlLabel
