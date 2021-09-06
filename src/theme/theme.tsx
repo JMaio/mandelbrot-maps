@@ -1,6 +1,6 @@
-import { colors, createMuiTheme, responsiveFontSizes } from '@material-ui/core';
+import { colors, createTheme, responsiveFontSizes } from '@material-ui/core';
 
-let theme = createMuiTheme({
+let theme = createTheme({
   props: {
     // Name of the component ⚛️
     MuiSwitch: {

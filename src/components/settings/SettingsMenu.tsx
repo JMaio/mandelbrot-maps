@@ -58,7 +58,7 @@ export const GroupTitle = (props: {
   title: string;
   icon: SvgIconComponent;
 }): JSX.Element => (
-  <Grid container alignItems="center" justify="center" spacing={1}>
+  <Grid container alignItems="center" justifyContent="center" spacing={1}>
     {/* remove margin to center based only on text and not icon (not ideal) */}
     <Grid item style={{ marginLeft: -24 }}>
       <props.icon color="primary" fontSize="small" />
@@ -181,7 +181,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
               container
               direction="row"
               alignItems="center"
-              justify="space-between"
+              justifyContent="space-between"
               style={{ padding: '2px 0' }}
             >
               {/* https://stackoverflow.com/a/51970114/9184658 */}
@@ -256,11 +256,11 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
             <Grid
               container
               direction="column"
-              justify="space-between"
+              justifyContent="space-between"
               // alignItems="stretch"
               spacing={1}
             >
-              <Grid item container direction="row" justify="space-around">
+              <Grid item container direction="row" justifyContent="space-around">
                 <Grid item>
                   <ResetButton />
                 </Grid>
@@ -268,7 +268,7 @@ export default function SettingsMenu(props: SettingsMenuProps): JSX.Element {
                   <AboutButton />
                 </Grid>
               </Grid>
-              <Grid item container direction="row" justify="space-around">
+              <Grid item container direction="row" justifyContent="space-around">
                 <Grid item>
                   <TanButton />
                 </Grid>

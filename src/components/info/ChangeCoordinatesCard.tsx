@@ -45,7 +45,7 @@ const ChangeCoordinatesCard = ({
           inputProps={{ step: 0.01 }}
           label="y"
         />
-        <Grid container direction="row" justify="space-around">
+        <Grid container direction="row" justifyContent="space-around">
           <TextField
             size="small"
             style={{ width: '5ch' }}

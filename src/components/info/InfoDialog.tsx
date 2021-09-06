@@ -66,7 +66,7 @@ export default function InfoDialog({
       <DialogContent dividers>
         <Grid
           container
-          justify="center"
+          justifyContent="center"
           style={{
             marginBottom: 16,
           }}

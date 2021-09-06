@@ -91,7 +91,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
   ...baseMdOverrides,
   ViewerLayoutDiagram: function ViewerLayoutDiagram() {
     return (
-      <Grid container justify="center" style={{ padding: '12px 0' }}>
+      <Grid container justifyContent="center" style={{ padding: '12px 0' }}>
         <Grid item xs={12} sm={9}>
           <ViewerLayoutDiagramSVG style={{ width: '100%' }} />
         </Grid>
@@ -101,7 +101,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   ViewChangerDisplay: function ViewChangerDisplay() {
     return (
-      <Grid container justify="space-evenly">
+      <Grid container justifyContent="space-evenly">
         <Grid item>
           <Grid container direction="column">
             <Grid item>
@@ -132,7 +132,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   HelpBreadcrumbs: function HelpBreadcrumbs() {
     return (
-      <Grid container justify="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <Grid item>
           <SettingsMenuButton onClick={noop} displayOnly />
         </Grid>
@@ -149,7 +149,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
 
   SettingsMenuButton: function SettingsMenuButtonDisplay() {
     return (
-      <Grid container justify="center">
+      <Grid container justifyContent="center">
         <Grid item style={{ marginBottom: 12 }}>
           <SettingsMenuButton onClick={noop} />
         </Grid>
@@ -179,7 +179,7 @@ const mdOverrides: MarkdownToJSX.Overrides = {
                   <Grid
                     container
                     direction="row"
-                    justify="space-between"
+                    justifyContent="space-between"
                     // align center shrinks to content
                     // alignItems="center"
                     key={k}

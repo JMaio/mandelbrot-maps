@@ -374,7 +374,7 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
           container
           direction={vertical ? 'column-reverse' : 'row'}
           alignItems={vertical ? 'flex-end' : 'flex-start'}
-          justify="center"
+          justifyContent="center"
           className="fullSize"
           style={{
             position: 'absolute',
