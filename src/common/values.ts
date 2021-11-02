@@ -72,13 +72,25 @@ export const springsConfigs = (
 ): { [k in springConfigKeys]: { [k in springControlKeys]: SpringConfig } } => ({
   /** used when the values are animated to a point, includes decay */
   default: {
-    xyCtrl: { mass: 1, tension: 500, friction: 75, precision: precision.default },
+    xyCtrl: {
+      mass: 1,
+      tension: 500,
+      friction: 75,
+      precision: precision.default,
+      restVelocity: 0.1,
+    },
     zoomCtrl: { mass: 1, tension: 300, friction: 40 },
     rotCtrl: { mass: 1, tension: 400, friction: 75 },
   },
   /** used when a user is interacting with the view */
   user: {
-    xyCtrl: { mass: 1, tension: 2000, friction: 75, precision: precision.default },
+    xyCtrl: {
+      mass: 1,
+      tension: 2000,
+      friction: 75,
+      precision: precision.default,
+      restVelocity: 0.1,
+    },
     zoomCtrl: { mass: 1, tension: 1200, friction: 75 },
     rotCtrl: { mass: 1, tension: 1200, friction: 75 },
   },

@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { SpringRef, useSpring } from 'react-spring';
+import { AnimationResult, SpringValue, useSpring } from 'react-spring';
 import './App.css';
 import {
   currentLocation,
@@ -17,7 +17,6 @@ import {
 } from './common/routing';
 import { settingsDefinitionsType } from './common/settings';
 import {
-  springControlKeys,
   ViewerControlSprings,
   ViewerLocation,
   ViewerRotationControl,
@@ -139,11 +138,11 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   // every render. To fix this, wrap the definition of 'updateM' in its own useCallback() Hook
   // callbacks for springs to update url when animation stops
   const updateM = useCallback(
-    (v: Partial<ViewerLocation>) => updateHash('m', v),
+    (v: AnimationResult<SpringValue<ViewerLocation>>) => updateHash('m', v.value),
     [updateHash],
   );
   const updateJ = useCallback(
-    (v: Partial<ViewerLocation>) => updateHash('j', v),
+    (v: AnimationResult<SpringValue<ViewerLocation>>) => updateHash('j', v.value),
     [updateHash],
   );
 
@@ -173,27 +172,27 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   };
 
   // make sure that the spring "onRest" is updated if the precision changes
-  useEffect(() => {
-    Object.entries(mandelbrotControls).forEach(([k, api]: [string, SpringRef]) => {
-      try {
-        const key = k as springControlKeys;
-        api.set({
-          onRest: updateM,
-          // hacky way to grab the config
-          config: springsConfigs(precision).default[key],
-        });
-      } catch (error) {
-        // guess not
-      }
-    });
-    // ficitly not adding mandelbrotControls to the deps list
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [precision, updateM]);
+  // useEffect(() => {
+  //   Object.entries(mandelbrotControls).forEach(([k, api]: [string, SpringRef]) => {
+  //     try {
+  //       const key = k as springControlKeys;
+  //       api.set({
+  //         onRest: updateM,
+  //         // hacky way to grab the config
+  //         config: springsConfigs(precision).default[key],
+  //       });
+  //     } catch (error) {
+  //       // guess not
+  //     }
+  //   });
+  //   // ficitly not adding mandelbrotControls to the deps list
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [precision, updateM]);
 
   const juliaControls: ViewerControlSprings = {
     xyCtrl: useSpring<ViewerXYControl>(() => ({
       xy: viewerOrigin.xy,
-      config: springsConfigs(precision).default.xyCtrl,
+      config: springsConfigs(defaultPrecision).default.xyCtrl,
       onRest: updateJ,
     })),
 
@@ -201,13 +200,13 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
       z: viewerOrigin.z,
       minZoom: 0.5,
       maxZoom: 2000,
-      config: springsConfigs(precision).default.zoomCtrl,
+      config: springsConfigs(defaultPrecision).default.zoomCtrl,
       onRest: updateJ,
     })),
 
     rotCtrl: useSpring<ViewerRotationControl>(() => ({
       theta: viewerOrigin.theta, // all angles in rad
-      config: springsConfigs(precision).default.rotCtrl,
+      config: springsConfigs(defaultPrecision).default.rotCtrl,
       onRest: updateJ,
     })),
   };
