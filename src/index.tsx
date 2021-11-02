@@ -7,16 +7,19 @@ import SettingsProvider, { SettingsContext } from './components/settings/Setting
 import './index.css';
 import theme from './theme/theme';
 // import * as serviceWorker from './serviceWorker';
+import { GamepadsProvider } from 'react-gamepads';
 
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <ServiceWorkerWrapper />
-      <SettingsProvider>
-        <SettingsContext.Consumer>
-          {({ settings }) => <App settings={settings} />}
-        </SettingsContext.Consumer>
-      </SettingsProvider>
+      <GamepadsProvider>
+        <SettingsProvider>
+          <SettingsContext.Consumer>
+            {({ settings }) => <App settings={settings} />}
+          </SettingsContext.Consumer>
+        </SettingsProvider>
+      </GamepadsProvider>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),

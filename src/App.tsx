@@ -24,7 +24,7 @@ import {
   ViewerZoomControl,
   XYType,
 } from './common/types';
-import { useWindowSize, warpToPoint } from './common/utils';
+import { useInterval, useWindowSize, warpToPoint } from './common/utils';
 import {
   deepZoomPrecision,
   defaultPrecision,
@@ -32,6 +32,7 @@ import {
   springsConfigs,
   viewerOrigin,
 } from './common/values';
+import GamepadController from './components/control/GamepadController';
 import CoordinateInterface from './components/info/CoordinateInterface';
 import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
@@ -66,29 +67,6 @@ const defaultMisiurewiczPoint = new PreperiodicPoint(defaultP, defaultP, false);
 const normaliseZoom = (z: number, point: PreperiodicPoint) => {
   return z / point.factorMagnitude;
 };
-
-function useInterval(callback: () => void, delay: number | null) {
-  const savedCallback = useRef<() => void | null>();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      if (typeof savedCallback?.current !== 'undefined') {
-        savedCallback?.current();
-      }
-    }
-
-    if (delay !== null) {
-      const id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
 
 function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
   const size = useWindowSize();
@@ -361,6 +339,9 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
     }
   };
 
+  // const [gamepads, setGamepads] = useState({});
+  // useGamepads((gamepads) => setGamepads(gamepads));
+
   return (
     <>
       <Grid container>
@@ -488,6 +469,10 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
 
           <Grid item style={{ width: 0, height: 0, zIndex: 3 }}>
             <ViewChanger vertical={vertical} changeFunc={setViewerState} />
+            <GamepadController visible={true} />
+            {/* {Object.entries(gamepads).map((gamepad) => {
+              <div>{gamepad}</div>;
+            })} */}
           </Grid>
 
           <Grid

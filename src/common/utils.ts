@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { RgbColor } from 'react-colorful';
 import { addV, subV } from 'react-use-gesture';
 import {
@@ -53,6 +53,28 @@ export function useWindowSize(): { w: number; h: number } {
   return windowSize;
 }
 
+export function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef<() => void | null>();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      if (typeof savedCallback?.current !== 'undefined') {
+        savedCallback?.current();
+      }
+    }
+
+    if (delay !== null) {
+      const id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 export interface GenericTouchBindParams {
   domTarget: RefObject<HTMLCanvasElement>;
   controls: ViewerControlSprings;

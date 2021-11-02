@@ -13051,6 +13051,7 @@ fsevents@~2.1.2:
     react: ^17.0.2
     react-colorful: ^5.5.0
     react-dom: ^17.0.2
+    react-gamepads: ^1.0.0
     react-refresh: ^0.10.0
     react-scripts: 4.0.3
     react-spring: ^9.3.0
@@ -16011,6 +16012,15 @@ fsevents@~2.1.2:
   peerDependencies:
     react: ^16.3.0
   checksum: 0287e0ae8cbf0a4c03889ffc2b745f5494b3edea0f4667357d709f5646dd78c7289ce305b6f473ec6ac5789f8a937c86b7e543d0249f0bf787bccdb1eab7ecd0
+  languageName: node
+  linkType: hard
+
+"react-gamepads@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-gamepads@npm:1.0.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: fd1456f6d6c8576427da0e573535244e4f384573c7ce2017f47dfd7853449e0bd7a442b07b70f4d64f62ad9e19deccdd15dd1ce1966c814b017d0c43d429dc75
   languageName: node
   linkType: hard
 
