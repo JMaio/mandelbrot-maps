@@ -53,7 +53,7 @@ export function useWindowSize(): { w: number; h: number } {
   return windowSize;
 }
 
-export function useInterval(callback: () => void, delay: number | null) {
+export function useInterval(callback: () => void, delay: number | null): void {
   const savedCallback = useRef<() => void | null>();
 
   // Remember the latest callback.

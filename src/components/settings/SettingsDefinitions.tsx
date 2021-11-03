@@ -170,6 +170,14 @@ Zooming into some regions may give almost no improvement over the standard metho
 Regions closer to the origin will usually allow for deeper zoom without loss of quality.
     `,
   },
+  debugController: {
+    label: `Debug controller`,
+    checked: settings.debugController,
+    control: <Switch color="primary" />,
+    helptext: `
+Display the current controller inputs interactively for debugging.
+    `,
+  },
 });
 
 export const getSettingsWidgetsGrouping = (
@@ -182,6 +190,7 @@ export const getSettingsWidgetsGrouping = (
       showMinimap: settingsWidgets.showMinimap,
       showCrosshair: settingsWidgets.showCrosshair,
       showCoordinates: settingsWidgets.showCoordinates,
+      debugController: settingsWidgets.debugController,
     },
   },
   {

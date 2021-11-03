@@ -469,7 +469,10 @@ function App({ settings }: { settings: settingsDefinitionsType }): JSX.Element {
 
           <Grid item style={{ width: 0, height: 0, zIndex: 3 }}>
             <ViewChanger vertical={vertical} changeFunc={setViewerState} />
-            <GamepadController visible={true} />
+            <GamepadController
+              visible={settings.debugController}
+              spring={mandelbrotControls}
+            />
             {/* {Object.entries(gamepads).map((gamepad) => {
               <div>{gamepad}</div>;
             })} */}

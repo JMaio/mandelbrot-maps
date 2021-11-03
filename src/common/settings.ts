@@ -16,6 +16,7 @@ export type settingsDefinitionsType = {
   useAA: boolean;
   colour: RgbColor;
   deepZoom: boolean;
+  debugController: boolean;
 };
 
 export const defaultSettings: settingsDefinitionsType = {
@@ -30,6 +31,7 @@ export const defaultSettings: settingsDefinitionsType = {
   useAA: false,
   colour: defaultShadingColour,
   deepZoom: false,
+  debugController: false,
 };
 
 export const defaultIterationLevels = [16, 250, 500, 750, 1000].map((i) => ({
