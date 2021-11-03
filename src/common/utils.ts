@@ -106,6 +106,10 @@ export const radToDeg = (rad: number): number => (rad * 180) / Math.PI;
 // Math.degrees(3.141592653589793); // 180
 // --------------------------------------------------------------------------
 
+// used to have screenScaleMultiplier here
+export const getRealZoom = (height: number, z: number): number => height * z;
+// * screenScaleMultiplier;
+
 // a touchbind for re-using across renderers
 export function genericTouchBind({
   domTarget,
@@ -122,9 +126,7 @@ export function genericTouchBind({
 
   const zoomMult = { in: 3e-3, out: 1e-3 };
 
-  // used to have screenScaleMultiplier here
-  const getRealZoom = (z: number) => (domTarget.current?.height || 100) * z;
-  // * screenScaleMultiplier;
+  const getRealZoomHere = (z: number) => getRealZoom(domTarget.current?.height || 100, z);
 
   /** Re-usable logic for XY "panning" */
   const updateXY = ({
@@ -221,7 +223,7 @@ export function genericTouchBind({
         // console.log(newZ);
         const newZclamp = _.clamp(newZ, minZoom.get(), maxZoom.get());
 
-        const realZoom = getRealZoom(newZclamp);
+        const realZoom = getRealZoomHere(newZclamp);
 
         // get movement of pointer origin for panning
         const [px, py]: Vector2 = vScale(-2 / realZoom, subV(origin, memo.o));
@@ -314,7 +316,7 @@ export function genericTouchBind({
         // divide by canvas size to scale appropriately
         // multiply by 2 to correct scaling on viewport (?)
         // use screen multiplier for more granularity
-        const realZoom = getRealZoom(z.get());
+        const realZoom = getRealZoomHere(z.get());
 
         const [px, py]: Vector = vScale(-2 / realZoom, movement);
         // const relMove: Vector = vScale(2 / realZoom, movement);

@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
 // https://codesandbox.io/s/react-gamepad-menu-w-controller-ui-hook-version-shenmue-horse-working-oioei?file=/src/components/GamepadController.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
-import { ViewerControlSprings } from '../../common/types';
+import { addV } from 'react-use-gesture';
+import { vRotate, vScale } from 'vec-la-fp';
+import { ViewerControlSprings, XYType } from '../../common/types';
 // import useGamepads from "../hooks/useGamepads";
 import GamepadSvg from './GamepadSvg';
+import { analogOverDeadzone } from './utils';
 
 interface GamepadControllerProps extends React.HTMLAttributes<HTMLDivElement> {
   visible: boolean;
@@ -37,11 +40,18 @@ function GamepadController({
     setGamepads(gamepads);
   });
 
+  const [{ xy }, setControlXY] = spring.xyCtrl;
+  const [{ z }] = spring.zoomCtrl;
   const [{ theta }, setControlRot] = spring.rotCtrl;
 
+  // If controller connected with buttons
+  const controllerConnected = useCallback(
+    () => gamepads && gamepads[0] && gamepads[0].buttons.length > 0,
+    [gamepads],
+  );
+
   useEffect(() => {
-    // If controller connected with buttons
-    if (gamepads && gamepads[0] && gamepads[0].buttons.length > 0) {
+    if (controllerConnected()) {
       // try {
       const lb = gamepads[0].buttons[4].pressed;
       const rb = gamepads[0].buttons[5].pressed;
@@ -68,36 +78,31 @@ function GamepadController({
       //   console.log(error);
       // }
     }
-  }, [gamepads, theta, setControlRot, maxVelocity, velocity]);
+  }, [gamepads, theta, setControlRot, maxVelocity, velocity, controllerConnected]);
 
-  const calcDirectionVertical = (axe: number): string => {
-    // Up
-    if (axe < -0.2) {
-      return 'up';
+  useEffect(() => {
+    if (controllerConnected()) {
+      const analog: AnalogStick = {
+        x: gamepads[0].axes[0],
+        y: gamepads[0].axes[1],
+      };
+      if (analogOverDeadzone(analog)) {
+        const axes: XYType = [
+          // multiply by abs value to "square" while keeping sign,
+          // exponentiate to make it more sensitive
+          analog.x * Math.abs(analog.x) ** 1.5,
+          analog.y * Math.abs(analog.y) ** 1.5 * -1,
+        ];
+        // scale by the "real" zoom to make moving more precise at higher magnification,
+        // rotate by theta to correctly interpret the controller movement
+        const newXY = addV(xy.get(), vScale(3e-1 / z.get(), vRotate(theta.get(), axes)));
+        setControlXY({
+          xy: newXY,
+        });
+      }
     }
-    // Down
-    if (axe > 0.2) {
-      return 'down';
-    }
-    return 'none';
-  };
+  }, [gamepads, xy, z, theta, setControlXY, controllerConnected]);
 
-  const calcDirectionHorizontal = (axe: number): string => {
-    // Left
-    if (axe < -0.2) {
-      return 'left';
-    }
-    // Right
-    if (axe > 0.2) {
-      return 'right';
-    }
-    return 'none';
-  };
-
-  // console.log([
-  //   calcDirectionHorizontal(gamepads[0].axes[0]),
-  //   calcDirectionVertical(gamepads[0].axes[1])
-  // ]);
   return (
     <div
       className="gamepads"
@@ -135,27 +140,7 @@ function GamepadController({
             select={gamepads[0].buttons[8].pressed}
             start={gamepads[0].buttons[9].pressed}
             // booleans
-            analogLeft={
-              gamepads[0].axes[0] > 0.3 ||
-              gamepads[0].axes[0] < -0.3 ||
-              gamepads[0].axes[1] > 0.3 ||
-              gamepads[0].axes[1] < -0.3
-            }
-            analogRight={
-              gamepads[0].axes[2] > 0.3 ||
-              gamepads[0].axes[2] < -0.3 ||
-              gamepads[0].axes[3] > 0.3 ||
-              gamepads[0].axes[3] < -0.3
-            }
-            // strings: directions ("up" / "down" / ...)
-            analogLeftDirection={[
-              calcDirectionHorizontal(gamepads[0].axes[0]),
-              calcDirectionVertical(gamepads[0].axes[1]),
-            ]}
-            analogRightDirection={[
-              calcDirectionHorizontal(gamepads[0].axes[2]),
-              calcDirectionVertical(gamepads[0].axes[3]),
-            ]}
+            analog={gamepads[0].axes}
           />
           {/* <h3>Player 1</h3> */}
         </>
