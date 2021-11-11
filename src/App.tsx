@@ -32,7 +32,7 @@ import {
   springsConfigs,
   viewerOrigin,
 } from './common/values';
-import GamepadController from './components/control/GamepadController';
+import GamepadController from './components/gamepad/GamepadController';
 import CoordinateInterface from './components/info/CoordinateInterface';
 import FirstTimeInfo from './components/info/FirstTimeInfo';
 import InfoDialog from './components/info/InfoDialog';
