@@ -17,15 +17,18 @@ interface GamepadButtonsProps {
   // [key: string]: boolean;
 }
 interface GamepadAnalogProps {
-  analog: number[];
-  // analogLeft: boolean;
-  // analogRight: boolean;
+  // analog: number[];
+  analogLeft: AnalogStick;
+  analogRight: AnalogStick;
+  triggerLeft: any;
+  triggerRight: any;
   // analogLeftDirection: string[];
   // analogRightDirection: string[];
   // [key: string]: string[];
 }
 
 type AnalogStick = { x: number; y: number };
+type AnalogTrigger = number;
 
 interface GamepadStyleProps {
   activeColor?: string;

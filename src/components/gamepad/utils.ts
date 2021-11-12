@@ -1,10 +1,14 @@
 // threshold to mark analog stick as "active"
-export const analogDeadzone = 0.35;
+export const analogStickDeadzone = 0.35;
+export const analogTriggerDeadzone = 0.2;
 
 export const analogAbs = ({ x, y }: AnalogStick): number => Math.sqrt(x * x + y * y);
 
-export const analogOverDeadzone = (s: AnalogStick): boolean =>
-  analogAbs(s) > analogDeadzone;
+export const analogStickOverDeadzone = (s: AnalogStick): boolean =>
+  analogAbs(s) > analogStickDeadzone;
+
+export const analogTriggerOverDeadzone = (s: AnalogTrigger): boolean =>
+  s > analogTriggerDeadzone;
 
 // /**
 //  * Scales the analog range (0.0 -> 1.0) to unit range (-1.0 -> 1.0)
