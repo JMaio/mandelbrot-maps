@@ -11407,7 +11407,7 @@ fsevents@~2.1.2:
     jshint: ^2.10.2
     lint-staged: ^10.5.3
     lodash: ^4.17.19
-    markdown-to-jsx: ^7.1.0
+    markdown-to-jsx: ^7.4.0
     prettier: ^2.2.1
     pretty-quick: ^3.0.2
     preval.macro: ^5.0.0
@@ -11484,12 +11484,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"markdown-to-jsx@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "markdown-to-jsx@npm:7.1.0"
+"markdown-to-jsx@npm:^7.4.0":
+  version: 7.7.13
+  resolution: "markdown-to-jsx@npm:7.7.13"
   peerDependencies:
     react: ">= 0.14.0"
-  checksum: ca3843e5fa6165c390fad808cedb4bffbd2c71b509512d4ba2a8190203c352295d144b6fe395ec678555c862237eaae731371e03ff161efc7aa9dfe545b2bc51
+  checksum: 958ef5dd74eec9edf4120de7170fe8fdb2318dffb6333e43d3370d55d9f93f81a88a4bac4b8bd66b609fcae70e35f7f9bf45dd5c2cad472794bde95eb4aa6b3b
   languageName: node
   linkType: hard
 
