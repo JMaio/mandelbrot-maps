@@ -2807,10 +2807,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.165":
-  version: 4.14.166
-  resolution: "@types/lodash@npm:4.14.166"
-  checksum: e8ce1ef9980f494d1da0bd3ac16ba0046b5c1097ff5c9446eb1bd167871d2e8edd2e8e8344a1dbb0134a1c12c29591cf8f950e083adb7e237d5cfeac228abb7d
+"@types/lodash@npm:^4.17.20":
+  version: 4.17.20
+  resolution: "@types/lodash@npm:4.17.20"
+  checksum: 2cd262c7297bc7fb21517f37ecf4804c1dcb66c95d624e5f3141b4c0028f5781b7d800e661a48925e9b24605268ccc5288a48bc79b95646e5eae9c0097f10737
   languageName: node
   linkType: hard
 
@@ -11248,6 +11248,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: 4983720b9abca930a4a46f18db163d7dad8dd00dbed6db0cc7b499b33b717cce69f80928b27bbb1ff2cbd3b19d251ee90669a8b5ea466072ca81c2ebe91e7468
+  languageName: node
+  linkType: hard
+
 "log-symbols@npm:^4.0.0":
   version: 4.0.0
   resolution: "log-symbols@npm:4.0.0"
@@ -11382,7 +11389,7 @@ fsevents@~2.1.2:
     "@material-ui/lab": ^4.0.0-alpha.57
     "@mdi/js": ^5.6.55
     "@types/jest": ^26.0.16
-    "@types/lodash": ^4.14.165
+    "@types/lodash": ^4.17.20
     "@types/node": ^14.14.10
     "@types/preval.macro": ^3.0.0
     "@types/react": ^17.0.0
@@ -11406,7 +11413,7 @@ fsevents@~2.1.2:
     jest-webgl-canvas-mock: ^0.2.3
     jshint: ^2.10.2
     lint-staged: ^10.5.3
-    lodash: ^4.17.19
+    lodash: ^4.17.21
     markdown-to-jsx: ^7.1.0
     prettier: ^2.2.1
     pretty-quick: ^3.0.2
